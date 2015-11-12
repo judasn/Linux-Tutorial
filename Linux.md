@@ -1,4 +1,4 @@
-# Linux 介绍
+<h1 id="linux0">Linux 介绍</h1>
 
 ------
 
@@ -69,7 +69,7 @@ Linux 的 Wiki 中有这句话：
 
 <h2 id="linux4">推荐的发行版本</h2>
 
-<h2 id="aa">推荐的发行版本2</h2>
+<h2 id="aa">推荐的发行版本2</h2>（[Linux 介绍](#linux0)）
 
 **Ubuntu：适用于开发机**
 **推荐版本：Ubuntu kylin 15.10**
