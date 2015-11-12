@@ -2,7 +2,7 @@
 
 [Linux 这个名字](#aa)
 
-[Linux 作用](#Linux 作用)
+[Linux 作用](#Linux作用)
 
 ## Linux 这个名字
 
@@ -47,7 +47,7 @@ Linux 的 Wiki 中有这句话：
 - OpenSuse 系，嘛，嗯…人气相对比较差，一般是服务器。
 其实 Linux 的发行版本有太多了，我也只是简单说下常见的而已，具体可以看：<http://zh.wikipedia.org/wiki/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E5%88%97%E8%A1%A8>
 
-## Linux 作用
+## Linux作用
 
 为什么要用 Linux 系统？大家常看到的说法是这样的：
 
