@@ -15,6 +15,7 @@
 Linux 的 Wiki 介绍：<http://zh.wikipedia.org/zh/Linux>
 
 Linux 也称：`GNU/Linux`（”GNU/Linux” 英语发音：/ɡ??nu? sl?? ?l?n?ks/），而其中 GNU 的全称又是：`Gnu’s Not Unix`。
+
 其中 GNU 放前面是有原因的，GNU 介绍：<http://zh.wikipedia.org/wiki/GNU>
 
 对于 Linux 和 GNU/Linux 的两种叫法是有?争议，可以看下面文章：<http://zh.wikipedia.org/wiki/GNU/Linux命名爭議>
@@ -28,6 +29,7 @@ Linux 也称：`GNU/Linux`（”GNU/Linux” 英语发音：/ɡ??nu? sl?? ?l?n?k
 类 Unix 系统，除了我们今天要讲的 Linux，还有大家熟知的 Mac OS X、FreeBSD（这两个是直接从 Unix 系发展过来的，所以相对 Linux 是比较地道的类 Unix 系统）
 
 - FreeBSD介绍：<http://zh.wikipedia.org/zh/FreeBSD>
+
 - Mac OS X介绍：<http://zh.wikipedia.org/wiki/OS_X>
 
 <h2 id="linux2">Linux 的发行版本</h2>
@@ -39,18 +41,27 @@ Linux 的 Wiki 中有这句话：
 **通过上面这句话我做了总结，我个人觉得应该这样分：**
 
 - Fedora、RHEL、centos 是一个系
+
 他们的区别：<http://blog.csdn.net/tianlesoftware/article/details/5420569>
+
 - Debian、Ubuntu 是一个系的
+
 他们的区别直接看 Ubuntu 的 Wiki 就可以得知：<http://zh.wikipedia.org/zh/Ubuntu>
+
 - ArchLinux 自己一个系：<http://zh.wikipedia.org/wiki/Arch_Linux>
+
 - openSUSE 自己一个系：<http://zh.wikipedia.org/wiki/OpenSUSE>
 
 **根据用途可以再总结：**
 
 - Fedora 系业界一般用于做服务器
+
 - Debian 系业界一般用于桌面，移动端，TV这一类
+
 - ArchLinux 系，很轻量的Linux，适合有一定Linux基础，并且爱折腾的人使用，用它做桌面或是服务器都行。
+
 - OpenSuse 系，嘛，嗯…人气相对比较差，一般是服务器。
+
 其实 Linux 的发行版本有太多了，我也只是简单说下常见的而已，具体可以看：<http://zh.wikipedia.org/wiki/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E5%88%97%E8%A1%A8>
 
 <h2 id="linux3">Linux 作用</h2>
@@ -62,6 +73,7 @@ Linux 的 Wiki 中有这句话：
 我觉得这几个点都比较虚， 特别是免费这东西，在景德镇应该算是最不值钱的东西。作为上层人来讲，我们之所以喜欢某个操作系统就是因为它可以加快的你生产效率，提高产能。我推荐 Linux 也只是因为它适合常见的编程语言做开发环境，仅此一点。
 
 **对此我的总结就是：**
+
 如果你是某种语言的开发者，你从事这个行业，不管你怎么学习下去，Linux 永远绕不开。从简单的各种语言开发，到后期的服务器部署，分布式，集群环境，数据库相关等，Linux 都在等着你。（P.S：微软系、美工等设计系是唯一这个总结之外的人）
 
 在认识 Linux 作用上我以下面这边文章为结尾。Linux 和 Mac OS X 都是类 Unix 系统，所以这篇文章中基本上的理由都可以用到 Linux 上的。
@@ -70,6 +82,7 @@ Linux 的 Wiki 中有这句话：
 <h2 id="linux4">推荐的发行版本</h2>
 
 **Ubuntu：适用于开发机**
+
 **推荐版本：Ubuntu kylin 15.10**
 
 - Ubuntu kylin 官网：<http://cn.Ubuntu.com/desktop>
@@ -86,6 +99,7 @@ Linux 的 Wiki 中有这句话：
 ------
 
 **CentOS：适用于服务器机**
+
 **推荐版本：6.7**
 
 - CentOS 官网：<http://www.centos.org/download/>
