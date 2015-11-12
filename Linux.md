@@ -1,10 +1,16 @@
 # Linux 介绍
 
-[Linux 这个名字](#aa)
+------
 
-[Linux 作用](#Linux作用)
+*   [Linux 介绍](#linux0)
+    *   [Linux 这个名字](#linux1)
+    *   [Linux 的发行版本](#linux2)
+    *   [Linux 作用](#linux3)
+    *   [推荐的发行版本](#linux4)
 
-## Linux 这个名字
+------
+
+<h2 id="linux1">Linux 这个名字</h2>
 
 Linux 的 Wiki 介绍：<http://zh.wikipedia.org/zh/Linux>
 
@@ -24,7 +30,7 @@ Linux 也称：`GNU/Linux`（”GNU/Linux” 英语发音：/ɡ??nu? sl?? ?l?n?k
 - FreeBSD介绍：<http://zh.wikipedia.org/zh/FreeBSD>
 - Mac OS X介绍：<http://zh.wikipedia.org/wiki/OS_X>
 
-## Linux 的发行版本
+<h2 id="linux2">Linux 的发行版本</h2>
 
 Linux 的 Wiki 中有这句话：
 
@@ -47,7 +53,7 @@ Linux 的 Wiki 中有这句话：
 - OpenSuse 系，嘛，嗯…人气相对比较差，一般是服务器。
 其实 Linux 的发行版本有太多了，我也只是简单说下常见的而已，具体可以看：<http://zh.wikipedia.org/wiki/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E5%88%97%E8%A1%A8>
 
-## Linux作用
+<h2 id="linux3">Linux 作用</h2>
 
 为什么要用 Linux 系统？大家常看到的说法是这样的：
 
@@ -61,7 +67,7 @@ Linux 的 Wiki 中有这句话：
 在认识 Linux 作用上我以下面这边文章为结尾。Linux 和 Mac OS X 都是类 Unix 系统，所以这篇文章中基本上的理由都可以用到 Linux 上的。
 为什么国外程序员爱用 Mac？<http://www.vpsee.com/2009/06/why-programmers-love-mac/>
 
-## 推荐的发行版本
+<h2 id="linux4">推荐的发行版本</h2>
 
 <h2 id="aa">推荐的发行版本2</h2>
 
