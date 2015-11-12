@@ -29,7 +29,6 @@ Linux 也称：`GNU/Linux`（”GNU/Linux” 英语发音：/ɡ??nu? sl?? ?l?n?k
 类 Unix 系统，除了我们今天要讲的 Linux，还有大家熟知的 Mac OS X、FreeBSD（这两个是直接从 Unix 系发展过来的，所以相对 Linux 是比较地道的类 Unix 系统）
 
 - FreeBSD介绍：<http://zh.wikipedia.org/zh/FreeBSD>
-
 - Mac OS X介绍：<http://zh.wikipedia.org/wiki/OS_X>
 
 <h2 id="linux2">Linux 的发行版本</h2>
@@ -40,26 +39,16 @@ Linux 的 Wiki 中有这句话：
 
 **通过上面这句话我做了总结，我个人觉得应该这样分：**
 
-- Fedora、RHEL、centos 是一个系
-
-他们的区别：<http://blog.csdn.net/tianlesoftware/article/details/5420569>
-
-- Debian、Ubuntu 是一个系的
-
-他们的区别直接看 Ubuntu 的 Wiki 就可以得知：<http://zh.wikipedia.org/zh/Ubuntu>
-
+- Fedora、RHEL、centos 是一个系，他们的区别：<http://blog.csdn.net/tianlesoftware/article/details/5420569>
+- Debian、Ubuntu 是一个系的，他们的区别直接看 Ubuntu 的 Wiki 就可以得知：<http://zh.wikipedia.org/zh/Ubuntu>
 - ArchLinux 自己一个系：<http://zh.wikipedia.org/wiki/Arch_Linux>
-
 - openSUSE 自己一个系：<http://zh.wikipedia.org/wiki/OpenSUSE>
 
 **根据用途可以再总结：**
 
 - Fedora 系业界一般用于做服务器
-
 - Debian 系业界一般用于桌面，移动端，TV这一类
-
 - ArchLinux 系，很轻量的Linux，适合有一定Linux基础，并且爱折腾的人使用，用它做桌面或是服务器都行。
-
 - OpenSuse 系，嘛，嗯…人气相对比较差，一般是服务器。
 
 其实 Linux 的发行版本有太多了，我也只是简单说下常见的而已，具体可以看：<http://zh.wikipedia.org/wiki/Linux%E5%8F%91%E8%A1%8C%E7%89%88%E5%88%97%E8%A1%A8>
