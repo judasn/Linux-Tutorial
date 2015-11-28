@@ -106,17 +106,163 @@ http://blog.xuite.net/chingwei/blog/38359401……A2%BC(需要穿越)
 
 find / -name 文件名（文件名可以用使用通配符）
 
+
+------------------------------------------------------------------------------------------
+
+1.查看内核版本
+ uname -a
+ 
+2.查看UBUNTU发行版本
+ cat /etc/issue
+ 
+3.查看发行代号
+ sudo lsb_release -a 
+
+
+
 ------------------------------------------------------------------------------------------
 
 <h2 id="ubuntu">修改源</h2>
+
+先了解源这东西：http://wiki.ubuntu.org.cn/%E6%BA%90%E5%88%97%E8%A1%A8
+文章的重点是页面最下面，每个版本的源地址都是不一样的，所以要懂得替换对应的版本英文名称，然后进行修改。
+
+
+注意：更换之前最好备份一下 sources.list 配置文件。
+
+替换过程：
+> 备份下：`cp /etc/apt/sources.list /etc/apt/sources_20151128_back.list`
+> 用 gedit 编辑器打开配置文件：`sudo gedit /etc/apt/sources.list`
+
+
+ 
+163镜像源：http://mirrors.163.com/.help/ubuntu.html 
+阿里源：http://mirrors.aliyun.com/help/ubuntu
+sohu：官网：http://mirrors.sohu.com/help/ubuntu.html
+
+更换源之后，需要在终端中执行，这是必须做的，不然你后面怎么apt-get安装都是会提示：未发现软件包。
+> `sudo apt-get update`
 
 ------------------------------------------------------------------------------------------
 
 <h2 id="ubuntu">安装软件基础</h2>
 
+
+查看软件版本：
+
+默认aptitude是没有安装的，所以要安装下：sudo apt-get install aptitude
+
+aptitude show wiznote(软件名称)
+
+也可用apt-show-versions (要先安装sudo apt-get install apt-show-versions)
+
+ 查看软件安装位置:
+dpkg -L wiznote(软件名称)
+ 
+查看软件是否安装：
+dpkg -l | grep wiznote(软件名称)
+
+
+清除所有已删除包的残馀配置文件
+ dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P
+如果报如下错误，证明你的系统中没有残留配置文件了，无须担心。
+
+
+备份当前系统安装的所有包的列表
+ 
+dpkg --get-selections | grep -v deinstall > ~/somefile
+从上面备份的安装包的列表文件恢复所有包
+ dpkg --set-selections < ~/somefile
+sudo dselect  或者 sudo  apt-get  dselect-upgrade  
+
+ 清理旧版本的软件缓存
+ sudo apt-get autoclean
+
+清理所有软件缓存
+ sudo apt-get clean
+ 
+删除系统不再使用的孤立软件
+ sudo apt-get autoremove
+
+sudo apt-get autoclean
+sudo apt-get clean 清理系统，不影响安装的软件使用
+sudo apt-get autoremove
+ 
+这三个命令主要清理升级缓存以及无用包的。
+------------------
+apt-get remove 卸载已安装的软件包（保留配置文档）
+apt-get –purge remove 卸载已安装的软件包（删除配置文档）
+apt-get clean 清理系统，不影响安装的软件使用
+apt-get upgrade 更新任何已安装的软件包
+apt-get dist-upgrade 将系统升级到新版本
+apt-cache search 查找软件包
+
+ 
+ 查看已经安装了哪些包
+dpkg -l
+
+
+
+
 ------------------------------------------------------------------------------------------
 
-<h2 id="ubuntu">安装常用组件</h2>
+<h2 id="ubuntu">安装常用系统软件</h2>
+
+> 安装各个软件之前的必须先执行的命令：`sudo apt-get update`
+
+---
+
+> VIM
+- 介绍：
+- 安装：`sudo apt-get -y install vim`
+- 资料：
+
+---
+
+> Tmux
+- 介绍：
+- 安装：`sudo apt-get -y install tmux`
+- 资料：
+ - http://blog.jobbole.com/87278/
+ - http://foocoder.com/blog/zhong-duan-huan-jing-zhi-tmux.html/  
+ - http://www.xzcblog.com/post-146.html
+ - http://cenalulu.github.io/linux/tmux/  
+ - http://blog.kissdata.com/2014/07/29/tmux.html  
+
+---
+
+> SSH（Secure Shell）
+- 介绍：
+- 安装：`sudo apt-get -y install openssh-server openssh-client`
+- 资料：
+ - 编辑SSH配置文件：`sudo vim /etc/ssh/sshd_config`
+   - 注释掉：`PermitRootLogin without-password`
+   - 新增一行：`PermitRootLogin yes`（表示允许root账号ssh登录）
+Port 22 # 可以指定其他端口
+Protocol 2,1 # 指定了SSH协议版本，目前SSH只有两个版本2和1
+PasswordAuthentication yes #是否开启密码验证，因为SSH也可以设置秘钥类授权登录的方式，如果用这种方式我们可以考虑关掉密码登录的方式。
+PermitEmptyPasswords no # 是否允许密码为空，与上面参数配合用。
+ - http://www.jikexueyuan.com/course/861_1.html?ss=1 
+
+配置基于秘钥的认证方式
+生成秘钥和公钥文件
+命令：ssh-keygen，默认生成这些文件是在/root/.ssh/id_rsa，询问你是否需要口令密码，直接回车即可，没必要再用口令了。
+命令：cd /root/.ssh，可以看到有两个文件：id_rsa(私钥)和id_rsa.pub(公钥)
+
+在.ssh目录下创建SSH认证文件，命令：touch authorized_keys
+将公钥内容写到SSH认证文件里面，命令：cat id_rsa.pub >> authorized_keys
+
+修改SSH认证文件权限，命令：
+chmod 700 /root/.ssh
+chmod 600 authorized_keys
+
+现在SSH客户端可以去拿着SSH服务器端上的id_rsa，然后客户端指定秘钥文件地址即可，这个一般由于你使用的客户端决定的。
+
+命令：sudo service ssh restart
+命令：sudo ifconfig，查看自己的网卡，在以太网的网卡上看到自己的IP
+安装SSH服务
+命令：sudo sysv-rc-conf ssh on
+
 
 ------------------------------------------------------------------------------------------
 
