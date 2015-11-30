@@ -223,37 +223,7 @@ find / -name 文件名（文件名可以用使用通配符）
 
 ---
 
-> SSH（Secure Shell）
-- 介绍：
-- 安装：`sudo apt-get -y install openssh-server openssh-client`
-- 资料：
- - 编辑SSH配置文件：`sudo vim /etc/ssh/sshd_config`
-   - 注释掉：`PermitRootLogin without-password`
-   - 新增一行：`PermitRootLogin yes`（表示允许root账号ssh登录）
-Port 22 # 可以指定其他端口
-Protocol 2,1 # 指定了SSH协议版本，目前SSH只有两个版本2和1
-PasswordAuthentication yes #是否开启密码验证，因为SSH也可以设置秘钥类授权登录的方式，如果用这种方式我们可以考虑关掉密码登录的方式。
-PermitEmptyPasswords no # 是否允许密码为空，与上面参数配合用。
- - http://www.jikexueyuan.com/course/861_1.html?ss=1 
 
-配置基于秘钥的认证方式
-生成秘钥和公钥文件
-命令：ssh-keygen，默认生成这些文件是在/root/.ssh/id_rsa，询问你是否需要口令密码，直接回车即可，没必要再用口令了。
-命令：cd /root/.ssh，可以看到有两个文件：id_rsa(私钥)和id_rsa.pub(公钥)
-
-在.ssh目录下创建SSH认证文件，命令：touch authorized_keys
-将公钥内容写到SSH认证文件里面，命令：cat id_rsa.pub >> authorized_keys
-
-修改SSH认证文件权限，命令：
-chmod 700 /root/.ssh
-chmod 600 authorized_keys
-
-现在SSH客户端可以去拿着SSH服务器端上的id_rsa，然后客户端指定秘钥文件地址即可，这个一般由于你使用的客户端决定的。
-
-命令：sudo service ssh restart
-命令：sudo ifconfig，查看自己的网卡，在以太网的网卡上看到自己的IP
-安装SSH服务
-命令：sudo sysv-rc-conf ssh on
 
 
 ------------------------------------------------------------------------------------------
