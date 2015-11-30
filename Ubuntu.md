@@ -73,42 +73,39 @@ Linux 一般可分 3 个分区，分别是 `boot 分区`、`swap 分区` 和 `�
 
 你有可能跟我一样还需要不时穿越，通用设置VPN的方法我也准备好了，你只要根据下面图片设置即可，但是需要注意的是，配置好后，最好重启电脑，不然可能没办法连接上，这点很重要。
 
+------------------------------------------------------------------------------------------
 
-设置局域网静态 IP（固定 IP）
-我目前有一台 Windows，一台 Ubuntu，Ubuntu 有时候是直接在 Windows 上直接 SSH 连接上去的，所以如果自动分配 IP 的话就比较麻烦。
-
-> 编辑配置文件：`sudo vim /etc/network/interfaces`
-> 配置文件内容中，部分信息改为如下：
-> 
->> auto eth0
->> \# iface eth0 inet dhcp
->> 
->> \# 注释上面默认配置的 DHCP 设置,改为下面这个 static
->> iface eth0 inet static 
->> address 192.168.1.103 # IP 地址
->> netmask 255.255.255.0 # 子网掩码
+> 设置局域网静态 IP（固定 IP）
+- 我目前有一台 Windows，一台 Ubuntu，Ubuntu 有时候是直接在 Windows 上直接 SSH 连接上去的，所以如果自动分配 IP 的话就比较麻烦。
+- 编辑配置文件：`sudo vim /etc/network/interfaces`
+- 配置文件内容中，部分信息改为如下：
+ - auto eth0
+ - \# iface eth0 inet dhcp
+ - \# 注释上面默认配置的 DHCP 设置,改为下面这个 static
+ - iface eth0 inet static 
+ - address 192.168.1.103 # IP 地址
+ - netmask 255.255.255.0 # 子网掩码
 
 ------------------------------------------------------------------------------------------
 
-设置DNS服务器
-> 编辑配置文件：`sudo vim /etc/resolvconf/resolv.conf.d/base`
-> 如果里面没内容，则新增下面两个：（我是广州电信，这两个 DNS 是我根据 360 安全卫士 DNS 优选功能自动筛选出来的，每个地区的人得到结果可能都不一样）
->
->> nameserver 123.125.81.6
->> nameserver 8.8.8.8
+> 设置DNS服务器
+- 编辑配置文件：`sudo vim /etc/resolvconf/resolv.conf.d/base`
+- 如果里面没内容，则新增下面两个：（我是广州电信，这两个 DNS 是我根据 360 安全卫士 DNS 优选功能自动筛选出来的，每个地区的人得到结果可能都不一样）
+ - nameserver 123.125.81.6
+ - nameserver 8.8.8.8
+- 更新resolv.conf文件：`sudo resolvconf -u`
+- 重启服务：`sudo /etc/init.d/networking restart`
 
-> 更新resolv.conf文件：`sudo resolvconf -u`
-> 重启服务：`sudo /etc/init.d/networking restart`
+------------------------------------------------------------------------------------------
 
+> 如果你的 Ubuntu 设置固定 IP 后网络图标消失且无法查看 IP：
+- `sudo vim /etc/NetworkManager/NetworkManager.conf`
+ - 修改该值为：managed=true （原为 false）
 
-如果你的 Ubuntu 设置固定 IP 后网络图标消失且无法查看 IP：
-> `sudo vim /etc/NetworkManager/NetworkManager.conf`
->
->> 修改该值为：managed=true （原为 false）
+> 资料：
+- <http://www.ha97.com/4895.html>
+- <http://blog.csdn.net/big2chris/article/details/9970127>
 
-- 资料：
- - http://www.ha97.com/4895.html
- - http://blog.csdn.net/big2chris/article/details/9970127
 ------------------------------------------------------------------------------------------
 
 <h2 id="ubuntu">常用系统设置</h2>
@@ -163,87 +160,43 @@ find / -name 文件名（文件名可以用使用通配符）
 
 <h2 id="ubuntu">修改源</h2>
 
-先了解源这东西：http://wiki.ubuntu.org.cn/%E6%BA%90%E5%88%97%E8%A1%A8
-文章的重点是页面最下面，每个版本的源地址都是不一样的，所以要懂得替换对应的版本英文名称，然后进行修改。
+简单地讲：修改资源源地址主要是为了加快下载速度，默认的资源源地址在是境外，速度肯定没有境内速度快。
 
+了解源这东西：<http://wiki.ubuntu.org.cn/%E6%BA%90%E5%88%97%E8%A1%A8>
 
-注意：更换之前最好备份一下 sources.list 配置文件。
+文章的重点是页面最下面，每个版本的源地址都是不一样的，所以要懂得替换对应的版本英文名称，各个版本的英文名称大家自己找下，然后进行修改。
 
-替换过程：
-> 备份下：`cp /etc/apt/sources.list /etc/apt/sources_20151128_back.list`
-> 用 gedit 编辑器打开配置文件：`sudo gedit /etc/apt/sources.list`
+-
 
+> 国内常用源：
+- 163 源：<http://mirrors.163.com/.help/ubuntu.html> 
+- 阿里源：<http://mirrors.aliyun.com/help/ubuntu>
+- sohu：<http://mirrors.sohu.com/help/ubuntu.html>
 
- 
-163镜像源：http://mirrors.163.com/.help/ubuntu.html 
-阿里源：http://mirrors.aliyun.com/help/ubuntu
-sohu：官网：http://mirrors.sohu.com/help/ubuntu.html
+-
 
-更换源之后，需要在终端中执行，这是必须做的，不然你后面怎么apt-get安装都是会提示：未发现软件包。
-> `sudo apt-get update`
+> 替换过程（更换之前最好备份一下 sources.list 配置文件）：
+- 备份下：`sudo cp /etc/apt/sources.list /etc/apt/sources_20151128_back.list`
+- 用 gedit 编辑器打开配置文件：`sudo gedit /etc/apt/sources.list`
 
-------------------------------------------------------------------------------------------
+-
+
+> 更换源之后，需要在终端中执行，这是必须做的，不然你后面怎么apt-get安装都是会提示：未发现软件包。
+- `sudo apt-get update`
 
 <h2 id="ubuntu">安装软件基础</h2>
 
-
-查看软件版本：
-
-默认aptitude是没有安装的，所以要安装下：sudo apt-get install aptitude
-
-aptitude show wiznote(软件名称)
-
-也可用apt-show-versions (要先安装sudo apt-get install apt-show-versions)
-
- 查看软件安装位置:
-dpkg -L wiznote(软件名称)
- 
-查看软件是否安装：
-dpkg -l | grep wiznote(软件名称)
-
-
-清除所有已删除包的残馀配置文件
- dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P
-如果报如下错误，证明你的系统中没有残留配置文件了，无须担心。
-
-
-备份当前系统安装的所有包的列表
- 
-dpkg --get-selections | grep -v deinstall > ~/somefile
-从上面备份的安装包的列表文件恢复所有包
- dpkg --set-selections < ~/somefile
-sudo dselect  或者 sudo  apt-get  dselect-upgrade  
-
- 清理旧版本的软件缓存
- sudo apt-get autoclean
-
-清理所有软件缓存
- sudo apt-get clean
- 
-删除系统不再使用的孤立软件
- sudo apt-get autoremove
-
-sudo apt-get autoclean
-sudo apt-get clean 清理系统，不影响安装的软件使用
-sudo apt-get autoremove
- 
-这三个命令主要清理升级缓存以及无用包的。
-------------------
-apt-get remove 卸载已安装的软件包（保留配置文档）
-apt-get –purge remove 卸载已安装的软件包（删除配置文档）
-apt-get clean 清理系统，不影响安装的软件使用
-apt-get upgrade 更新任何已安装的软件包
-apt-get dist-upgrade 将系统升级到新版本
-apt-cache search 查找软件包
-
- 
- 查看已经安装了哪些包
-dpkg -l
-
-
-
-
-------------------------------------------------------------------------------------------
+> - 取回更新的软件包列表信息：`sudo apt-get update`
+> - 查看已经安装了哪些包：`dpkg -l`
+> - 查看已安装列表中是否有vim软件，没有安装则没有数据显示：`dpkg -l | grep vim`
+> - 查看vim软件安装位置：`dpkg -L vim`
+> - 安装名为XXX的软件：`sudo apt-get install XXX`
+> - 卸载名为XXX的软件（保留配置文档）：`sudo apt-get remove XXX`
+> - 卸载名为XXX的软件（删除配置文档）：`sudo apt-get –purge remove XXX`
+> - 升级系统所有有新版本的软件：`sudo apt-get upgrade`
+> - 删除已下载的旧包文件：`sudo apt-get autoclean`
+> - 删除所有已下载的包文件：`sudo apt-get clean`
+> - 卸载所有自动安装且不再使用的软件包：`sudo apt-get autoremove`
 
 <h2 id="ubuntu">安装常用系统软件</h2>
 
