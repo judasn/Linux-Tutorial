@@ -224,6 +224,14 @@ find / -name 文件名（文件名可以用使用通配符）
 
 ---
 
+> SSH（Secure Shell）
+- 介绍：
+- 安装：`sudo apt-get -y install openssh-server openssh-client`
+- 资料：
+ - [SSH 常用功能](SSH.md)
+
+---
+
 
 
 
