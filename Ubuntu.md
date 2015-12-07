@@ -232,6 +232,14 @@ find / -name 文件名（文件名可以用使用通配符）
 
 ---
 
+> NFS（Network FileSystem）
+- 介绍：
+- 安装：`sudo apt-get install -y nfs-common nfs-kernel-server`
+- 资料：
+ - [NFS 常用功能](NFS.md)
+
+---
+
 
 
 

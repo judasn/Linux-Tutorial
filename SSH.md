@@ -13,7 +13,13 @@
 
 <h2 id="ssh1">SSH 安装</h2>
 
-- 安装：`sudo apt-get -y install openssh-server openssh-client`
+- 查看是否已安装：
+ - CentOS：`rpm -qa | grep  openssh`
+ - Ubuntu：`dpkg -l | grep  openssh`
+
+- 安装：
+ - CentOS 6：`sudo yum install -y openssh-server openssh-clients`
+ - Ubuntu：`sudo apt-get install -y openssh-server openssh-client`
 
 <h2 id="ssh2">SSH 配置文件常用参数</h2>
 
@@ -46,6 +52,4 @@
 
 <h2 id="ssh5">SSH 资料</h2>
 
-- http://www.jikexueyuan.com/course/861_1.html?ss=1 
- 
-
+- <http://www.jikexueyuan.com/course/861_1.html?ss=1> 
