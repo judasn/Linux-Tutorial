@@ -14,7 +14,8 @@
 <h2 id="ssh1">SSH 安装</h2>
 
 - 安装：
- - CentOS：`yum install -y nfs-utils`
+ - CentOS 5：`yum install -y nfs-utils portmap`
+ - CentOS 6：`yum install -y nfs-utils rpcbind`
  - Ubuntu：`apt-get install nfs-common nfs-kernel-server`
 
 
@@ -54,8 +55,17 @@ showmount -e 192.168.1.25（这个IP是NFS的服务器端IP）
 
 
 
-<h2 id="ssh5">SSH 资料</h2>
+<h2 id="ssh5">NFS 资料</h2>
 
-- http://www.jikexueyuan.com/course/861_1.html?ss=1 
+- <http://wiki.jikexueyuan.com/project/linux/nfs.html> 
+- <http://www.jb51.net/os/RedHat/77993.html> 
+- <http://www.cnblogs.com/Charles-Zhang-Blog/archive/2013/02/05/2892879.html> 
+- <http://www.linuxidc.com/Linux/2013-08/89154.htm> 
+- <http://www.centoscn.com/image-text/config/2015/0111/4475.html> 
+- <> 
+- <> 
+- <> 
+- <> 
+- <> 
  
 
