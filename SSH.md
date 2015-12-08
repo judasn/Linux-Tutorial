@@ -23,7 +23,7 @@
 
 <h2 id="ssh2">SSH 配置文件常用参数</h2>
 
-- 配置文件介绍：`sudo vim /etc/ssh/sshd_config`
+- 配置文件介绍（记得先备份）：`sudo vim /etc/ssh/sshd_config`
  - Port 22 #默认指定 22 端口，可以自己修改
  - Protocol 2,1 #指定了 SSH 协议版本，目前 SSH 只有两个版本 2 和 1
  - PasswordAuthentication yes #是否开启密码验证，因为 SSH 也可以设置秘钥类授权登录的方式，如果用这种方式我们可以考虑关掉密码登录的方式。
@@ -31,7 +31,7 @@
  
 <h2 id="ssh3">SSH 允许 root 账户登录</h2>
 
-- 编辑配置文件：`sudo vim /etc/ssh/sshd_config`
+- 编辑配置文件（记得先备份）：`sudo vim /etc/ssh/sshd_config`
  - 允许 root 账号登录
     - 注释掉：`PermitRootLogin without-password`
     - 新增一行：`PermitRootLogin yes`

@@ -23,7 +23,7 @@
 
 <h2 id="nfs2">NFS 服务器配置文件常用参数</h2>
 
-- 配置文件介绍：`sudo vim /etc/exports`
+- 配置文件介绍（记得先备份）：`sudo vim /etc/exports`
  - 默认配置文件里面是没啥内容的，我们需要自己加上配置内容，一行表示共享一个目录。为了方便使用，共享的目录最好将权限设置为 777（`chmod 777 folderName`）。
  - 假设在配置文件里面加上：`/opt/mytest 192.168.0.0/55(rw,sync,all_squash,anonuid=501,anongid=501,no_subtree_check)`
  - 该配置解释：

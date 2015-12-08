@@ -248,6 +248,14 @@ find / -name 文件名（文件名可以用使用通配符）
 
 ---
 
+> FTP（File Transfer Protocol）
+- 介绍：
+- 安装：`sudo apt-get install -y vsftpd`
+- 资料：
+ - [FTP 常用功能](FTP.md)
+
+---
+
 
 
 
