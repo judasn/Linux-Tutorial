@@ -240,6 +240,14 @@ find / -name 文件名（文件名可以用使用通配符）
 
 ---
 
+> NTP（Network Time Protocol）
+- 介绍：
+- 安装：`sudo apt-get install -y ntp`
+- 资料：
+ - [NTP 常用功能](NTP.md)
+
+---
+
 
 
 
