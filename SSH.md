@@ -14,8 +14,8 @@
 <h2 id="ssh1">SSH 安装</h2>
 
 - 查看是否已安装：
- - CentOS：`rpm -qa | grep  openssh`
- - Ubuntu：`dpkg -l | grep  openssh`
+ - CentOS：`rpm -qa | grep openssh`
+ - Ubuntu：`dpkg -l | grep openssh`
 
 - 安装：
  - CentOS 6：`sudo yum install -y openssh-server openssh-clients`

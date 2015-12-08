@@ -13,8 +13,8 @@
 <h2 id="nfs1">NFS 安装</h2>
 
 - 查看是否已安装：
- - CentOS：`rpm -qa | grep  nfs-*`
- - Ubuntu：`dpkg -l | grep  nfs-*`
+ - CentOS：`rpm -qa | grep nfs-*`
+ - Ubuntu：`dpkg -l | grep nfs-*`
 
 - 安装：
  - CentOS 5：`sudo yum install -y nfs-utils portmap`

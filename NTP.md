@@ -12,8 +12,8 @@
 <h2 id="ntp1">NTP 安装</h2>
 
 - 查看是否已安装：
- - CentOS：`rpm -qa | grep  ntp-*`
- - Ubuntu：`dpkg -l | grep  ntp-*`
+ - CentOS：`rpm -qa | grep ntp-*`
+ - Ubuntu：`dpkg -l | grep ntp-*`
 
 - 安装：
  - CentOS 6：`sudo yum install -y ntp`
