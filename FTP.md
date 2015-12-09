@@ -93,7 +93,7 @@
         
 <h2 id="ftp6">FTP 资料</h2>
 
-- <http://www.jikexueyuan.com/course/994.html  >
+- <http://www.jikexueyuan.com/course/994.html>
 - <http://www.while0.com/36.html>
 - <http://www.cnblogs.com/CSGrandeur/p/3754126.html>
 - <http://www.centoscn.com/image-text/config/2015/0613/5651.html>
