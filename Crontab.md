@@ -33,6 +33,7 @@
     - 0 23-7/2 * * * service httpd restart      #晚上 11 点到早上 7 点之间，每隔 2 个小时重启 apache
     - 0-59/30 18-23 * * * service httpd restart #每天 18:00 到 23：00 之间，每隔 30 分钟重启 apache（方法一）
     - 0,30 18-23 * * * service httpd restart    #每天 18:00 到 23：00 之间，每隔 30 分钟重启 apache（方法二）
+- 执行记录日志：`cd /var/log/cron`
 
 <h2 id="crontab3">Crontab 资料</h2>
 
