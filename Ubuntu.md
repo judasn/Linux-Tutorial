@@ -226,7 +226,6 @@ find / -name 文件名（文件名可以用使用通配符）
 
 > SSH（Secure Shell）
 - 介绍：
-- 安装：`sudo apt-get -y install openssh-server openssh-client`
 - 资料：
  - [SSH 常用功能](SSH.md)
 
@@ -234,7 +233,6 @@ find / -name 文件名（文件名可以用使用通配符）
 
 > NFS（Network FileSystem）
 - 介绍：
-- 安装：`sudo apt-get install -y nfs-common nfs-kernel-server`
 - 资料：
  - [NFS 常用功能](NFS.md)
 
@@ -242,7 +240,6 @@ find / -name 文件名（文件名可以用使用通配符）
 
 > NTP（Network Time Protocol）
 - 介绍：
-- 安装：`sudo apt-get install -y ntp`
 - 资料：
  - [NTP 常用功能](NTP.md)
 
@@ -250,9 +247,15 @@ find / -name 文件名（文件名可以用使用通配符）
 
 > FTP（File Transfer Protocol）
 - 介绍：
-- 安装：`sudo apt-get install -y vsftpd`
 - 资料：
  - [FTP 常用功能](FTP.md)
+
+---
+
+> VPN（Virtual Private Network）
+- 介绍：
+- 资料：
+ - [VPN 常用功能](VPN.md)
 
 ---
 
