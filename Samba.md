@@ -21,7 +21,7 @@
 
 <h2 id="samba2">Samba 服务器配置文件常用参数</h2>
 
-- 配置文件介绍（记得先备份）：`sudo /etc/samba/smb.conf`
+- 配置文件介绍（记得先备份）：`sudo vim /etc/samba/smb.conf`
  - 该配置解释：
     - 在 [globle] 区域
        - workgroup = WORKGROUP #WORKGROUP表示Windows默认的工作组名称，一般共享给windows是设置为WORKGROUP
@@ -52,3 +52,6 @@
 <h2 id="samba3">Samba 资料</h2>
 
 - <http://www.lvtao.net/linux/555.html> 
+- <https://www.centos.bz/2011/07/centos5-install-samba-windows-linux-fileshare/> 
+- <https://wsgzao.github.io/post/samba/> 
+- <http://linux.vbird.org/linux_server/0370samba.php> 
