@@ -217,11 +217,21 @@ find / -name 文件名（文件名可以用使用通配符）
 - 安装：`sudo apt-get -y install tmux`
 - 资料：
  - http://blog.jobbole.com/87278/
- - http://foocoder.com/blog/zhong-duan-huan-jing-zhi-tmux.html/  
+ - http://foocoder.com/blog/zhong-duan-huan-jing-zhi-tmux.html/
  - http://www.xzcblog.com/post-146.html
- - http://cenalulu.github.io/linux/tmux/  
- - http://blog.kissdata.com/2014/07/29/tmux.html  
+ - http://cenalulu.github.io/linux/tmux/
+ - http://blog.kissdata.com/2014/07/29/tmux.html
+ - http://blog.csdn.net/gatieme/article/details/49301037
 
+---
+
+> sysv-rc-conf
+- 介绍：管理启动项，一般是用在 Ubuntu 系统上的，CentOS 一般大家用 chkconfig
+- 安装：`sudo apt-get install -y sysv-rc-conf `
+- 资料：
+ - http://blog.csdn.net/gatieme/article/details/45251389
+ - http://gm100861.blog.51cto.com/1930562/950066
+ 
 ---
 
 > SSH（Secure Shell）
