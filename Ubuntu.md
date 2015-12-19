@@ -167,45 +167,55 @@ find / -name 文件名（文件名可以用使用通配符）
 
 文章的重点是页面最下面，每个版本的源地址都是不一样的，所以要懂得替换对应的版本英文名称，各个版本的英文名称大家自己找下，然后进行修改。
 
--
 
-> 国内常用源：
+> 国内常用源配置方法：
+
 - 163 源：<http://mirrors.163.com/.help/ubuntu.html> 
 - 阿里源：<http://mirrors.aliyun.com/help/ubuntu>
 - sohu：<http://mirrors.sohu.com/help/ubuntu.html>
 
--
-
 > 替换过程（更换之前最好备份一下 sources.list 配置文件）：
+
+- 我以 Ubuntu 14.04 为例，使用网易源：
 - 备份下：`sudo cp /etc/apt/sources.list /etc/apt/sources_20151128_back.list`
-- 用 gedit 编辑器打开配置文件：`sudo gedit /etc/apt/sources.list`
+- 用 gedit 编辑器打开配置文件：`sudo gedit /etc/apt/sources.list`，替换里面所有内容为下面这些内容：
+ - deb http://mirrors.163.com/ubuntu/ trusty main restricted universe multiverse
+ - deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
+ - deb http://mirrors.163.com/ubuntu/ trusty-updates main restricted universe multiverse
+ - deb http://mirrors.163.com/ubuntu/ trusty-proposed main restricted universe multiverse
+ - deb http://mirrors.163.com/ubuntu/ trusty-backports main restricted universe multiverse
+ - deb-src http://mirrors.163.com/ubuntu/ trusty main restricted universe multiverse
+ - deb-src http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
+ - deb-src http://mirrors.163.com/ubuntu/ trusty-updates main restricted universe multiverse
+ - deb-src http://mirrors.163.com/ubuntu/ trusty-proposed main restricted universe multiverse
+ - deb-src http://mirrors.163.com/ubuntu/ trusty-backports main restricted universe multiverse
 
--
+> 更换源之后，需要在终端中执行，这是必须做的，不然你后面可能会遇到 apt-get 安装会提示：未发现软件包。
 
-> 更换源之后，需要在终端中执行，这是必须做的，不然你后面怎么apt-get安装都是会提示：未发现软件包。
 - `sudo apt-get update`
 
 <h2 id="ubuntu">安装软件基础</h2>
 
-> - 取回更新的软件包列表信息：`sudo apt-get update`
-> - 查看已经安装了哪些包：`dpkg -l`
-> - 查看已安装列表中是否有vim软件，没有安装则没有数据显示：`dpkg -l | grep vim`
-> - 查看vim软件安装位置：`dpkg -L vim`
-> - 安装名为XXX的软件：`sudo apt-get install XXX`
-> - 卸载名为XXX的软件（保留配置文档）：`sudo apt-get remove XXX`
-> - 卸载名为XXX的软件（删除配置文档）：`sudo apt-get –purge remove XXX`
-> - 升级系统所有有新版本的软件：`sudo apt-get upgrade`
-> - 删除已下载的旧包文件：`sudo apt-get autoclean`
-> - 删除所有已下载的包文件：`sudo apt-get clean`
-> - 卸载所有自动安装且不再使用的软件包：`sudo apt-get autoremove`
+- 取回更新的软件包列表信息：`sudo apt-get update`
+- 查看已经安装了哪些包：`dpkg -l`
+- 查看已安装列表中是否有vim软件，没有安装则没有数据显示：`dpkg -l | grep vim`
+- 查看vim软件安装位置：`dpkg -L vim`
+- 安装名为XXX的软件：`sudo apt-get install XXX`
+- 卸载名为XXX的软件（保留配置文档）：`sudo apt-get remove XXX`
+- 卸载名为XXX的软件（删除配置文档）：`sudo apt-get –purge remove XXX`
+- 升级系统所有有新版本的软件：`sudo apt-get upgrade`
+- 删除已下载的旧包文件：`sudo apt-get autoclean`
+- 删除所有已下载的包文件：`sudo apt-get clean`
+- 卸载所有自动安装且不再使用的软件包：`sudo apt-get autoremove`
 
 <h2 id="ubuntu">安装常用系统软件</h2>
 
-> 安装各个软件之前的必须先执行的命令：`sudo apt-get update`
+- 安装各个软件之前的必须先执行的命令：`sudo apt-get update`
 
 ---
 
 > VIM
+
 - 介绍：
 - 安装：`sudo apt-get -y install vim`
 - 资料：
@@ -213,6 +223,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > Tmux
+
 - 介绍：
 - 安装：`sudo apt-get -y install tmux`
 - 资料：
@@ -226,6 +237,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > sysv-rc-conf
+
 - 介绍：管理启动项，一般是用在 Ubuntu 系统上的，CentOS 一般大家用 chkconfig
 - 安装：`sudo apt-get install -y sysv-rc-conf `
 - 资料：
@@ -235,6 +247,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > SSH（Secure Shell）
+
 - 介绍：
 - 资料：
  - [SSH 常用功能](SSH.md)
@@ -242,6 +255,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > NFS（Network FileSystem）
+
 - 介绍：
 - 资料：
  - [NFS 常用功能](NFS.md)
@@ -249,6 +263,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > NTP（Network Time Protocol）
+
 - 介绍：
 - 资料：
  - [NTP 常用功能](NTP.md)
@@ -256,6 +271,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > FTP（File Transfer Protocol）
+
 - 介绍：
 - 资料：
  - [FTP 常用功能](FTP.md)
@@ -263,6 +279,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > VPN（Virtual Private Network）
+
 - 介绍：
 - 资料：
  - [VPN 常用功能](VPN.md)
@@ -270,6 +287,7 @@ find / -name 文件名（文件名可以用使用通配符）
 ---
 
 > Samba
+
 - 介绍：
 - 资料：
  - [Samba 常用功能](Samba.md)
