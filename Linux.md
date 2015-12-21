@@ -14,22 +14,22 @@
 
 Linux 的 Wiki 介绍：<http://zh.wikipedia.org/zh/Linux>
 
-Linux 也称：`GNU/Linux`（”GNU/Linux” 英语发音：/ɡ??nu? sl?? ?l?n?ks/），而其中 GNU 的全称又是：`Gnu’s Not Unix`。
+Linux 也称：`GNU/Linux`，而其中 GNU 的全称又是：`Gnu’s Not Unix`。
 
 其中 GNU 放前面是有原因的，GNU 介绍：<http://zh.wikipedia.org/wiki/GNU>
 
-对于 Linux 和 GNU/Linux 的两种叫法是有?争议，可以看下面文章：<http://zh.wikipedia.org/wiki/GNU/Linux命名爭議>
+对于 Linux 和 GNU/Linux 的两种叫法是有争议，可以看下面文章：<http://zh.wikipedia.org/wiki/GNU/Linux命名爭議>
 
 其实我们可以认为：Linux 本质是指 Linux 内核，而称 GNU/Linux 则代表这是一个系统，所以我认为 Debian 的这个叫法是合理的，但是确实有点不好念和记忆。所以普遍大家直接称作 Linux。
 
 通过上面的全称和资料其实我们也就了解到，Linux 本质来源不是 Unix，但是它借鉴了 Unix 的设计思想，所以在系统业界上把这种和 Unix 是一致设计思想的系统归为：`类 Unix 系统`。
 
-类 Unix 系统的介绍：<http://zh.wikipedia.org/wiki/>类Unix系统
+类 Unix 系统的介绍：<http://zh.wikipedia.org/wiki/> 类 Unix 系统
 
 类 Unix 系统，除了我们今天要讲的 Linux，还有大家熟知的 Mac OS X、FreeBSD（这两个是直接从 Unix 系发展过来的，所以相对 Linux 是比较地道的类 Unix 系统）
 
-- FreeBSD介绍：<http://zh.wikipedia.org/zh/FreeBSD>
-- Mac OS X介绍：<http://zh.wikipedia.org/wiki/OS_X>
+- FreeBSD 介绍：<http://zh.wikipedia.org/zh/FreeBSD>
+- Mac OS X 介绍：<http://zh.wikipedia.org/wiki/OS_X>
 
 <h2 id="linux2">Linux 的发行版本</h2>
 

@@ -170,7 +170,7 @@ find / -name 文件名（文件名可以用使用通配符）
 1.查看内核版本
  uname -a
  
-2.查看UBUNTU发行版本
+2.查看 Ubuntu 发行版本
  cat /etc/issue
  
 3.查看发行代号
