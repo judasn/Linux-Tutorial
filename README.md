@@ -1,4 +1,4 @@
-# Linux-Tutorial
+# Linux-Tutorial（本系列教程还在整理中，请不要fork，等整理完美了，我会进行通知）
 
 ## 目录(Contents)
 
