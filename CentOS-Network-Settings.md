@@ -1,4 +1,4 @@
-<h1 id="networkSettings0"># CentOS 网络设置 </h1>
+<h1 id="networkSettings0">CentOS 网络设置 </h1>
 
 ------
 

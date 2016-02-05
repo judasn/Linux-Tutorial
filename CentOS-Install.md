@@ -1,4 +1,4 @@
-<h1 id="centos0"># CentOS 安装 </h1>
+<h1 id="centos0">CentOS 安装 </h1>
 
 ------
 
