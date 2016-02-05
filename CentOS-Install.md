@@ -1,11 +1,19 @@
-# CentOS 安装
+<h1 id="centos0">CentOS 安装 </h1>
+
+------
+
+*   [CentOS 安装](#centos0)
+    *   [VirtualBox 下安装 CentOS 过程](#virtualbox1)
+    *   [VMware 下安装 CentOS 过程](#vmware1)
+    
+------
 
 - 本教程中主要演示了 VirtualBox 和 VMware Workstation 下安装 `CentOS 6.6` 的过程。
 - VirtualBox 是免费开源，我个人在使用经历中遇到过很多次崩溃、安装有问题等，所以它不是我主推的虚拟机
 - VMware Workstation 是商业软件，很好用，一些辅助功能也很到位，主推该虚拟机。
 
 
-<h2 id="ubuntu">VirtualBox 下安装 CentOS 过程</h2>
+<h2 id="virtualbox1">VirtualBox 下安装 CentOS 过程</h2>
 
 - VirtualBox 的介绍和下载
  - 官网：<https://www.virtualbox.org/>
@@ -57,7 +65,7 @@
  	- 安装完成后一定要把盘片删除，防止系统启动的时候去读盘，重新进入安装系统模式
 
 
-<h2 id="ubuntu">VMware 下安装 CentOS 过程</h2>
+<h2 id="vmware1">VMware 下安装 CentOS 过程</h2>
 
 - VMware Workstation 的介绍和下载
  - 官网：<https://www.vmware.com/products/workstation>
@@ -70,10 +78,10 @@
 - 安装细节开始：
  - ![VMware 下安装](images/CentOS-install-VMware-a-1.jpg) 
  - ![VMware 下安装](images/CentOS-install-VMware-a-2.jpg)
-    - 默认 VMware 选择的是 `典型` 我不推荐，我下面的步骤是选择 `自定义（高级）`。如果你非常了解 Linux 系统倒是可以考虑选择 `典型`,在它默认安装完的系统上可以很好地按你的需求进行修改
+    - 默认 VMware 选择的是 `典型` 我不推荐，我下面的步骤是选择 `自定义（高级）`。如果你非常了解 Linux 系统倒是可以考虑选择 `典型`，在它默认安装完的系统上可以很好地按你的需求进行修改
  - ![VMware 下安装](images/CentOS-install-VMware-a-3.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-4.jpg)
-    - 牢记：不要在这一步就选择镜像文件,不然也会直接进入 `典型` 模式,直接按它的规则进行系统安装
+    - 牢记：不要在这一步就选择镜像文件，不然也会直接进入 `典型` 模式，直接按它的规则进行系统安装
  - ![VMware 下安装](images/CentOS-install-VMware-a-5.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-6.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-7.jpg)
@@ -92,11 +100,11 @@
  - ![VMware 下安装](images/CentOS-install-VMware-a-14.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-15.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-b-1.gif)
-	- 如上图 gif 所示,在创建完虚拟机之后,我们要加载系统镜像,然后启动虚拟机进行安装,接下来的安装步骤跟上面使用 VirtualBox 安装细节基本一样,不一样的地方是我这里选择的是自定义分区,不再是选择默认分区方式
+	- 如上图 gif 所示，在创建完虚拟机之后，我们要加载系统镜像，然后启动虚拟机进行安装，接下来的安装步骤跟上面使用 VirtualBox 安装细节基本一样，不一样的地方是我这里选择的是自定义分区，不再是选择默认分区方式
  - ![VMware 下安装](images/CentOS-install-VMware-a-16.jpg)
-	- 如上图箭头所示,这里我们选择自定义分区方式
+	- 如上图箭头所示，这里我们选择自定义分区方式
  - ![VMware 下安装](images/CentOS-install-VMware-b-2.gif)
-	- 如上图 gif 所示,我只把最基本的区分出来,如果你有自己的需求可以自己设置
+	- 如上图 gif 所示，我只把最基本的区分出来，如果你有自己的需求可以自己设置
 	- 简单分区方案：
 	   - `/boot` == 500 M（主分区）
 	   - `/swap` == 2 G（逻辑分区）一般大家的说法这个大小是跟你机子的内存大小相关的，也有说法内存大不需要这个，但是还是建议分，虚拟机内存 2 G，所以我分 2 G
