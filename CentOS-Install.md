@@ -78,10 +78,10 @@
 - 安装细节开始：
  - ![VMware 下安装](images/CentOS-install-VMware-a-1.jpg) 
  - ![VMware 下安装](images/CentOS-install-VMware-a-2.jpg)
-    - 默认 VMware 选择的是 `典型` 我不推荐，我下面的步骤是选择 `自定义（高级）`。如果你非常了解 Linux 系统倒是可以考虑选择 `典型`,在它默认安装完的系统上可以很好地按你的需求进行修改
+    - 默认 VMware 选择的是 `典型` 我不推荐，我下面的步骤是选择 `自定义（高级）`。如果你非常了解 Linux 系统倒是可以考虑选择 `典型`，在它默认安装完的系统上可以很好地按你的需求进行修改
  - ![VMware 下安装](images/CentOS-install-VMware-a-3.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-4.jpg)
-    - 牢记：不要在这一步就选择镜像文件,不然也会直接进入 `典型` 模式,直接按它的规则进行系统安装
+    - 牢记：不要在这一步就选择镜像文件，不然也会直接进入 `典型` 模式，直接按它的规则进行系统安装
  - ![VMware 下安装](images/CentOS-install-VMware-a-5.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-6.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-7.jpg)
@@ -100,11 +100,11 @@
  - ![VMware 下安装](images/CentOS-install-VMware-a-14.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-15.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-b-1.gif)
-	- 如上图 gif 所示,在创建完虚拟机之后,我们要加载系统镜像,然后启动虚拟机进行安装,接下来的安装步骤跟上面使用 VirtualBox 安装细节基本一样,不一样的地方是我这里选择的是自定义分区,不再是选择默认分区方式
+	- 如上图 gif 所示，在创建完虚拟机之后，我们要加载系统镜像，然后启动虚拟机进行安装，接下来的安装步骤跟上面使用 VirtualBox 安装细节基本一样，不一样的地方是我这里选择的是自定义分区，不再是选择默认分区方式
  - ![VMware 下安装](images/CentOS-install-VMware-a-16.jpg)
-	- 如上图箭头所示,这里我们选择自定义分区方式
+	- 如上图箭头所示，这里我们选择自定义分区方式
  - ![VMware 下安装](images/CentOS-install-VMware-b-2.gif)
-	- 如上图 gif 所示,我只把最基本的区分出来,如果你有自己的需求可以自己设置
+	- 如上图 gif 所示，我只把最基本的区分出来，如果你有自己的需求可以自己设置
 	- 简单分区方案：
 	   - `/boot` == 500 M（主分区）
 	   - `/swap` == 2 G（逻辑分区）一般大家的说法这个大小是跟你机子的内存大小相关的，也有说法内存大不需要这个，但是还是建议分，虚拟机内存 2 G，所以我分 2 G
