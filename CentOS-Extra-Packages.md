@@ -11,9 +11,8 @@
 > 替换过程（这里以 163 源为例，系统 CentOS 6.7）：
 
 - 备份官网源：`sudo mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.20151219.backup`
-- 删除官网源：`sudo rm -rf /etc/yum.repos.d/CentOS-Base.repo`
 - `cd /etc/yum.repos.d/`
-- 下载对应版本repo文件, 放入 **/etc/yum.repos.d/**
+- 下载对应版本 repo 文件, 放入 **/etc/yum.repos.d/**
  - 下载源文件：
     - CentOS7：`sudo wget http://mirrors.163.com/.help/CentOS7-Base-163.repo`
     - CentOS6：`sudo wget http://mirrors.163.com/.help/CentOS6-Base-163.repo`
@@ -23,7 +22,6 @@
  - `sudo yum clean all`
  - `sudo yum makecache`
  - `sudo yum update`
-
 
 <h2 id="ubuntu">第三方源</h2>
 
