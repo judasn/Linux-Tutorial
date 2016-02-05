@@ -14,8 +14,11 @@
 - JDK 1.8 下载
  - 此时（20160205）最新版本：`jdk-8u72-linux-x64.tar.gz`
  - 官网：<http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>
- - 官网压缩包地址：<http://211.138.156.198:82/1Q2W3E4R5T6Y7U8I9O0P1Z2X3C4V5B/download.oracle.com/otn-pub/java/jdk/8u72-b15/jdk-8u72-linux-x64.tar.gz>
  - 百度云下载（64 位）：<http://pan.baidu.com/s/1eQZffbW>
+ - 官网压缩包地址：<http://211.138.156.198:82/1Q2W3E4R5T6Y7U8I9O0P1Z2X3C4V5B/download.oracle.com/otn-pub/java/jdk/8u72-b15/jdk-8u72-linux-x64.tar.gz>
+ - 在命令行模式下下载上面压缩包：
+    - `cd /opt`
+    - `sudo wget http://211.138.156.198:82/1Q2W3E4R5T6Y7U8I9O0P1Z2X3C4V5B/download.oracle.com/otn-pub/java/jdk/8u72-b15/jdk-8u72-linux-x64.tar.gz`
 
 
 - 默认 CentOS 有安装 openJDK，建议先卸载掉
