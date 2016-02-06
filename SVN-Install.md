@@ -10,16 +10,18 @@
 
 <h2 id="jdk1">CentOS 下过程</h2>
 
-- JDK 在 CentOS 和 Ubuntu 下安装过程是一样的，所以这里不再讲 Ubuntu 系统下的安装
-- JDK 1.8 下载
- - 此时（20160205）最新版本：`jdk-8u72-linux-x64.tar.gz`
- - 官网：<http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>
- - 百度云下载（64 位）：<http://pan.baidu.com/s/1eQZffbW>
- - 官网压缩包地址：<http://211.138.156.198:82/1Q2W3E4R5T6Y7U8I9O0P1Z2X3C4V5B/download.oracle.com/otn-pub/java/jdk/8u72-b15/jdk-8u72-linux-x64.tar.gz>
- - 在命令行模式下下载上面压缩包：
-    - `cd /opt`
-    - `sudo wget http://211.138.156.198:82/1Q2W3E4R5T6Y7U8I9O0P1Z2X3C4V5B/download.oracle.com/otn-pub/java/jdk/8u72-b15/jdk-8u72-linux-x64.tar.gz`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/mod_dav_svn-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-debuginfo-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-devel-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-gnome-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-javahl-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-perl-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-python-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-ruby-1.8.15-1.x86_64.rpm`
+`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-tools-1.8.15-1.x86_64.rpm`
 
+`sudo rpm -ivh *.rpm`
 
 
 - 检查是否已经安装了 SVN：`svn --version`
