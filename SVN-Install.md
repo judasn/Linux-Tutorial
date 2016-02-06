@@ -10,18 +10,18 @@
 
 <h2 id="jdk1">CentOS 下过程</h2>
 
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/mod_dav_svn-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-debuginfo-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-devel-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-gnome-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-javahl-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-perl-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-python-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-ruby-1.8.15-1.x86_64.rpm`
-`wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-tools-1.8.15-1.x86_64.rpm`
-
-`sudo rpm -ivh *.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/mod_dav_svn-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/serf-1.3.7-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-debuginfo-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-devel-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-gnome-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-javahl-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-perl-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-python-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-ruby-1.8.15-1.x86_64.rpm`
+- `wget http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/subversion-tools-1.8.15-1.x86_64.rpm`
+- `sudo rpm -ivh *.rpm`
 
 
 - 检查是否已经安装了 SVN：`svn --version`
