@@ -34,14 +34,14 @@
  - `sudo vim /etc/yum/pluginconf.d/priorities.conf`
  - 把 enabled=1 改为 enabled=0 即可
  - 设置默认源的优先级：
- - 一般默认的源配置里面 [base], [updates], [extras]，[CentOSplus] 的 priority=1， [contrib] 的 priority=2，其他第三的软件源为：priority=N （推荐 N > 10，N 可以为1到99的正整数，数值越小越优先）
+ - 一般默认的源配置里面 [base], [updates], [extras]，[centosplus] 的 priority=1， [contrib] 的 priority=2，其他第三的软件源为：priority=N （推荐 N > 10，N 可以为1到99的正整数，数值越小越优先）
  - `sudo vim /etc/yum.repos.d/CentOS-Base.repo`
  - 配置内容如下图
  - ![CentOS 默认源的级别设置](images/CentOS-Extra-Packages-a-1.jpg)
  
 - 安装 EPEL 源：
  - 官网中文材料：<https://fedoraproject.org/wiki/EPEL/zh-cn>
- - 安装命令：`sudo yum install epel-release`
+ - 安装命令：`sudo yum install -y epel-release`
  - 导入 KEY：`rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6`
  - 设置 EPEL 源的级别：`vim  /etc/yum.repos.d/epel.repo`，追加：priority=11
 - 卸载 EPEL 源

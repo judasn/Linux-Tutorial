@@ -13,4 +13,8 @@
 - [Samba 介绍](Samba.md)
 - [Crontab 介绍](Crontab.md)
 - [Iptables 介绍](Iptables.md)
+- [CentOS 安装](CentOS-Install.md)
+- [CentOS 网络设置](CentOS-Network-Settings.md)
 - [CentOS 源设置](CentOS-Extra-Packages.md)
+- [JDK 安装](JDK-Install.md)
+- [SVN 安装](SVN-Install.md)
