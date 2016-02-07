@@ -98,14 +98,12 @@
         />
         ```
         - 重点参数解释：
-        ```
-        protocol，Tomcat 8 设置 nio2 更好：org.apache.coyote.http11.Http11Nio2Protocol
-        protocol，Tomcat 6 设置 nio 更好：org.apache.coyote.http11.Http11NioProtocol
-        enableLookups，禁用DNS查询
-        acceptCount，指定当所有可以使用的处理请求的线程数都被使用时，可以放到处理队列中的请求数，超过这个数的请求将不予处理，默认设置 100
-        maxThreads，最大并发数，默认设置 200
-        minSpareThreads，Tomcat初始化时创建的线程数，默认设置 10
-        ```
+            - protocol，Tomcat 8 设置 nio2 更好：org.apache.coyote.http11.Http11Nio2Protocol
+            - protocol，Tomcat 6 设置 nio 更好：org.apache.coyote.http11.Http11NioProtocol
+            - enableLookups，禁用DNS查询
+            - acceptCount，指定当所有可以使用的处理请求的线程数都被使用时，可以放到处理队列中的请求数，超过这个数的请求将不予处理，默认设置 100
+            - maxThreads，最大并发数，默认设置 200
+            - minSpareThreads，Tomcat初始化时创建的线程数，默认设置 10
 
 
 <h2 id="tomcat4">资料</h2>
