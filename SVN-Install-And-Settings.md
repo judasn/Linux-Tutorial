@@ -163,8 +163,8 @@
         - 一种方式：先关闭 iptables，防止出现拦截问题而测试不了：`service iptables stop`
         - 一种方式：在 iptables 中添加允许规则（svn 默认端口是 3690）：
             - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 3690 -j ACCEPT`
-            - 保存规则：`/etc/rc.d/init.d/iptables save`
-            - 重启 iptables：`sudo iptables restart`
+            - 保存规则：`sudo /etc/rc.d/init.d/iptables save`
+            - 重启 iptables：`sudo service iptables restart`
     - 在 Windows 的 svn 客户端上访问:`svn://192.168.0.110`
 
 
