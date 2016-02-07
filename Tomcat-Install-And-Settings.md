@@ -59,7 +59,7 @@
     CATALINA_PID=$CATALINA_HOME/catalina.pid
     export CATALINA_PID
     ```
-    - 刷新变量配置：`sudo source /etc/profile`
+    - 刷新变量配置：`source /etc/profile`
 - 如果使用 `shutdown.sh` 无法停止 tomcat，可以修改其配置：`vim /usr/program/tomcat8/bin/shutdown.sh`
     - 把最尾巴这一行：`exec "$PRGDIR"/"$EXECUTABLE" stop "$@"`
     - 改为：`exec "$PRGDIR"/"$EXECUTABLE" stop 10 -force`
