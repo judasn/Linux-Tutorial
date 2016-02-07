@@ -6,7 +6,8 @@
     *   [RPM 安装（推荐）](#subversion1)
     *   [编译安装（不推荐）](#subversion2)
     *   [SVN 配置](#subversion3)
-    *   [资料](#subversion4)
+    *   [SVN 设置提交之后可修改提交的 Message 信息](#subversion4)
+    *   [资料](#subversion5)
     
 ------
 
@@ -114,7 +115,7 @@
 
 - 设置配置文件
     - 编辑配置文件：`vim /opt/svn/repo/conf/svnserve.conf`
-    - ![设置配置文件](images/SVN-Install-a-1.jpg)
+    - ![设置配置文件](images/SVN-Install-And-Settings-a-1.jpg)
     - 配置文件中下面几个参数（默认是注释的）：
         - `anon-access`： 对不在授权名单中的用户访问仓库的权限控制，有三个可选性：`write、read、none`
             - `none` 表示没有任何权限
@@ -132,13 +133,13 @@
 
 - 添加用户
     - 编辑配置文件：`vim /opt/svn/repo/conf/passwd`
-    - ![添加用户](images/SVN-Install-a-2.jpg)
+    - ![添加用户](images/SVN-Install-And-Settings-a-2.jpg)
     - 添加用户很简答，如上图所示在配置文中添加一个格式为：`用户名 = 密码`  的即可
 
 
 - 设置用户权限
     - 编辑配置文件：`vim /opt/svn/repo/conf/authz`
-    - ![设置用户权限](images/SVN-Install-a-3.jpg)
+    - ![设置用户权限](images/SVN-Install-And-Settings-a-3.jpg)
     - 配置文件中几个参数解释：
         - `r` 表示可写
         - `w` 表示可读
@@ -167,7 +168,16 @@
     - 在 Windows 的 svn 客户端上访问:`svn://192.168.0.110`
 
 
-<h2 id="subversion4">资料</h2>
+<h2 id="subversion4">SVN 设置提交之后可修改提交的 Message 信息</h2>
+
+- 下载我 hooks 文件：<http://pan.baidu.com/s/1c1jtlmw>
+- 把 pre-revprop-change 文件放在你的仓库下，比如我仓库地址是：`/opt/svn/repo/hooks`
+    - 编辑该文件：`vim /opt/svn/repo/hooks/pre-revprop-change`
+    - 把文件尾巴的这句脚本：`echo "$1 $2 $3 $4 $5" >> /opt/svn/repo/logchanges.log`，改为：`echo "$1 $2 $3 $4 $5" >> /你的仓库地址/logchanges.log`
+    - 你在该目录下也可以看到一个文件 `pre-revprop-change.tmpl`，这个其实就是 svn 提供给你模板，其他的那些你有兴趣也可以研究下
+
+
+<h2 id="subversion5">资料</h2>
 
 - <http://tecadmin.net/install-subversion-1-8-on-centos-rhel/>
 - <http://svn.apache.org/repos/asf/subversion/trunk/INSTALL>
@@ -181,3 +191,4 @@
 - <http://blog.csdn.net/tianlesoftware/article/details/6119231>
 - <http://www.scmeye.com/thread-419-1-1.html>
 - <http://m.blog.csdn.net/article/details?id=7908907>
+- 设置可编辑提交信息：<http://stackoverflow.com/questions/692851/can-i-go-back-and-edit-comments-on-an-svn-checkin>

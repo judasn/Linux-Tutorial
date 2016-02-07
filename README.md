@@ -17,4 +17,4 @@
 - [CentOS 网络设置](CentOS-Network-Settings.md)
 - [CentOS 源设置](CentOS-Extra-Packages.md)
 - [JDK 安装](JDK-Install.md)
-- [SVN 安装](SVN-Install.md)
+- [SVN 安装和配置](SVN-Install-And-Settings.md)
