@@ -20,3 +20,4 @@
 - [SVN 安装和配置](SVN-Install-And-Settings.md)
 - [Tomcat 安装和配置、优化](Tomcat-Install-And-Settings.md)
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
+- [Maven 安装和配置](Maven-Install-And-Settings.md)
