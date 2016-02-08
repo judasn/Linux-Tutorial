@@ -170,11 +170,14 @@
 
 <h2 id="subversion4">SVN 设置提交之后可修改提交的 Message 信息</h2>
 
-- 下载我 hooks 文件：<http://pan.baidu.com/s/1c1jtlmw>
-- 把 pre-revprop-change 文件放在你的仓库下，比如我仓库地址是：`/opt/svn/repo/hooks`
-    - 编辑该文件：`vim /opt/svn/repo/hooks/pre-revprop-change`
-    - 把文件尾巴的这句脚本：`echo "$1 $2 $3 $4 $5" >> /opt/svn/repo/logchanges.log`，改为：`echo "$1 $2 $3 $4 $5" >> /你的仓库地址/logchanges.log`
-    - 你在该目录下也可以看到一个文件 `pre-revprop-change.tmpl`，这个其实就是 svn 提供给你模板，其他的那些你有兴趣也可以研究下
+- 默认的 SVN 是无法修改提交后的 Message 信息的，修改会报如下错误：
+- ![SVN 设置提交之后可修改提交的 Message 信息](images/SVN-Install-And-Settings-a-4.jpg)
+- 解决办法：
+    - 下载我 hooks 文件：<http://pan.baidu.com/s/1c1jtlmw>
+    - 把 pre-revprop-change 文件放在你的仓库下，比如我仓库地址是：`/opt/svn/repo/hooks`
+        - 编辑该文件：`vim /opt/svn/repo/hooks/pre-revprop-change`
+        - 把文件尾巴的这句脚本：`echo "$1 $2 $3 $4 $5" >> /opt/svn/repo/logchanges.log`，改为：`echo "$1 $2 $3 $4 $5" >> /你的仓库地址/logchanges.log`
+        - 你在该目录下也可以看到一个文件 `pre-revprop-change.tmpl`，这个其实就是 svn 提供给你模板，其他的那些你有兴趣也可以研究下
 
 
 <h2 id="subversion5">资料</h2>
