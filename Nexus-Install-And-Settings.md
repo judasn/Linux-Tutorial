@@ -22,7 +22,6 @@
     - 我个人已经使用了第三方源：`EPEL、RepoForge`，如果你出现 `yum install XXXXX` 安装不成功的话，很有可能就是你没有相关源，请查看我对源设置的文章
     - 压缩包下载：`wget http://download.sonatype.com/nexus/oss/nexus-2.12.0-01-bundle.tar.gz`
     - 如果地址下载不了，那是因为你需要开 VPN，你也可以选择降低要求下载 2.11.4-01 版本：<http://pan.baidu.com/s/1mgSNJtA>
-        - ``
         - 解压压缩包：`tar zxvf nexus-2.11.4-01-bundle.tar.gz`
             - 解压出来有两个文件夹：
             - 这是程序目录：`nexus-2.11.4-01`
