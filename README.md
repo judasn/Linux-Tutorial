@@ -21,3 +21,4 @@
 - [Tomcat 安装和配置、优化](Tomcat-Install-And-Settings.md)
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
 - [Maven 安装和配置](Maven-Install-And-Settings.md)
+- [Nexus 安装和配置](Nexus-Install-And-Settings.md)
