@@ -22,7 +22,8 @@
     - 解压：`tar zxvf apache-maven-3.3.9-bin.tar.gz`
     - 修改目录名，默认的太长了：`mv apache-maven-3.3.9-bin/ maven3.3.9/`
     - 移到我个人习惯的安装目录下：`mv maven3.3.9/` /usr/program`
-    - 环境变量设置：
+    - 环境变量设置：`vim /etc/profile`
+    - 在文件最尾巴添加下面内容：
     ```
     # Maven
     MAVEN_HOME=/usr/program/maven3.3.9
@@ -32,6 +33,7 @@
     export PATH
     export MAVEN_OPTS
     ```
+    - 刷新配置文件：`source /etc/profile`
     - 测试是否安装成功：`mvn -version`
 
 
