@@ -41,6 +41,7 @@
     - 我个人习惯 `/opt` 目录下创建一个目录 `setups` 用来存放各种软件安装包；在 `/usr` 目录下创建一个 `program` 用来存放各种解压后的软件包，下面的讲解也都是基于此习惯
     - 我个人已经使用了第三方源：`EPEL、RepoForge`，如果你出现 `yum install XXXXX` 安装不成功的话，很有可能就是你没有相关源，请查看我对源设置的文章
     - 解压安装包：`sudo tar -zxvf jdk-8u72-linux-x64.tar.gz`
+    - 移到解压包到我个人习惯的安装目录下：`mv jdk1.8.0_72/ /usr/program/`
     - 配置环境变量：
         - 编辑配置文件：`sudo vim /etc/profile`
         - 在该文件的最尾巴，添加下面内容：
