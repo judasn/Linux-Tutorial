@@ -12,7 +12,7 @@
 <h2 id="extract-compress1">常用压缩包**解压**命令整理</h2>
 
 Linux 后缀为 .tar.gz 格式的文件-解压
-命令：`tar -zxvf XXXXXX.tar.gz`
+命令：`tar zxvf XXXXXX.tar.gz`
 
 Linux 后缀为 .tar.bz2 格式的文件-解压
 命令：`tar jxvf XXXXXX.tar.bz2`
