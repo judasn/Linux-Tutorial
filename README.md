@@ -22,3 +22,4 @@
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
 - [Maven 安装和配置](Maven-Install-And-Settings.md)
 - [Nexus 安装和配置](Nexus-Install-And-Settings.md)
+- [Mysql 安装和配置](Mysql-Install-And-Settings.md)
