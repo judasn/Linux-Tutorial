@@ -29,7 +29,7 @@ iptables 的设置在 CentOS 和 Ubuntu 下有些细节不一样，Ubuntu 这里
  - 查看已有规则列表，并且显示编号：`sudo iptables -L -n --line-numbers`
  - ![Iptables 服务器配置文件常用参数](images/Iptables-a-1.jpg)
  - 要删除 INPUT 里序号为 8 的规则，执行：`sudo iptables -D INPUT 8` 
- - 保存配置命令：`sudo iptables save`
+ - 保存配置命令：`sudo service iptables save 或者 sudo /etc/rc.d/init.d/iptables save`
  - 重启服务命令 ：`sudo service iptables restart`
  - 查看服务状态： `sudo service iptables status`
  - 设置开启默认启动： `sudo chkconfig --level 345 iptables on`

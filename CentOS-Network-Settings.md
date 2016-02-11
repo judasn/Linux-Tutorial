@@ -1,4 +1,4 @@
-<h1 id="networkSettings0">CentOS 网络设置 </h1>
+<h1 id="networkSettings0">CentOS 网络设置</h1>
 
 ------
 
@@ -48,3 +48,4 @@
     HWADDR=00:0C:29:A9:37:D4    (使用图形界面设置后生成的) 
     LAST_CONNECT=1454626679   (使用图形界面设置后生成的) 
   ```
+  - 重启网络配置：`service network restart`

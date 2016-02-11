@@ -30,7 +30,7 @@ Linux 后缀为 .7z 格式的文件-解压
 命令：`7za x XXXXXX.7z`
 
 Linux 后缀为 .tar.xz 格式的文件-解压，解压出来是tar，再对tar进行解压
-命令：`xz -d XXXXXX.tar.xz`
+命令：`tar xf XXXXXX.tar.xz`
 
 <h2 id="extract-compress2">常用文件进行**压缩**命令整理</h2>
 

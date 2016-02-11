@@ -55,7 +55,7 @@
     - 如上图标注 1 所示，因为我们是用全新的虚拟机，所以这里选择 `使用所有空间` ，然后 CentOS 会按它默认的方式进行分区
  - ![VirtualBox 下安装](images/CentOS-Install-VirtualBox-a-21.jpg)
  - ![VirtualBox 下安装](images/CentOS-Install-VirtualBox-a-22.jpg)
- 	- `Desktop` 代表：图形界面版，会默认安装很多软件，建议新手选择此模式
+ 	- `Desktop` 代表：图形界面版，会默认安装很多软件，建议新手选择此模式，我后面其他文章的讲解都是基于此系统下，如果你不是此模式的系统可能在安装某些软件的时候会出现某些依赖包没有安装的情况
  	- `basic sever` 代表：命令行界面，有良好基础的基本都会喜欢这个 
  - ![VirtualBox 下安装](images/CentOS-Install-VirtualBox-a-23.jpg)
  	- 上一步我选择的是 `Desktop` 所以有很多软件需要安装，这个过程大概需要 5 ~ 10 分钟
@@ -97,6 +97,7 @@
  - ![VMware 下安装](images/CentOS-install-VMware-a-11.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-12.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-13.jpg)
+    - 强烈建议至少要给 20 G，不然装不了多少软件的
  - ![VMware 下安装](images/CentOS-install-VMware-a-14.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-a-15.jpg)
  - ![VMware 下安装](images/CentOS-install-VMware-b-1.gif)
