@@ -59,6 +59,7 @@
         - 检查是否使用了最新的 JDK：`java -version`
 
 
-- 资料
+<h2 id="jdk2">资料</h2>
+
  - <http://www.jikexueyuan.com/course/480_1.html?ss=1>
  

@@ -14,20 +14,20 @@
 
 - Tomcat 8 安装
     - 官网：<http://tomcat.apache.org/>
-    - Tomcat 8 官网：<http://tomcat.apache.org/download-80.cgi>
-    - 此时（20160207） Tomcat 8 最新版本为：`apache-tomcat-8.0.30.tar.gz`
+    - Tomcat 8 官网下载：<http://tomcat.apache.org/download-80.cgi>
+    - 此时（20160207） Tomcat 8 最新版本为：`apache-tomcat-8.0.32.tar.gz`
     - 我个人习惯 `/opt` 目录下创建一个目录 `setups` 用来存放各种软件安装包；在 `/usr` 目录下创建一个 `program` 用来存放各种解压后的软件包，下面的讲解也都是基于此习惯
     - 我个人已经使用了第三方源：`EPEL、RepoForge`，如果你出现 `yum install XXXXX` 安装不成功的话，很有可能就是你没有相关源，请查看我对源设置的文章
-    - Tomcat 8 下载：`wget http://apache.fayea.com/tomcat/tomcat-8/v8.0.30/bin/apache-tomcat-8.0.30.tar.gz`
-    - 压缩包解压：`tar -zxvf apache-tomcat-8.0.30.tar.gz`
-    - 移到解压出来文件夹到 /usr 下：`mv apache-tomcat-8.0.30/ /usr/program/`
-    - 为了方便，修改解压目录的名字：`mv /usr/program/apache-tomcat-8.0.30/ /usr/program/tomcat8/`
+    - Tomcat 8 下载：`wget http://apache.fayea.com/tomcat/tomcat-8/v8.0.32/bin/apache-tomcat-8.0.32.tar.gz`
+    - 压缩包解压：`tar -zxvf apache-tomcat-8.0.32.tar.gz`
+    - 移到解压出来文件夹到 /usr 下：`mv apache-tomcat-8.0.32/ /usr/program/`
+    - 为了方便，修改解压目录的名字：`mv /usr/program/apache-tomcat-8.0.32/ /usr/program/tomcat8/`
 
     
 - 设置 Iptables 规则（这一步是必须设置的）：
     - 一种方式：先关闭 iptables，防止出现拦截问题而测试不了：`service iptables stop`
-    - 一种方式：在 iptables 中添加允许规则（svn 默认端口是 3690）：
-        - 添加规则：`sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT`
+    - 一种方式：在 iptables 中添加允许规则（Tomcat 默认端口是 8080）：
+        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT`
         - 保存规则：`sudo /etc/rc.d/init.d/iptables save`
         - 重启 iptables：`sudo service iptables restart`
     
@@ -68,7 +68,7 @@
 <h2 id="tomcat3">Tomcat 8 优化</h2>
 
 - 官网标准答案：<https://tomcat.apache.org/tomcat-8.0-doc/config/http.html>
-- 官网帮助文档下载（该资料在：`/tomcat-8.0-doc/config/http.html`）：`wget http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.0.30/bin/apache-tomcat-8.0.30-fulldocs.tar.gz`
+- 官网帮助文档下载（该资料在：`/tomcat-8.0-doc/config/http.html`）：`wget http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.0.32/bin/apache-tomcat-8.0.32-fulldocs.tar.gz`
 - 编辑配置文件：`vim /usr/program/tomcat8/conf/server.xml`
     - 修改链接参数：
         - 默认值：
