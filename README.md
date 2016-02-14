@@ -24,3 +24,4 @@
 - [Nexus 安装和配置](Nexus-Install-And-Settings.md)
 - [Mysql 安装和配置](Mysql-Install-And-Settings.md)
 - [Redis 安装和配置](Redis-Install-And-Settings.md)
+- [Jira 安装和配置](Jira-Install-And-Settings.md)
