@@ -2,6 +2,10 @@
 
 <h2 id="ubuntu">修改官方源</h2>
 
+- 下面内容的一个简易集合版本脚本：<http://pan.baidu.com/s/1hrdnbi0>
+
+<h2 id="ubuntu22">修改官方源</h2>
+
 > 国内常用源配置方法（该源和官方源是一样的，只是因为服务器在国内会起到加速作用而已）：
 
 - 163 源：<http://mirrors.163.com/.help/centos.html> 
@@ -23,7 +27,7 @@
  - `sudo yum makecache`
  - `sudo yum update -y`
 
-<h2 id="ubuntu">第三方源</h2>
+<h2 id="ubuntu33">第三方源</h2>
 
 > 加入第三方源主要是为了 yum 下载到官方没有提供的软件，在其他社区、第三方源里面有很多的软件包，有些软件是很好用的。CentOS 可以加入多个源，所以就存在一个源的优先级问题了，设置优先级的可以使用 yum-plugin-priorities 工具。一般我是建议官方的优先级是最高的，然后才是第三方的。
 
