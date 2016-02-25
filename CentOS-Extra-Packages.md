@@ -21,7 +21,7 @@
  - 导入key：`rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6`
  - `sudo yum clean all`
  - `sudo yum makecache`
- - `sudo yum update`
+ - `sudo yum update -y`
 
 <h2 id="ubuntu">第三方源</h2>
 
@@ -59,7 +59,7 @@
 - 更新包信息：
  - `sudo yum clean all`
  - `sudo yum makecache`
- - `sudo yum update`
+ - `sudo yum update -y`
  
 - 测试：
  - 命令：`sudo yum check-update`
