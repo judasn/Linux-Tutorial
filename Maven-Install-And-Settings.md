@@ -20,8 +20,8 @@
     - 我个人已经使用了第三方源：`EPEL、RepoForge`，如果你出现 `yum install XXXXX` 安装不成功的话，很有可能就是你没有相关源，请查看我对源设置的文章
     - 下载压缩包：`wget http://mirrors.cnnic.cn/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz`
     - 解压：`tar zxvf apache-maven-3.3.9-bin.tar.gz`
-    - 修改目录名，默认的太长了：`mv apache-maven-3.3.9-bin/ maven3.3.9/`
-    - 移到我个人习惯的安装目录下：`mv maven3.3.9/` /usr/program`
+    - 修改目录名，默认的太长了：`mv apache-maven-3.3.9/ maven3.3.9/`
+    - 移到我个人习惯的安装目录下：`mv maven3.3.9/ /usr/program`
     - 环境变量设置：`vim /etc/profile`
     - 在文件最尾巴添加下面内容：
     ```
