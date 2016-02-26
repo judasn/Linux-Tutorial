@@ -97,6 +97,20 @@
         ```
     
     
+<h2 id="nexus2">Nexus 配置</h2>
+ 
+- 手动更新索引
+    - 关闭 Nexus：`/usr/program/nexus2.11.4/bin/nexus stop`
+    - 命令：`cd  /opt/sonatype-work/nexus/indexer/central-ctx`
+        - 删除里面默认的文件：`rm -rf *`
+    - 访问官网索引：<http://repo.maven.apache.org/maven2/.index/>
+        - 下载文件：**nexus-maven-repository-index.gz**：`wget http://repo.maven.apache.org/maven2/.index/nexus-maven-repository-index.gz`
+        - 下载文件：**nexus-maven-repository-index.properties**：`wget http://repo.maven.apache.org/maven2/.index/nexus-maven-repository-index.properties`
+        - 下载索引解压工具：`wget https://repo1.maven.org/maven2/org/apache/maven/indexer/indexer-cli/5.1.1/indexer-cli-5.1.1.jar`
+        - 执行解压命令（该命令执行需要4分钟左右）：`java -jar indexer-cli-5.1.0.jar -u nexus-maven-repository-index.gz -d ./`
+        - 删除解压前文件：`rm -rf indexer-cli-5.1.0.jar nexus-maven-repository-index.gz nexus-maven-repository-index.properties`
+        - 重启服务：`/usr/program/nexus2.11.4/bin/nexus start`
+    
 <h2 id="nexus3">资料</h2>
 
 - <http://www.cnblogs.com/leefreeman/p/4211530.html>
@@ -106,3 +120,6 @@
 - <http://mritd.me/2015/12/29/Nexus-2-11-CentOS%E6%90%AD%E5%BB%BA%E6%95%99%E7%A8%8B/>
 - <http://mritd.me/2015/12/28/Nexus-%E7%A7%81%E6%9C%8D%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/>
 - <http://my.oschina.net/liangbo/blog/195739>
+- <http://www.mamicode.com/info-detail-1016489.html>
+- <http://blog.csdn.net/shawyeok/article/details/23564681>
+- <http://zyjustin9.iteye.com/blog/2017321>
