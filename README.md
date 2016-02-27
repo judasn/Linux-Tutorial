@@ -4,6 +4,7 @@
 
 - [Linux 介绍](Linux.md)
 - [Bash 命令](Bash.md)
+- [CentOS 其他常用命令](CentOS-Other-Bash.md.md)
 - [Linux 下常用压缩文件的解压、压缩](File-Extract-Compress.md)
 - [SSH（Secure Shell）介绍](SSH.md)
 - [FTP（File Transfer Protocol）介绍](FTP.md)
@@ -15,6 +16,7 @@
 - [Iptables 介绍](Iptables.md)
 - [CentOS 安装](CentOS-Install.md)
 - [CentOS 网络设置](CentOS-Network-Settings.md)
+- [VMware 克隆 CentOS 后网卡信息修改](CentOS-Virtual-Machine-Copy-Settings.md)
 - [CentOS 源设置](CentOS-Extra-Packages.md)
 - [JDK 安装](JDK-Install.md)
 - [SVN 安装和配置](SVN-Install-And-Settings.md)
