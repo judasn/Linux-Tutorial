@@ -1,15 +1,16 @@
-<h1 id="nexus0">Nexus 安装和配置</h1>
+<h1 id="nexus">Nexus 安装和配置</h1>
 
 ------
 
-*   [Nexus 安装和配置](#nexus0)
-    *   [Nexus 安装](#nexus1)
-    *   [Nexus 配置](#nexus2)
-    *   [资料](#nexus3)
+*   [Nexus 安装和配置](#nexus)
+    *   [Nexus 安装](#install)
+    *   [Nexus 配置](#settings)
+    *   [Nexus 手动更新索引文件](#update-index)
+    *   [资料](#information)
     
 ------
 
-<h2 id="nexus1">Nexus 安装</h2>
+<h2 id="install">Nexus 安装</h2>
 
 - Nexus 安装
     - 官网：<http://www.sonatype.org/nexus/>
@@ -40,7 +41,7 @@
         ```
         - 刷新配置：`source /etc/profile`
         - 由于目录 `sonatype-work` 以后是做仓库用的，会存储很多 jar，所以这个目录一定要放在磁盘空间大的区内，目前我们还没第一次启动 Nexus，所以这里还是空文件
-            - 我个人习惯把这类目录放在 `/opt` 下：`mv /opt/setup/sonatype-work/ /opt/`
+            - 我个人习惯把这类目录放在 `/opt` 下，所以你要特别注意，下面有内容对这个文件夹进行操作的都是基于 opt 目录的：`mv /opt/setup/sonatype-work/ /opt/`
             - 设置配置文件：`vim /usr/program/nexus2.11.4/conf/nexus.properties`
                 - 把文件中该值：`nexus-work=${bundleBasedir}/../sonatype-work/nexus`
                 - 改为：`nexus-work=/opt/sonatype-work/nexus`
@@ -60,7 +61,7 @@
         
         
         
-<h2 id="nexus2">Nexus 配置</h2>
+<h2 id="settings">Nexus 配置</h2>
 
 - 下载远程中央库的索引到服务器
     - ![Nexus 配置](images/Nexus-Install-And-Settings-a-1.jpg)
@@ -97,8 +98,7 @@
         ```
     
     
-<h2 id="nexus2">Nexus 配置</h2>
- 
+<h2 id="update-index">Nexus 手动更新索引文件</h2>
 - 手动更新索引
     - 关闭 Nexus：`/usr/program/nexus2.11.4/bin/nexus stop`
     - 命令：`cd  /opt/sonatype-work/nexus/indexer/central-ctx`
@@ -111,7 +111,7 @@
         - 删除解压前文件：`rm -rf indexer-cli-5.1.0.jar nexus-maven-repository-index.gz nexus-maven-repository-index.properties`
         - 重启服务：`/usr/program/nexus2.11.4/bin/nexus start`
     
-<h2 id="nexus3">资料</h2>
+<h2 id="information">资料</h2>
 
 - <http://www.cnblogs.com/leefreeman/p/4211530.html>
 - <http://www.itdadao.com/article/89071/>
