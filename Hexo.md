@@ -53,6 +53,8 @@ npm install hexo-generator-sitemap@1 --save
 其实就是把hexo生成的public目录下的所有文件复制到judasn.github.io这个项目的根目录下，github会自动识别的，不然没啥的。
 
 
+对于hexo目录的themes，里面要去掉一些googleapis相关的，不然会卡死的。
+
 
 资料：
 http://wsgzao.github.io/post/hexo-guide/
