@@ -9,7 +9,7 @@
 
 ------
 
-<h2id="base">基础常用命令</h2>
+<h2 id="base">基础常用命令</h2>
 
 - `某个命令 --h`，对这个命令进行解释
 - `某个命令 --help`，解释这个命令(更详细)
@@ -110,6 +110,9 @@
 	- `find. -name "lin*" -execls -l{}\;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中-exec和{}\;都是固定格式
 
 
-<h2id="information">资料</h2>
+[锚点名1]<a name="footnode">资料1</a>
+[锚点名2]<a name="footnode"></a>资料2
+
+<h2 id="information">资料</h2>
 
 - <http://wenku.baidu.com/view/1ad19bd226fff705cc170af3.html>
