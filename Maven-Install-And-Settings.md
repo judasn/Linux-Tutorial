@@ -14,6 +14,7 @@
 - Maven 安装
     - 官网：<http://maven.apache.org/>
     - 官网下载：<http://maven.apache.org/download.cgi>
+    - 历史版本下载：<https://archive.apache.org/dist/maven/binaries/>
     - 此时（20160208） Maven 最新版本为：**3.3.9**
     - Maven 3.3 的 JDK 最低要求是 JDK 7
     - 我个人习惯 `/opt` 目录下创建一个目录 `setups` 用来存放各种软件安装包；在 `/usr` 目录下创建一个 `program` 用来存放各种解压后的软件包，下面的讲解也都是基于此习惯
