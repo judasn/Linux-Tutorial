@@ -35,9 +35,9 @@
 
 底部会显示一些全局的统计数据，peek 是指峰值情况，cumm 是从 iftop 运行至今的累计情况，而 rates 表示最近 2 秒、10 秒、40 秒内总共接收或者发送的平均网络流量。
 
-TX:  cumm:   143MB   peak:   10.5Mb    rates:   1.03Mb  1.54Mb  2.10Mb
-RX:          12.7GB          228Mb              189Mb   191Mb   183Mb
-TOTAL:       12.9GB          229Mb              190Mb   193Mb   185MbW
+TX:（发送流量）  cumm:   143MB   peak:   10.5Mb    rates:   1.03Mb  1.54Mb  2.10Mb
+RX:（接收流量）          12.7GB          228Mb              189Mb   191Mb   183Mb
+TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb   185MbW
 
 ```
 
