@@ -20,6 +20,6 @@
 - 安装下载的 rpm 文件：`sudo rpm -ivh *.rpm`
 
 
-## NFS 资料
+## 资料
 
 - <http://www.jianshu.com/p/5930545b5591> 
