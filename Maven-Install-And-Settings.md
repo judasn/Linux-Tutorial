@@ -1,15 +1,8 @@
-<h1 id="maven0">Maven 安装和配置</h1>
+# Maven 安装和配置
 
-------
 
-*   [Maven 安装和配置](#maven0)
-    *   [Maven 安装](#maven1)
-    *   [Maven 配置](#maven2)
-    *   [资料](#maven3)
-    
-------
 
-<h2 id="maven1">Maven 安装</h2>
+##  Maven 安装
 
 - Maven 安装
     - 官网：<http://maven.apache.org/>
@@ -25,6 +18,7 @@
     - 移到我个人习惯的安装目录下：`mv maven3.3.9/ /usr/program`
     - 环境变量设置：`vim /etc/profile`
     - 在文件最尾巴添加下面内容：
+    
     ```
     # Maven
     MAVEN_HOME=/usr/program/maven3.3.9
@@ -34,17 +28,128 @@
     export PATH
     export MAVEN_OPTS
     ```
+
     - 刷新配置文件：`source /etc/profile`
     - 测试是否安装成功：`mvn -version`
 
 
-<h2 id="maven2">Maven 配置</h2>
+## Maven 配置
+
+- 配置项目连接上私服
+- 全局方式配置：
+
+``` bash
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <!--本地仓库位置-->
+    <localRepository>D:/maven/my_local_repository</localRepository>
+
+    <pluginGroups>
+    </pluginGroups>
+
+    <proxies>
+    </proxies>
+
+    <!--设置 Nexus 认证信息-->
+    <servers>
+        <server>
+            <id>nexus-releases</id>
+            <username>admin</username>
+            <password>admin123</password>
+        </server>
+        <server>
+            <id>nexus-snapshots</id>
+            <username>admin</username>
+            <password>admin123</password>
+        </server>
+    </servers>
+
+    <!--设置 Nexus 镜像，后面只要本地没对应的以来，则到 Nexus 去找-->
+    <mirrors>
+        <mirror>
+            <id>nexus-releases</id>
+            <mirrorOf>*</mirrorOf>
+            <url>http://localhost:8081/nexus/content/groups/public</url>
+        </mirror>
+        <mirror>
+            <id>nexus-snapshots</id>
+            <mirrorOf>*</mirrorOf>
+            <url>http://localhost:8081/nexus/content/groups/public-snapshots</url>
+        </mirror>
+    </mirrors>
 
 
-<h2 id="maven3">资料</h2>
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <repositories>
+                <repository>
+                    <id>nexus-releases</id>
+                    <url>http://nexus-releases</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>nexus-snapshots</id>
+                    <url>http://nexus-snapshots</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>nexus-releases</id>
+                    <url>http://nexus-releases</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>nexus-snapshots</id>
+                    <url>http://nexus-snapshots</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+    </activeProfiles>
+
+</settings>
+```
+
+- 项目级别：
+
+
+
+
+## 资料
 
 - <http://maven.apache.org/install.html>
 - <http://www.tutorialspoint.com/maven/index.htm>
 - <http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html>
 - <http://maven.apache.org/guides/getting-started/index.html>
 - <http://maven.apache.org/general.html>
+- <http://stackoverflow.com/questions/6950346/infrastructure-with-maven-jenkins-nexus>
+- <http://blog.csdn.net/sxyx2008/article/details/7975129>
+- <http://blog.csdn.net/xuke6677/article/details/8482472>

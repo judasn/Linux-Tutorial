@@ -1,16 +1,8 @@
-<h1 id="nexus">Nexus 安装和配置</h1>
+#  Nexus 安装和配置
 
-------
 
-*   [Nexus 安装和配置](#nexus)
-    *   [Nexus 安装](#install)
-    *   [Nexus 配置](#settings)
-    *   [Nexus 手动更新索引文件](#update-index)
-    *   [资料](#information)
-    
-------
 
-<h2 id="install">Nexus 安装</h2>
+## Nexus 安装
 
 - Nexus 安装
     - 官网：<http://www.sonatype.org/nexus/>
@@ -32,6 +24,7 @@
         - 把目录名字改为更好看点：`mv nexus-2.11.4-01/ nexus2.11.4/`
         - 编辑系统配置文件：`vim /etc/profile`
         - 在文件的尾巴增加下面内容：
+        
         ```
         # Nexus
         NEXUS_HOME=/usr/program/nexus2.11.4
@@ -39,6 +32,7 @@
         RUN_AS_USER=root
         export RUN_AS_USER
         ```
+
         - 刷新配置：`source /etc/profile`
         - 由于目录 `sonatype-work` 以后是做仓库用的，会存储很多 jar，所以这个目录一定要放在磁盘空间大的区内，目前我们还没第一次启动 Nexus，所以这里还是空文件
             - 我个人习惯把这类目录放在 `/opt` 下，所以你要特别注意，下面有内容对这个文件夹进行操作的都是基于 opt 目录的：`mv /opt/setup/sonatype-work/ /opt/`
@@ -58,18 +52,16 @@
         - 登录账号密码：
             - 账号密码：**admin**
             - 密码：**admin123**
-        
-        
-        
-<h2 id="settings">Nexus 配置</h2>
 
+
+## Nexus 配置
+
+- 修改默认端口：`vim /usr/program/nexus2.11.4/conf/nexus.properties`，修改该值：application-port=8081
 - 下载远程中央库的索引到服务器
     - ![Nexus 配置](images/Nexus-Install-And-Settings-a-1.jpg)
     - 如上图标注 4 所示，把默认是 `False` 改为 `True`
     - ![Nexus 配置](images/Nexus-Install-And-Settings-a-2.gif)
     - 如上图 gif 所示，创建任务开始进行索引下载。需要特别提醒的是，如果你的私服是虚拟机，那得保证你分配的硬盘足够大，别像我一样吝啬只给 10 G（现在还剩下 1.9 G），结果报：**设备上没有空间**
-
-
 - 项目上配置链接连接私服（下面内容涉及到 maven 的基础知识，请自行私下学习）：
     - 对项目独立设置：
         - 打开项目的 pom.xml 文件：
@@ -96,9 +88,50 @@
             </mirror>
         </mirrors>
         ```
-    
-    
-<h2 id="update-index">Nexus 手动更新索引文件</h2>
+
+
+## 持续集成自动构建后发布到 Nexus 上
+
+- 在 Maven 的 settings.xml 加上连接服务器信息：
+
+``` bash
+<!--设置私库认证信息，用户名和密码我就用默认的，如果你们有权限控制的需求可以创建对应的一些账号-->  
+<servers>  
+    <server>  
+        <id>nexus-releases</id>  
+        <username>admin</username>  
+        <password>admin123</password>  
+    </server>  
+    <server>  
+        <id>nexus-snapshots</id>  
+        <username>admin</username>  
+        <password>admin123</password>  
+    </server>  
+</servers>  
+```
+
+
+- 在项目的 pom.xml 文件加上：
+
+``` bash
+<!-- nexus-releases nexus-snapshots 与 Maven 的配置文件 settings.xml 中 server 下的 id 对应 -->  
+<distributionManagement>  
+    <repository>  
+        <id>nexus-releases</id>  
+        <name>Nexus Releases Repository</name>  
+        <url>http://192.168.0.110:8081/nexus/content/repositories/releases/</url>  
+    </repository>  
+    <snapshotRepository>  
+        <id>nexus-snapshots</id>  
+        <name>Nexus Snapshots Repository</name>  
+        <url>http://192.168.0.110:8081/nexus/content/repositories/snapshots/</url>  
+    </snapshotRepository>  
+</distributionManagement>
+```
+
+
+
+## Nexus 手动更新索引文件
 - 手动更新索引
     - 关闭 Nexus：`/usr/program/nexus2.11.4/bin/nexus stop`
     - 命令：`cd  /opt/sonatype-work/nexus/indexer/central-ctx`
@@ -110,8 +143,9 @@
         - 执行解压命令（该命令执行需要4分钟左右）：`java -jar indexer-cli-5.1.0.jar -u nexus-maven-repository-index.gz -d ./`
         - 删除解压前文件：`rm -rf indexer-cli-5.1.0.jar nexus-maven-repository-index.gz nexus-maven-repository-index.properties`
         - 重启服务：`/usr/program/nexus2.11.4/bin/nexus start`
-    
-<h2 id="information">资料</h2>
+
+
+## 资料
 
 - <http://www.cnblogs.com/leefreeman/p/4211530.html>
 - <http://www.itdadao.com/article/89071/>

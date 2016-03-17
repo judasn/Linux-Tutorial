@@ -1,4 +1,4 @@
-# 被黑客入侵的检查
+# 黑客入侵检查
 
 ------
 
@@ -6,26 +6,17 @@
 
 - 扫描木马工具：`clamAV`
     - 官网：<http://pkgs.repoforge.org/clamav/>
-安装
-yum -y install clamav*
-
-启动
-service clamd restart 
-
-更新病毒库
-freshclam  
-
-扫描方法，
-- 扫描 /etc 目录，并把扫描结果放在 /root 目录下：`clamscan -r /etc --max-dir-recursion=5 -l /root/etcclamav.log`
-clamscan -r /bin --max-dir-recursion=5 -l /root/binclamav.log
-clamscan -r /usr --max-dir-recursion=5 -l /root/usrclamav.log
-
-如果日志有类似内容，表示有木马病毒
-/usr/bin/.sshd: Linux.Trojan.Agent FOUND
-/usr/sbin/ss: Linux.Trojan.Agent FOUND
-/usr/sbin/lsof: Linux.Trojan.Agent FOUND
-
-
+- CentOS 安装：`yum install -y clamav*`
+- 启动 clamAV 服务：`service clamd restart` 
+- 更新病毒库：`freshclam`  
+- 扫描方法：
+    - 扫描 /etc 目录，并把扫描结果放在 /root 目录下：`clamscan -r /etc --max-dir-recursion=5 -l /root/etcclamav.log`
+    - 扫描 /bin 目录，并把扫描结果放在 /root 目录下：`clamscan -r /bin --max-dir-recursion=5 -l /root/binclamav.log`
+    - 扫描 /usr 目录，并把扫描结果放在 /root 目录下：`clamscan -r /usr --max-dir-recursion=5 -l /root/usrclamav.log`
+- 如果日志有类似内容，表示有木马病毒：
+    - `/usr/bin/.sshd: Linux.Trojan.Agent FOUND`
+    - `/usr/sbin/ss: Linux.Trojan.Agent FOUND`
+    - `/usr/sbin/lsof: Linux.Trojan.Agent FOUND`
 - 看下当前有多少登录者：`who`
 - 看下最近有哪些登录者：`last`
 - 查看最近尝试登录的账号信息：`grep "sshd" /var/log/secure`
@@ -97,7 +88,3 @@ TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb 
 - <http://yafeilee.me/blogs/54be6e876c69341430050000> 
 - <http://coolnull.com/4174.html> 
 - <http://www.oicqzone.com/pc/2014110420118.html> 
-- <> 
-- <> 
-- <> 
-- <> 

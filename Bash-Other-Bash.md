@@ -1,4 +1,4 @@
-<h1id="bash0">CentOS 其他常用命令</h1>
+<h1id="bash0">Bash 其他常用命令</h1>
 
 ------
 

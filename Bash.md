@@ -105,10 +105,14 @@
 	- `rm -r -i 文件夹`，在删除文件夹里的文件会提示(要的话,在提示后面输入yes)
 	- `rm -r -f 文件夹`，强制删除
 	- `rm -r -f 文件夹1/ 文件夹2/ 文件夹3/`删除多个
-- `find`高级查找
-	- `find. -name *lin*`，其中.代表在当前目录找，-name表示匹配文件名/文件夹名，*lin*用通配符搜索含有lin的文件或是文件夹
-	- `find/ -name *.conf`，其中/代表根目录查找，*.conf代表搜索后缀会.conf的文件
-	- `find. -name "lin*" -execls -l{}\;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中-exec和{}\;都是固定格式
+- `find` 高级查找
+	- `find . -name *lin*`，其中 . 代表在当前目录找，-name 表示匹配文件名 / 文件夹名，\*lin\* 用通配符搜索含有lin的文件或是文件夹
+	- `find . -iname *lin*`，其中 . 代表在当前目录找，-iname 表示匹配文件名 / 文件夹名（忽略大小写差异），\*lin\* 用通配符搜索含有lin的文件或是文件夹
+	- `find / -name *.conf`，其中 / 代表根目录查找，*.conf代表搜索后缀会.conf的文件
+	- `find /opt -name .oh-my-zsh`，其中 /opt 代表目录名，.oh-my-zsh 代表搜索的是隐藏文件 / 文件夹名字为 oh-my-zsh 的
+	- `find /opt -type f -iname .oh-my-zsh`，其中 /opt 代表目录名，-type f 代表只找文件，.oh-my-zsh 代表搜索的是隐藏文件名字为 oh-my-zsh 的
+	- `find /opt -type d -iname .oh-my-zsh`，其中 /opt 代表目录名，-type d 代表只找目录，.oh-my-zsh 代表搜索的是隐藏文件夹名字为 oh-my-zsh 的
+	- `find . -name "lin*" -execls -l{}\;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中 -exec 和 {}\; 都是固定格式
 
 <h2 id="information">资料</h2>
 
