@@ -26,7 +26,7 @@
 - [Samba 介绍](Samba.md)
 - [Crontab 介绍](Crontab.md)
 - [Iptables 介绍](Iptables.md)
-- [花生壳 安装）介绍](Hsk-Install.md)
+- [花生壳 安装介绍](Hsk-Install.md)
 - [CentOS 网络设置](CentOS-Network-Settings.md)
 - [VMware 克隆 CentOS 后网卡信息修改](CentOS-Virtual-Machine-Copy-Settings.md)
 - [CentOS 源设置](CentOS-Extra-Packages.md)
