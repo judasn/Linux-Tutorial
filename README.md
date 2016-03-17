@@ -44,6 +44,26 @@
 - [黑客入侵检查](Was-Hacked.md)
 
 
+## 下一步(Next)
+
+- Nginx 安装和配置
+- Apache 安装和配置
+- FastDFS 安装和配置
+- Zookeeper 安装和配置
+- Solr 服务安装和配置
+- ActiveMQ 服务安装和配置
+- RabbitMQ 服务安装和配置
+- GitLab 安装和配置
+- Zabbix 安装和配置
+- Nagios 安装和配置
+- Docker 安装和配置
+- ShadowSocks 安装和配置
+- Tmux 安装和配置
+- VIM 学习和配置
+- sed 学习
+- 常用脚本
+
+
 ## 联系(Contact)
 
 - Email：judas.n@qq.com（常用） or admin@youmeek.com（备用）
