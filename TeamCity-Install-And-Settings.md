@@ -208,11 +208,10 @@
 
 - TeamCity 的插件列表：<https://confluence.jetbrains.com/display/TW/TeamCity+Plugins>
 - 使用外部数据库：
-    - 使用外部数据库：>https://confluence.jetbrains.com/display/TCD9/Setting+up+an+External+Database>
-    - 迁移到外部数据库：>https://confluence.jetbrains.com/display/TCD9/Migrating+to+an+External+Database>
+    - 使用外部数据库：<https://confluence.jetbrains.com/display/TCD9/Setting+up+an+External+Database>
+    - 迁移到外部数据库：<https://confluence.jetbrains.com/display/TCD9/Migrating+to+an+External+Database>
 - 数据备份：<https://confluence.jetbrains.com/display/TCD9/TeamCity+Data+Backup>
 - 代码检查功能：
     - <https://confluence.jetbrains.com/display/TCD9/Code+Quality+Tools>
     - <https://confluence.jetbrains.com/display/TCD9/Code+Quality+Tools#CodeQualityTools-IntelliJIDEA-poweredCodeAnalysisTools>  
     - <https://confluence.jetbrains.com/pages/viewpage.action?pageId=74847276>
-
