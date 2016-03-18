@@ -71,10 +71,15 @@
 - 欢迎捐赠 ^_^：<http://www.youmeek.com/donate>
 
 
-## Gtihub 协同方式
+## Gtihub 协同合作视频教程
 
-- 协同视频（judasn 添加）：<http://www.g.cn>
-- 协同视频（YouMeek 添加）：<http://www.google.com>
+- Judas.n 录制
+    - 视频格式：MP4
+    - 片长：16 min
+    - 文件大小：62 M
+- 下载：
+    - 百度云盘：<http://pan.baidu.com/s/1bogmTLd>
+    - 360 网盘（2fb5）：<https://yunpan.cn/cYez7W9xnHs3c>
 
 
 ## Github 常用按钮说明
