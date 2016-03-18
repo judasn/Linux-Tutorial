@@ -1,12 +1,17 @@
 # Github 协同合作（基于 IntelliJ IDEA）
 
+## 初衷
+
+- 学得越多越是渺小，需要参与更多合作。
+
+
 ## 假设场景
 
 - 项目 `Linux-Tutorial`：<https://github.com/judasn/Linux-Tutorial>
 - 项目发起者：judasn：<https://github.com/judasn>
 - 参与人 A：YouMeek：<https://github.com/YouMeek>
-- judasn 使用 Firefox 浏览器 + IntelliJ IDEA 15.0.4
-- YouMeek 使用 Chrome 浏览器 + IntelliJ IDEA 2016.1
+- judasn 使用 `Firefox` 浏览器 + `IntelliJ IDEA 15.0.4`
+- YouMeek 使用 `Chrome` 浏览器 + `IntelliJ IDEA 2016.1`
 
 
 ## 协同场景
