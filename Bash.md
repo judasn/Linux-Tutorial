@@ -1,14 +1,7 @@
-<h1id="bash">Bash 常用命令</h1>
+# Bash 常用命令
 
-------
 
-* [Bash 常用命令](#bash)
-	 * [基础常用命令](#base)
-	 * [资料](#information)
-
-------
-
-<h2 id="base">基础常用命令</h2>
+## 基础常用命令
 
 - `某个命令 --h`，对这个命令进行解释
 - `某个命令 --help`，解释这个命令(更详细)
@@ -114,6 +107,6 @@
 	- `find /opt -type d -iname .oh-my-zsh`，其中 /opt 代表目录名，-type d 代表只找目录，.oh-my-zsh 代表搜索的是隐藏文件夹名字为 oh-my-zsh 的
 	- `find . -name "lin*" -execls -l{}\;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中 -exec 和 {}\; 都是固定格式
 
-<h2 id="information">资料</h2>
+## 资料
 
 - <http://wenku.baidu.com/view/1ad19bd226fff705cc170af3.html>
