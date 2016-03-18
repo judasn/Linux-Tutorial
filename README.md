@@ -70,6 +70,10 @@
 - Blog：<http://code.YouMeek.com>
 - 欢迎捐赠 ^_^：<http://www.youmeek.com/donate>
 
+## Gtihub 协同方式
+
+- 协同视频（judasn 添加）：<http://www.g.cn>
+
 
 ## Github 常用按钮说明
 
