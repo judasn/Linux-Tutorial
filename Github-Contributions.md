@@ -14,12 +14,12 @@
 - YouMeek 使用 `Chrome` 浏览器 + `IntelliJ IDEA 2016.1`
 
 
-## 协同场景
+## 协同场景概念
 
 - 项目 Linux-Tutorial 属于 judasn，我暂且称此为：`源项目`
 - YouMeek Fork 了一份 Linux-Tutorial 项目，我暂且称此为：`副项目`
 - YouMeek 在 `副项目` 中进行修改内容
-- YouMeek 要把自己修改的内容提交到 `源项目`
+- **核心**：YouMeek 要把自己修改的内容提交到 `源项目`
 
 
 ## 协同细节
