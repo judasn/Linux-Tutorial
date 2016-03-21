@@ -12,7 +12,7 @@
 - [Linux 介绍](Linux.md)
 - [Ubuntu 介绍](Ubuntu.md)
 - [CentOS 安装](CentOS-Install.md)
-- [CentOS 设置](centos-settings/TOC.md)
+- [CentOS 设置（目录）](centos-settings/TOC.md)
 - [Bash 命令](Bash.md)
 - [Bash 其他常用命令](Bash-Other-Bash.md.md)
 - [Linux 下常用压缩文件的解压、压缩](File-Extract-Compress.md)
