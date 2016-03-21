@@ -1,15 +1,7 @@
-<h1 id="extract-compress0">Linux 下常用压缩文件的解压、压缩</h1>
+# Linux 下常用压缩文件的解压、压缩
 
-------
 
-*   [Linux 下常用压缩文件的解压、压缩](#extract-compress0)
-    *   [常用压缩包解压命令整理](#extract-compress1)
-    *   [常用文件压缩命令整理](#extract-compress2)
-    *   [资料](#extract-compress3)
-
-------
-
-<h2 id="extract-compress1">常用压缩包**解压**命令整理</h2>
+## 常用压缩包**解压**命令整理
 
 Linux 后缀为 .tar.gz 格式的文件-解压
 命令：`tar zxvf XXXXXX.tar.gz`
@@ -45,8 +37,20 @@ Linux 压缩文件为后缀 .zip 格式的文件
 
 Linux 压缩文件为后缀 .7z 格式的文件
 命令：`7za a test1.7z /opt/test1/`
-        
-<h2 id="extract-compress3">资料</h2>
+
+
+## 特殊格式
+
+- rar 的安装：
+    - 下载：`wget http://www.rarlab.com/rar/rarlinux-3.8.0.tar.gz`
+    - 解压下载下来的压缩包：`tar zxvf rarlinux-3.8.0.tar.gz`
+    - 进入解压后目录：`cd rar`
+    - 编译：`make`
+    - 安装：`make install`
+- rar 解压：`rar x 文件名.rar`
+
+
+## 资料
 
 - <http://forum.ubuntu.org.cn/viewtopic.php?f=50&t=158893>
 
