@@ -1,4 +1,4 @@
-# Linux-Tutorial
+# Java 程序员眼中的 Linux
 
 ## 初衷(Original Intention)
 
@@ -6,7 +6,6 @@
 - 整理下自己所学
 - 带动更多的人进入 Linux 世界，特别是做 Java 开发的人
 - 学得越多越是明白一个人的力量是不够的，希望你能一起参与，真心希望（鞠躬）
-
 
 ## 目录(Contents)
 
