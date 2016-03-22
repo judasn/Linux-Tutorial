@@ -56,11 +56,12 @@ iptables 的设置在 CentOS 和 Ubuntu 下有些细节不一样，Ubuntu 这里
  - `sudo iptables -I INPUT -i lo -j ACCEPT` #允许本地回环接口(即运行本机访问本机)
  - `sudo iptables -I INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT` # 允许已建立的或相关连的通行
  - `sudo iptables -I OUTPUT -j ACCEPT` #允许所有本机向外的访问
- - `sudo iptables -I INPUT -p tcp -m tcp --dport --dport 22 -j ACCEPT` # 允许访问22端口
- - `sudo iptables -I INPUT -p tcp -m tcp --dport --dport 80 -j ACCEPT` #允许访问80端口
- - `sudo iptables -I INPUT -p tcp -m tcp --dport --dport 21 -j ACCEPT` #允许FTP服务的21端口
- - `sudo iptables -I INPUT -p tcp -m tcp --dport --dport 20 -j ACCEPT` #允许FTP服务的20端口
- - `sudo iptables -I INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT` #允许ping
+ - `sudo iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT` # 允许访问 22 端口
+ - `sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT` #允许访问 80 端口
+ - `sudo iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT` #允许访问 8080 端口
+ - `sudo iptables -A INPUT -p tcp -m tcp --dport 21 -j ACCEPT` #允许 FTP 服务的 21 端口
+ - `sudo iptables -A INPUT -p tcp -m tcp --dport 20 -j ACCEPT` #允许 FTP 服务的 20 端口
+ - `sudo iptables -I INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT` #允许 ping
  - `sudo iptables -I INPUT -j REJECT`  #禁止其他未允许的规则访问（使用该规则前一定要保证 22 端口是开着，不然就连 SSH 都会连不上）
  - `sudo iptables -I FORWARD -j REJECT`
 

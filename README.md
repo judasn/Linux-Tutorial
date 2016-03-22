@@ -41,12 +41,12 @@
 - [Jira 安装和配置](Jira-Install-And-Settings.md)
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
 - [TeamCity 安装和配置](TeamCity-Install-And-Settings.md)
+- [Nginx 安装和配置](Nginx-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 
 
 ## 下一步(Next)
 
-- Nginx 安装和配置
 - Apache 安装和配置
 - FastDFS 安装和配置
 - Zookeeper 安装和配置
