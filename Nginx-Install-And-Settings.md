@@ -93,23 +93,210 @@
         - `sudo service iptables save`
         - `sudo service iptables restart`
     - 启动：`/usr/local/nginx/sbin/nginx`，启动完成 shell 是不会有输出的
+    - 检查 时候有 Nginx 进程：`ps aux | grep nginx`，正常是显示 3 个结果出来 
     - 检查 Nginx 是否启动并监听了 80 端口：`netstat -ntulp | grep 80` 
     - 访问：`192.168.1.114`，如果能看到：`Welcome to nginx!`，即可表示安装成功
     - 检查 Nginx 启用的配置文件是哪个：`/usr/local/nginx/sbin/nginx -t`
-    - 重启 Nginx：`/usr/local/nginx/sbin/nginx -s reload`
+    - 刷新 Nginx 配置后重启：`/usr/local/nginx/sbin/nginx -s reload`
     - 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
 
 
 ## Nginx 配置
 
+## Nginx 在 **1.8.1** 版本下的默认配置（去掉注释）
+
+``` nginx
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+```
+
 ### HTTP 服务，虚拟主机
+
+- 停止防火墙：`service iptables stop`，防止出现特别干扰
+- 编辑默认的配置文件：`vim /usr/local/nginx/conf/nginx.conf`
+- 设置两个虚拟主机（通过**端口**来区分开）
+
+``` nginx
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    # 一个 server 代表一个虚拟主机
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            # 虚拟机根目录是 /usr/local/nginx/html 目录
+            root   html;
+            # 虚拟机首页是 /usr/local/nginx/html 目录下这两个文件
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+    
+    server {
+        # 第二个虚拟机的端口是 90，服务地址还是本地
+        listen       90;
+        server_name  localhost;
+
+        location / {
+            root   html90;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+```
+
+- 设置两个虚拟主机（通过**域名**来区分开）
+
+``` nginx
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    # 一个 server 代表一个虚拟主机
+    server {
+        listen       80;
+        # 两个虚拟主机都使用 80 端口，设置不同域名
+        server_name  code.youmeek.com;
+
+        location / {
+            # 虚拟机根目录是 /usr/local/nginx/html 目录
+            root   html;
+            # 虚拟机首页是 /usr/local/nginx/html 目录下这两个文件
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+    
+    server {
+        listen       80;
+        # 两个虚拟主机都使用 80 端口，设置不同域名
+        server_name  i.youmeek.com;
+
+        location / {
+            root   html-i;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}
+```
+
+
+### 反向代理和负载均衡
+
+- 最精简的环境：一台虚拟机
+    - 1 个 JDK
+    - 1 个 Nginx
+    - 2 个 Tomcat
+    
+- Nginx 配置：
+
+``` nginx
+worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    # 自己定义的两个 tomcat 请求地址和端口
+    # 也就是当浏览器请求：tomcat.youmeek.com 的时候从下面这两个 tomcat 中去找一个进行转发
+    upstream tomcatCluster {
+        server 192.168.1.114:8080;
+        server 192.168.1.114:8081;
+        
+        # 添加 weight 字段可以表示权重，值越高权重越大，默认值是 1，最大值官网没说，一般如果设置也就设置 3,5,7 这样的数
+        # 官网：https://www.nginx.com/resources/admin-guide/load-balancer/#weight
+        # server 192.168.1.114:8080 weight=2;
+        # server 192.168.1.114:8081 weight=1;
+    }
+
+    server {
+        listen       80;
+        server_name  tomcat.youmeek.com;
+
+        location / {
+            proxy_pass   http://tomcatCluster;
+            index  index.html index.htm;
+        }
+    }
+}
+```
 
 ### HTTP 服务，绑定多个域名
 
 - <https://www.ttlsa.com/nginx/use-nginx-proxy/>
 
-
-### 负载均衡
 
 ### 安装第三方模块
 
@@ -122,7 +309,6 @@
 
 - <https://help.aliyun.com/knowledge_detail/5974693.html?spm=5176.788314853.2.18.s4z1ra>
 
-### 防盗链
 
 ### Nginx 禁止特定用户代理（User Agents）访问，静止指定 IP 访问
 
