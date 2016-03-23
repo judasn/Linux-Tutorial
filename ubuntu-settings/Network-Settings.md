@@ -22,7 +22,7 @@
 - 编辑配置文件：`sudo vim /etc/network/interfaces`
 - 配置文件内容中，部分信息改为如下：
 
-``` bash
+``` nginx
 auto eth0
 # iface eth0 inet dhcp
 # 注释上面默认配置的 DHCP 设置,改为下面这个 static
@@ -37,7 +37,7 @@ gateway 192.168.1.1 # 网关
 
 - 编辑配置文件：`sudo vim /etc/resolvconf/resolv.conf.d/base`
 - 如果里面没内容，则新增下面两个：（我是广州电信，这两个 DNS 是我根据 360 安全卫士 DNS 优选功能自动筛选出来的，每个地区的人得到结果可能都不一样）
-``` bash
+``` nginx
 nameserver 123.125.81.6
 nameserver 8.8.8.8
 ```

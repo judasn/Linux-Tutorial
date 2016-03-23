@@ -80,7 +80,7 @@
 - 启动 Nginx
     - 先检查是否在 /usr/local 目录下生成了 Nginx 等相关文件：`cd /usr/local/nginx;ll`，正常的效果应该是显示这样的：
     
-    ``` bash
+    ``` nginx
     drwxr-xr-x. 2 root root 4096 3月  22 16:21 conf
     drwxr-xr-x. 2 root root 4096 3月  22 16:21 html
     drwxr-xr-x. 2 root root 4096 3月  22 16:21 sbin

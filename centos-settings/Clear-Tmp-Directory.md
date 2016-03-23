@@ -10,7 +10,7 @@
 
 - 编辑配置文件：`vim /etc/cron.daily/tmpwatch`
 
-``` bash
+``` nginx
 #! /bin/sh
 flags=-umc
 /usr/sbin/tmpwatch "$flags" -x /tmp/.X11-unix -x /tmp/.XIM-unix \

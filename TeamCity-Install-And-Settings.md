@@ -96,7 +96,7 @@
     - `sudo service iptables restart`
 - 如果你要改变端口，找到下面这个 8111 位置：`vim /usr/program/TeamCity/conf/server.xml`
 
-``` bash
+``` nginx
 <Connector port="8111" ...
 ```
 
