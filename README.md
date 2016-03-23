@@ -2,15 +2,18 @@
 
 ## 初衷(Original Intention)
 
-- 本系列历时半年之久，初稿预计这个月底（2016-03）就可以结算，感谢自己坚持下来。
+- 本系列历时半年之久，初稿预计 2016-04 期间可以结束，所有有些文章是空白或是不完善的。感谢自己坚持下来了。
 - 整理下自己所学
 - 带动更多的人进入 Linux 世界，特别是做 Java 开发的人
-- 学得越多越是明白一个人的力量是不够的，希望你能一起参与，真心希望（鞠躬）
+- **学得越多越是明白一个人的力量是不够的，希望你能一起参与，真心希望！！！（鞠躬）**
 
 ## 目录(Contents)
 
 - [Linux 介绍](Linux.md)
 - [Ubuntu 介绍](Ubuntu.md)
+- [Ubuntu 安装](Ubuntu-Install.md)
+- [Ubuntu 设置（目录）](ubuntu-settings/TOC.md)
+- [CentOS 介绍](CentOS.md)
 - [CentOS 安装](CentOS-Install.md)
 - [CentOS 设置（目录）](centos-settings/TOC.md)
 - [Bash 命令](Bash.md)
@@ -26,10 +29,8 @@
 - [Samba 介绍](Samba.md)
 - [Crontab 介绍](Crontab.md)
 - [Iptables 介绍](Iptables.md)
-- [花生壳 安装介绍](Hsk-Install.md)
-- [CentOS 网络设置](CentOS-Network-Settings.md)
+- [花生壳-安装介绍](Hsk-Install.md)
 - [VMware 克隆 CentOS 后网卡信息修改](CentOS-Virtual-Machine-Copy-Settings.md)
-- [CentOS 源设置](CentOS-Extra-Packages.md)
 - [JDK 安装](JDK-Install.md)
 - [SVN 安装和配置](SVN-Install-And-Settings.md)
 - [Tomcat 安装和配置、优化](Tomcat-Install-And-Settings.md)
