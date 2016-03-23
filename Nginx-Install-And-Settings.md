@@ -60,7 +60,7 @@
     - 进入解压后目录：`cd nginx-1.8.1/`
     - 编译配置：
 
-    ``` bash
+    ``` ini
     ./configure \
     --prefix=/usr/local/nginx \
     --pid-path=/var/local/nginx/nginx.pid \
