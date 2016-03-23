@@ -1,16 +1,7 @@
-<h1 id="tomcat0">Tomcat 8 安装和配置、优化</h1>
+# Tomcat 8 安装和配置、优化
 
-------
 
-*   [Tomcat 8 安装和配置](#tomcat0)
-    *   [Tomcat 8 安装](#tomcat1)
-    *   [Tomcat 8 配置](#tomcat2)
-    *   [Tomcat 8 优化](#tomcat3)
-    *   [资料](#tomcat4)
-    
-------
-
-<h2 id="tomcat1">Tomcat 8 安装</h2>
+## Tomcat 8 安装
 
 - Tomcat 8 安装
     - 官网：<http://tomcat.apache.org/>
@@ -22,28 +13,25 @@
     - 压缩包解压：`tar -zxvf apache-tomcat-8.0.32.tar.gz`
     - 移到解压出来文件夹到 /usr 下：`mv apache-tomcat-8.0.32/ /usr/program/`
     - 为了方便，修改解压目录的名字：`mv /usr/program/apache-tomcat-8.0.32/ /usr/program/tomcat8/`
-
-    
 - 设置 Iptables 规则（这一步是必须设置的）：
     - 一种方式：先关闭 iptables，防止出现拦截问题而测试不了：`service iptables stop`
     - 一种方式：在 iptables 中添加允许规则（Tomcat 默认端口是 8080）：
         - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT`
         - 保存规则：`sudo /etc/rc.d/init.d/iptables save`
         - 重启 iptables：`sudo service iptables restart`
-    
-    
 - 测试安装好后的 Tomcat：
     - 启动 Tomcat：`sh /usr/program/tomcat8/bin/startup.sh ; tail -200f /usr/program/tomcat8/logs/catalina.out`
     - 访问：`http://服务器 IP 地址:8080/`
     - 停止 Tomcat：`sh /usr/program/tomcat8/bin/shutdown.sh`
 
 
-<h2 id="tomcat2">Tomcat 8 配置</h2>
+## Tomcat 8 配置
 
 - 设置 Tomcat 环境变量：
     - `sudo vim /etc/profile`
     - 最文件最尾巴添加下面内容：
-    ```
+    
+    ``` ini
     CATALINA_HOME=/usr/program/tomcat8
     export CATALINA_HOME
     
@@ -59,20 +47,21 @@
     CATALINA_PID=$CATALINA_HOME/catalina.pid
     export CATALINA_PID
     ```
+
     - 刷新变量配置：`source /etc/profile`
 - 如果使用 `shutdown.sh` 无法停止 tomcat，可以修改其配置：`vim /usr/program/tomcat8/bin/shutdown.sh`
     - 把最尾巴这一行：`exec "$PRGDIR"/"$EXECUTABLE" stop "$@"`
     - 改为：`exec "$PRGDIR"/"$EXECUTABLE" stop 10 -force`
     
     
-<h2 id="tomcat3">Tomcat 8 优化</h2>
+## Tomcat 8 优化
 
 - 官网标准答案：<https://tomcat.apache.org/tomcat-8.0-doc/config/http.html>
 - 官网帮助文档下载（该资料在：`/tomcat-8.0-doc/config/http.html`）：`wget http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.0.32/bin/apache-tomcat-8.0.32-fulldocs.tar.gz`
 - 编辑配置文件：`vim /usr/program/tomcat8/conf/server.xml`
     - 修改链接参数：
         - 默认值：
-        ```
+        ``` xml
         <Connector 
             port="8080" 
             protocol="HTTP/1.1" 
@@ -81,7 +70,7 @@
         />
         ```
         - 修改为：
-        ```
+        ``` xml
         <Connector 
            port="8080" 
            protocol="org.apache.coyote.http11.Http11Nio2Protocol" 
@@ -106,7 +95,7 @@
             - minSpareThreads，Tomcat初始化时创建的线程数，默认设置 10
 
 
-<h2 id="tomcat4">资料</h2>
+## 资料
 
 - <http://www.jikexueyuan.com/course/2064_3.html?ss=1>
 - <http://www.wellho.net/mouth/2163_CATALINA-OPTS-v-JAVA-OPTS-What-is-the-difference-.html>

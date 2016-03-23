@@ -19,7 +19,7 @@
     - 环境变量设置：`vim /etc/profile`
     - 在文件最尾巴添加下面内容：
     
-    ```
+    ``` ini
     # Maven
     MAVEN_HOME=/usr/program/maven3.3.9
     PATH=$PATH:$MAVEN_HOME/bin
@@ -38,7 +38,7 @@
 - 配置项目连接上私服
 - 全局方式配置：
 
-``` nginx
+``` xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">

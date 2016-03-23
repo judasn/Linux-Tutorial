@@ -32,7 +32,7 @@
     - 设置环境变量：
         - 编辑：`vim /etc/profile`
         - 在文件尾部添加：
-        ```
+        ``` ini
         JIRA_HOME=/usr/program/jira6.3.6/data/
         export JIRA_HOME
         ```

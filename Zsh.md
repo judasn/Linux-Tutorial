@@ -13,7 +13,7 @@
 - Zsh 官网：<http://www.zsh.org/>
 - 先看下你的 CentOS 支持哪些 shell：`cat /etc/shells`，正常结果应该是这样的：
 
-``` nginx
+``` bash
 /bin/sh
 /bin/bash
 /sbin/nologin

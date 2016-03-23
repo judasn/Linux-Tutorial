@@ -25,7 +25,7 @@
         - 编辑系统配置文件：`vim /etc/profile`
         - 在文件的尾巴增加下面内容：
         
-        ```
+        ``` ini
         # Nexus
         NEXUS_HOME=/usr/program/nexus2.11.4
         export NEXUS_HOME
