@@ -95,12 +95,100 @@
     - 启动：`/usr/local/nginx/sbin/nginx`，启动完成 shell 是不会有输出的
     - 检查 Nginx 是否启动并监听了 80 端口：`netstat -ntulp | grep 80` 
     - 访问：`192.168.1.114`，如果能看到：`Welcome to nginx!`，即可表示安装成功
+    - 检查 Nginx 启用的配置文件是哪个：`/usr/local/nginx/sbin/nginx -t`
+    - 重启 Nginx：`/usr/local/nginx/sbin/nginx -s reload`
+    - 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
 
 
 ## Nginx 配置
+
+### HTTP 服务，虚拟主机
+
+### HTTP 服务，绑定多个域名
+
+- <https://www.ttlsa.com/nginx/use-nginx-proxy/>
+
+
+### 负载均衡
+
+### 安装第三方模块
+
+### 生成规格图
+
+### 启用 Gzip 压缩
+
+
+### 防盗链
+
+- <https://help.aliyun.com/knowledge_detail/5974693.html?spm=5176.788314853.2.18.s4z1ra>
+
+### 防盗链
+
+### Nginx 禁止特定用户代理（User Agents）访问，静止指定 IP 访问
+
+- <https://www.ttlsa.com/nginx/how-to-block-user-agents-using-nginx/>
+- <https://help.aliyun.com/knowledge_detail/5974693.html?spm=5176.788314853.2.18.s4z1ra>
+- <>
+- <>
+- <>
+
+### Nginx 缓存
+
+
+### Nginx 自动分割日志文件
+
+
+
+### Nginx 处理跨域请求
+
+
+### 安全相预防
+
+
+在配置文件中设置自定义缓存以限制缓冲区溢出攻击的可能性
+client_body_buffer_size 1K;
+client_header_buffer_size 1k;
+client_max_body_size 1k;
+large_client_header_buffers 2 1k;
+
+7. 将timeout设低来防止DOS攻击
+所有这些声明都可以放到主配置文件中。
+client_body_timeout 10;
+client_header_timeout 10;
+keepalive_timeout 5 5;
+send_timeout 10;
+
+
+8. 限制用户连接数来预防DOS攻击
+limit_zone slimits $binary_remote_addr 5m;
+limit_conn slimits 5;
+
+
+
+### 杂七杂八
+
+- [nginx实现简体繁体字互转以及中文转拼音](https://www.ttlsa.com/nginx/nginx-modules-ngx_set_cconv/)
+- [nginx记录分析网站响应慢的请求(ngx_http_log_request_speed)](https://www.ttlsa.com/nginx/nginx-modules-ngx_http_log_request_speed/)
+- [nginx空白图片(empty_gif模块)](https://www.ttlsa.com/nginx/nginx-modules-empty_gif/)
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
 
 
 
 ## 资料
 
+- <https://help.aliyun.com/knowledge_detail/5974693.html?spm=5176.788314853.2.18.s4z1ra>
+- <>
+- <>
+- <>
+- <>
+- <>
+- <>
+- <>
+- <>
 
