@@ -66,7 +66,7 @@
     - 对项目独立设置：
         - 打开项目的 pom.xml 文件：
         - 添加下面内容：
-        ```
+        ``` xml
         <repositories>
             <repository>
                 <id>Nexus</id>
@@ -78,7 +78,7 @@
     - 对全局配置进行设置：
         - 打开 maven 的 settings.xml 文件：
         - 添加下面内容：
-        ```
+        ``` xml
         <mirrors>
             <mirror>
                 <id>YouMeekNexus</id>
@@ -94,7 +94,7 @@
 
 - 在 Maven 的 settings.xml 加上连接服务器信息：
 
-``` nginx
+``` xml
 <!--设置私库认证信息，用户名和密码我就用默认的，如果你们有权限控制的需求可以创建对应的一些账号-->  
 <servers>  
     <server>  
@@ -113,7 +113,7 @@
 
 - 在项目的 pom.xml 文件加上：
 
-``` nginx
+``` xml
 <!-- nexus-releases nexus-snapshots 与 Maven 的配置文件 settings.xml 中 server 下的 id 对应 -->  
 <distributionManagement>  
     <repository>  
