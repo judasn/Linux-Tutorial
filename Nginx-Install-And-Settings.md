@@ -86,7 +86,6 @@
     drwxr-xr-x. 2 root root 4096 3月  22 16:21 sbin
     ```
 
-    - 假设有生成对应的文件，那我们就删掉刚刚安装的解压包：`rm -rf /opt/setups/nginx-1.8.1`
     - 停止防火墙：`service iptables stop`
         - 或是把 80 端口加入到的排除列表：
         - `sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
@@ -103,7 +102,7 @@
 
 ## Nginx 配置
 
-## Nginx 在 **1.8.1** 版本下的默认配置（去掉注释）
+## Nginx 在 1.8.1 版本下的默认配置（去掉注释）
 
 ``` nginx
 worker_processes  1;

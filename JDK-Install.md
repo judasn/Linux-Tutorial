@@ -1,14 +1,7 @@
-<h1 id="jdk0">JDK 安装</h1>
+## JDK 安装
 
-------
 
-*   [JDK 安装](#jdk0)
-    *   [CentOS 下过程](#jdk1)
-    *   [资料](#jdk2)
-    
-------
-
-<h2 id="jdk1">CentOS 下过程</h2>
+## CentOS 下过程
 
 - JDK 在 CentOS 和 Ubuntu 下安装过程是一样的，所以这里不再讲 Ubuntu 系统下的安装
 - JDK 1.8 下载
@@ -58,8 +51,17 @@
         - 执行命令，刷新该配置（必备操作）：`source /etc/profile`
         - 检查是否使用了最新的 JDK：`java -version`
 
+## 其他
 
-<h2 id="jdk2">资料</h2>
+- JDK 历史版本下载地址整理（不间断更新）：
+    - **JDK 9**：<https://jdk9.java.net/download/>
+    - **JDK 8**：<http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>
+    - **JDK 7**：<http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html>
+    - **JDK 6**：<http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html>
+
+
+
+## 资料
 
  - <http://www.jikexueyuan.com/course/480_1.html?ss=1>
  
