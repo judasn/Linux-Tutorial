@@ -13,9 +13,9 @@
 
 <h2 id="networkSettings1">界面化下设置网络（新手推荐使用这种）</h2>
 
-- ![界面化设置](images/CentOS-Network-Settings-a-1.jpg)
+- ![界面化设置](../images/CentOS-Network-Settings-a-1.jpg)
  - 选择上图箭头所示
-- ![界面化设置](images/CentOS-Network-Settings-a-2.jpg)
+- ![界面化设置](../images/CentOS-Network-Settings-a-2.jpg)
  - 如上图标注 3 所示：选择 `手动` 模式
  - 如上图标注 4 所示：填写自己局域网内的子网掩码、默认网关，以及你要分配的内网 IP 地址。这三个参数你可以参考你当前使用的主机信息，在 Windows 系统上使用：`cmd --- ipconfig`，查看你当前连接的网卡信息。如果你是无线网卡则读取对应的无线网卡信息，如果你是本地连接，则读取对应的本地连接信息。 
  - 如上图标注 5 所示：填写你当前地区合适的 DNS 地址，我这边地区使用 360 测试出来的结果显示 114 的适合我，所以我这里填写该值
