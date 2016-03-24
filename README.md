@@ -64,7 +64,6 @@
 - sed 学习
 - 常用脚本
 
-
 ## 联系(Contact)
 
 - Email：judas.n@qq.com（常用） or admin@youmeek.com（备用）
@@ -84,13 +83,11 @@
     - 百度云盘：<http://pan.baidu.com/s/1bogmTLd>
     - 360 网盘（2fb5）：<https://yunpan.cn/cYez7W9xnHs3c>
 
-
 ## Github 常用按钮说明
 
 - Watch：关注该项目，作者有更新的时候，会在你的 Github 主页有通知消息。
 - Star：收藏该项目，在你的头像上有一个“Your stars”链接，可以看到你的收藏列表。
 - Fork：复制一份项目到的Github空间上，你可以自己开发自己的这个地址项目，然后 Pull Request 给项目原主人。 
-
 
 ## 参与作者汇总(Author)
 
