@@ -8,9 +8,11 @@
 - Ubuntu kylin 官网：<http://cn.Ubuntu.com/desktop>
 - Ubuntu 标准桌面版下载：<http://www.ubuntu.org.cn/download/desktop>
 - Ubuntu 官网回答社区：<http://askubuntu.com/>
-- Ubuntu 正式支援的衍生版本包括：Kubuntu、Edubuntu、Xubuntu、Ubuntu Kylin、Ubuntu Server Edition、Gobuntu、Ubuntu Studio、Ubuntu JeOS、Mythbuntu、BioInfoServOS、Ebuntu、Xubuntu、Fluxbuntu、Freespire、Gnoppix、gOS、Hiweed、Jolicloud、Gubuntu、Linux Deepin、Linux Mint、Lubuntu、nUbuntu、Ubuntu CE 等。
-- Unity 桌面介绍：<http://www.oschina.net/p/ubuntu-unity>
-
+- Ubuntu 正式衍生版本：<https://zh.wikipedia.org/zh/Ubuntu#.E5.88.86.E6.94.AF.E7.89.88.E6.9C.AC>
+- Ubuntu 非正式衍生版本：<https://zh.wikipedia.org/zh/Ubuntu#.E9.9D.9E.E6.AD.A3.E5.BC.8F.E8.A1.8D.E7.94.9F.E7.89.88.E6.9C.AC>
+- Unity 桌面介绍：<https://zh.wikipedia.org/wiki/Unity_(使用者介面)>
+- GNOME 桌面介绍：<https://zh.wikipedia.org/wiki/GNOME>
+- KDE 桌面介绍：<https://zh.wikipedia.org/wiki/KDE>
 
 # Ubuntu 原型系统：Debian
 
