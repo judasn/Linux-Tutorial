@@ -1,11 +1,6 @@
 #  FastDFS 安装和配置
 
 
-- ![TeamCity](http://img.youmeek.com/2016/TeamCity.jpg)
-
-
-
-
 ## 它是什么
 
 - FastDFS 介绍：<http://www.oschina.net/p/fastdfs>
@@ -32,7 +27,7 @@
 
 
 
-### 安装部署（Linux 环境）
+### 单机安装部署（CentOS 6.7 环境）
 
 - 环境准备：
     - 已经安装好 Nginx
@@ -69,7 +64,8 @@
     port=22122
     connect_timeout=30
     network_timeout=60
-    # 下面这个路径是保存 store data 和 log 的地方，需要我们改下，指向我们一个存在的目录，创建目录：mkdir -p /opt/fastdfs/tracker/data-and-log
+    # 下面这个路径是保存 store data 和 log 的地方，需要我们改下，指向我们一个存在的目录
+    # 创建目录：mkdir -p /opt/fastdfs/tracker/data-and-log
     base_path=/opt/fastdfs/tracker/data-and-log
     max_connections=256
     accept_threads=1
@@ -136,8 +132,8 @@
     network_timeout=60
     heart_beat_interval=30
     stat_report_interval=60
-    # 下面这个路径是保存 store data 和 log 的地方，需要我们改下，指向我们一个存在的目录，创建目录：mkdir -p /opt/fastdfs/storage/data-and-log
-    # 我这里习惯的目录是：/opt/fastdfs/storage/data-and-log
+    # 下面这个路径是保存 store data 和 log 的地方，需要我们改下，指向我们一个存在的目录
+    # 创建目录：mkdir -p /opt/fastdfs/storage/data-and-log
     base_path=/opt/fastdfs/storage/data-and-log
     max_connections=256
     buff_size = 256KB
@@ -202,7 +198,8 @@
     ``` ini
     connect_timeout=30
     network_timeout=60
-    # 下面这个路径是保存 store log 的地方，需要我们改下，指向我们一个存在的目录，创建目录：mkdir -p /opt/fastdfs/client/data-and-log
+    # 下面这个路径是保存 store log 的地方，需要我们改下，指向我们一个存在的目录
+    # 创建目录：mkdir -p /opt/fastdfs/client/data-and-log
     base_path=/opt/fastdfs/client/data-and-log
     # 指定 tracker 服务器的 IP 和端口
     tracker_server=192.168.1.114:22122
@@ -259,7 +256,8 @@
     ``` ini
     connect_timeout=2
     network_timeout=30
-    # 下面这个路径是保存 log 的地方，需要我们改下，指向我们一个存在的目录，创建目录：mkdir -p /opt/fastdfs/fastdfs-nginx-module/data-and-log
+    # 下面这个路径是保存 log 的地方，需要我们改下，指向我们一个存在的目录
+    # 创建目录：mkdir -p /opt/fastdfs/fastdfs-nginx-module/data-and-log
     base_path=/opt/fastdfs/fastdfs-nginx-module/data-and-log
     load_fdfs_parameters_from_tracker=true
     storage_sync_file_max_delay = 86400
@@ -269,8 +267,9 @@
     tracker_server=192.168.1.114:22122
     storage_server_port=23000
     group_name=group1
-    # 配置多个 tracker 时，应该将此项设置为true
-    url_have_group_name = false
+    # 因为我们访问图片的地址是：http://192.168.1.114/group1/M00/00/00/wKgBclb0aqWAbVNrAAAjn7_h9gM813_big.jpg
+    # 该地址前面是带有 /group1/M00，所以我们这里要使用 true，不然访问不到（原值是 false）
+    url_have_group_name = true
     store_path_count=1
     # 图片实际存放路径，如果有多个，这里可以有多行：
     # store_path0=/opt/fastdfs/storage/images-data0
@@ -323,9 +322,18 @@
         - 刷新 Nginx 配置后重启：`/usr/local/nginx/sbin/nginx -s reload`
         - 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
         - 如果访问不了，或是出现其他信息看下错误立即：`vim /var/log/nginx/error.log`
-        
 
-### 资料
+
+### 多机安装部署（CentOS 6.7 环境）
+
+
+http://blog.csdn.net/ricciozhang/article/details/49402273
+
+
+
+
+
+## 资料
 
 - [fastdfs+nginx安装配置](http://blog.csdn.net/ricciozhang/article/details/49402273)
 
