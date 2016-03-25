@@ -47,10 +47,10 @@ nameserver 8.8.8.8
 
 ## 配置 VPN（作为开发者经常用）：
 
-- ![Ubuntu VPN 配置](images/Ubuntu-a-3.jpg)
-- ![Ubuntu VPN 配置](images/Ubuntu-a-4.jpg)
-- ![Ubuntu VPN 配置](images/Ubuntu-a-5.jpg)
-- ![Ubuntu VPN 配置](images/Ubuntu-a-6.jpg)
+- ![Ubuntu VPN 配置](../images/Ubuntu-a-3.jpg)
+- ![Ubuntu VPN 配置](../images/Ubuntu-a-4.jpg)
+- ![Ubuntu VPN 配置](../images/Ubuntu-a-5.jpg)
+- ![Ubuntu VPN 配置](../images/Ubuntu-a-6.jpg)
 
 
 ## 其他常见问题
