@@ -17,6 +17,7 @@
 - [CentOS 介绍](CentOS.md)
 - [CentOS 安装](CentOS-Install.md)
 - [CentOS 设置（目录）](centos-settings/centos-settings-toc.md)
+- [Vim 安装和配置](Vim-Install-And-Settings.md)
 - [Bash 命令](Bash.md)
 - [Bash 其他常用命令](Bash-Other-Bash.md)
 - [Linux 下常用压缩文件的解压、压缩](File-Extract-Compress.md)
@@ -44,12 +45,13 @@
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
 - [TeamCity 安装和配置](TeamCity-Install-And-Settings.md)
 - [Nginx 安装和配置](Nginx-Install-And-Settings.md)
+- [FastDFS 安装和配置](FastDFS-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
+
 
 ## 下一步(Next)
 
 - Apache 安装和配置
-- FastDFS 安装和配置
 - Zookeeper 安装和配置
 - Solr 服务安装和配置
 - ActiveMQ 服务安装和配置
@@ -60,7 +62,6 @@
 - Docker 安装和配置
 - ShadowSocks 安装和配置
 - Tmux 安装和配置
-- VIM 学习和配置
 - sed 学习
 - 常用脚本
 
