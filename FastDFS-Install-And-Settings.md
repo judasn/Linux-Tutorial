@@ -46,8 +46,10 @@
     - 进入解压后目录：`cd libfastcommon-1.0.7/`
     - 编译：`./make.sh`
     - 安装：`./make.sh install`
-    - 复制一个配置文件：`cp /usr/lib64/libfastcommon.so /usr/lib/`
-    - 复制一个配置文件：`cp /usr/lib64/libfdfsclient.so /usr/lib/`
+    - 设置几个软链接：`ln -s /usr/lib64/libfastcommon.so /usr/local/lib/libfastcommon.so`  
+    - 设置几个软链接：`ln -s /usr/lib64/libfastcommon.so /usr/lib/libfastcommon.so`  
+    - 设置几个软链接：`ln -s /usr/lib64/libfdfsclient.so /usr/local/lib/libfdfsclient.so`  
+    - 设置几个软链接：`ln -s /usr/lib64/libfdfsclient.so /usr/lib/libfdfsclient.so` 
 - 安装 tracker （跟踪器）服务 **FastDFS_v5.08.tar.gz**
     - 解压：`tar zxvf FastDFS_v5.05.tar.gz`
     - 进入解压后目录：`cd FastDFS/`
@@ -218,15 +220,20 @@
 - 安装 **fastdfs-nginx-module_v1.16.tar.gz**，安装 Nginx 第三方模块相当于这个 Nginx 都是要重新安装一遍的
     - 解压 Nginx 模块：`tar zxvf fastdfs-nginx-module_v1.16.tar.gz`，得到目录地址：**/opt/setups/FastDFS/fastdfs-nginx-module**
     - 编辑 Nginx 模块的配置文件：`vim /opt/setups/FastDFS/fastdfs-nginx-module/src/config`
-    - 把下面内容的三个路径中包含有 `local` 字眼去掉，因为这三个路径根本不是在 local 下的。
+    - 找到下面一行包含有 `local` 字眼去掉，因为这三个路径根本不是在 local 目录下的。
     ``` nginx
-    ngx_addon_name=ngx_http_fastdfs_module
-    HTTP_MODULES="$HTTP_MODULES ngx_http_fastdfs_module"
-    NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_fastdfs_module.c"
     CORE_INCS="$CORE_INCS /usr/local/include/fastdfs /usr/local/include/fastcommon/"
-    CORE_LIBS="$CORE_LIBS -L/usr/local/lib -lfastcommon -lfdfsclient"
-    CFLAGS="$CFLAGS -D_FILE_OFFSET_BITS=64 -DFDFS_OUTPUT_CHUNK_SIZE='256*1024' -DFDFS_MOD_CONF_FILENAME='\"/etc/fdfs/mod_fastdfs.conf\"'"
     ```
+    - 改为如下：
+    ``` nginx
+    CORE_INCS="$CORE_INCS /usr/include/fastdfs /usr/include/fastcommon/"
+    ```
+    - 复制文件：`cp /opt/setups/FastDFS/FastDFS/conf/http.conf /etc/fdfs`
+    - 复制文件：`cp /opt/setups/FastDFS/FastDFS/conf/mime.types /etc/fdfs`
+- 安装 Nginx 和 Nginx 第三方模块
+    - 安装 Nginx 依赖包：`yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel`
+    - 预设几个文件夹，方便等下安装的时候有些文件可以进行存放：
+        - `mkdir -p /usr/local/nginx /var/log/nginx /var/temp/nginx /var/lock/nginx`
     - 解压 Nginx：`tar zxvf /opt/setups/nginx-1.8.1.tar.gz`
     - 进入解压后目录：`cd /opt/setups/nginx-1.8.1/`
     - 编译配置：（注意最后一行）
@@ -262,6 +269,7 @@
     tracker_server=192.168.1.114:22122
     storage_server_port=23000
     group_name=group1
+    # 配置多个 tracker 时，应该将此项设置为true
     url_have_group_name = false
     store_path_count=1
     # 图片实际存放路径，如果有多个，这里可以有多行：
@@ -278,9 +286,10 @@
     group_count = 0
     ```
 
-    - 编辑 Nginx 配置文件
+    - 编辑 Nginx 配置文件，注意第一行，我特别加上了使用 root 用户去执行。
     
     ``` nginx
+    user  root;
     worker_processes  1;
     
     events {
@@ -313,10 +322,11 @@
         - 检查 时候有 Nginx 进程：`ps aux | grep nginx`，正常是显示 3 个结果出来 
         - 刷新 Nginx 配置后重启：`/usr/local/nginx/sbin/nginx -s reload`
         - 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
-
-
+        - 如果访问不了，或是出现其他信息看下错误立即：`vim /var/log/nginx/error.log`
+        
 
 ### 资料
 
+- [fastdfs+nginx安装配置](http://blog.csdn.net/ricciozhang/article/details/49402273)
 
 

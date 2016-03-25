@@ -54,7 +54,7 @@
 - 开始安装：
     - 安装依赖包：`yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel`
     - 预设几个文件夹，方便等下安装的时候有些文件可以进行存放：
-        - `mkdir -p /usr/local/nginx /var/log/nginx /var/temp/nginx`
+        - `mkdir -p /usr/local/nginx /var/log/nginx /var/temp/nginx /var/lock/nginx`
     - 下载源码包：``wget http://nginx.org/download/nginx-1.8.1.tar.gz`
     - 解压：`tar zxvf nginx-1.8.1.tar.gz`
     - 进入解压后目录：`cd nginx-1.8.1/`
@@ -98,6 +98,7 @@
     - 检查 Nginx 启用的配置文件是哪个：`/usr/local/nginx/sbin/nginx -t`
     - 刷新 Nginx 配置后重启：`/usr/local/nginx/sbin/nginx -s reload`
     - 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
+    - 如果访问不了，或是出现其他信息看下错误立即：`vim /var/log/nginx/error.log`
 
 
 ## Nginx 配置
