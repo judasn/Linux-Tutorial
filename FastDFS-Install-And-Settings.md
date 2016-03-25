@@ -331,8 +331,6 @@ http://blog.csdn.net/ricciozhang/article/details/49402273
 
 
 
-
-
 ## 资料
 
 - [fastdfs+nginx安装配置](http://blog.csdn.net/ricciozhang/article/details/49402273)
