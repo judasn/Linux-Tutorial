@@ -254,6 +254,7 @@
     - 安装：`make install`
     - 复制 Nginx 模块的配置文件：`cp /opt/setups/FastDFS/fastdfs-nginx-module/src/mod_fastdfs.conf /etc/fdfs`
     - 编辑 Nginx 模块的配置文件：`vim /etc/fdfs/mod_fastdfs.conf`，编辑内容看下面中文注释
+    - 如果在已经启动 Nginx 的情况下修改下面内容记得要重启 Nginx。
     ``` ini
     connect_timeout=2
     network_timeout=30
