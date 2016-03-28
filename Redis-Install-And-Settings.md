@@ -128,7 +128,11 @@ aof-rewrite-incremental-fsync yes
 
 
 
+## Redis GUI 管理工具
 
+- Redis Desktop Manager
+    - 官网：<http://redisdesktop.com/>
+    - 官网下载：<http://redisdesktop.com/download>
 
 
 
