@@ -116,8 +116,6 @@
     - 启动 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf`
     - 重启 tracker 服务：`/usr/bin/fdfs_trackerd /etc/fdfs/tracker.conf restart`
     - 查看是否有 tracker 进程：`ps aux | grep tracker`
-
-
 - storage （存储节点）服务部署
     - 一般 storage 服务我们会单独装一台机子，但是这里为了方便我们安装在同一台。
     - 如果 storage 单独安装的话，那上面安装的步骤都要在走一遍，只是到了编辑配置文件的时候，编辑的是 storage.conf 而已
@@ -214,7 +212,8 @@
     ```
     - 在终端中通过 shell 上传 opt 目录下的一张图片：`/usr/bin/fdfs_test /etc/fdfs/client.conf upload /opt/test.jpg`
     - 如下图箭头所示，生成的图片地址为：`http://192.168.1.114/group1/M00/00/00/wKgBclb0aqWAbVNrAAAjn7_h9gM813_big.jpg`
-    - 因为我们还没装 FastDFS 的 Nginx 模块，所以现在我们访问不了图片地址
+     - ![FastDFS](images/FastDFS-a-1.jpg)
+    - 即使我们现在知道图片的访问地址我们也访问不了，因为我们还没装 FastDFS 的 Nginx 模块
 - 安装 **fastdfs-nginx-module_v1.16.tar.gz**，安装 Nginx 第三方模块相当于这个 Nginx 都是要重新安装一遍的
     - 解压 Nginx 模块：`tar zxvf fastdfs-nginx-module_v1.16.tar.gz`，得到目录地址：**/opt/setups/FastDFS/fastdfs-nginx-module**
     - 编辑 Nginx 模块的配置文件：`vim /opt/setups/FastDFS/fastdfs-nginx-module/src/config`

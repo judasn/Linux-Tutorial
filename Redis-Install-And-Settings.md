@@ -46,8 +46,8 @@ daemonize no
 pidfile /var/run/redis.pid
 port 6379
 tcp-backlog 511
-# 请求超时时间
-timeout 0
+# 请求超时时间，默认是 0
+timeout 15
 tcp-keepalive 0
 loglevel notice
 logfile ""
@@ -118,8 +118,7 @@ aof-rewrite-incremental-fsync yes
 - `PERSIST key`，清除生成时间，重新变成永久存储（重新设置 key 的值也可以起到清除生存时间的效果）
 - `FLUSHDB`，清空当前数据库所有键值
 - `FLUSHALL`，清空所有数据库的所有键值
-- ``，
-- ``，
+
 
 ## Redis 客户端
 
@@ -133,6 +132,8 @@ aof-rewrite-incremental-fsync yes
 - Redis Desktop Manager
     - 官网：<http://redisdesktop.com/>
     - 官网下载：<http://redisdesktop.com/download>
+    - 效果如下图：
+    - ![Redis Desktop Manager](images/Redis-GUI-a-1.jpg)
 
 
 
