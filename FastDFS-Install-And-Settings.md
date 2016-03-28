@@ -286,9 +286,10 @@
     group_count = 0
     ```
 
-    - 编辑 Nginx 配置文件，注意第一行，我特别加上了使用 root 用户去执行。
+    - 编辑 Nginx 配置文件
     
     ``` nginx
+    # 注意这一行行，我特别加上了使用 root 用户去执行，不然有些日记目录没有权限访问
     user  root;
     worker_processes  1;
     
