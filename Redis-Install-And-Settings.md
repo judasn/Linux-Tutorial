@@ -46,8 +46,7 @@ daemonize no
 pidfile /var/run/redis.pid
 port 6379
 tcp-backlog 511
-# 请求超时时间，默认是 0
-timeout 15
+timeout 0
 tcp-keepalive 0
 loglevel notice
 logfile ""
