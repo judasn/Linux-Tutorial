@@ -41,6 +41,7 @@
 - [Nexus 安装和配置](Nexus-Install-And-Settings.md)
 - [Mysql 安装和配置](Mysql-Install-And-Settings.md)
 - [Redis 安装和配置](Redis-Install-And-Settings.md)
+- [Solr 安装和配置](Solr-Install-And-Settings.md)
 - [Jira 安装和配置](Jira-Install-And-Settings.md)
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
 - [TeamCity 安装和配置](TeamCity-Install-And-Settings.md)
@@ -53,7 +54,6 @@
 
 - Apache 安装和配置
 - Zookeeper 安装和配置
-- Solr 服务安装和配置
 - ActiveMQ 服务安装和配置
 - RabbitMQ 服务安装和配置
 - GitLab 安装和配置
