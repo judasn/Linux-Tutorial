@@ -53,6 +53,8 @@
 ## 下一步(Next)
 
 - Apache 安装和配置
+- Keepalived 安装和配置
+- LVS 安装和配置
 - Zookeeper 安装和配置
 - ActiveMQ 服务安装和配置
 - RabbitMQ 服务安装和配置
