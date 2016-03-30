@@ -67,6 +67,11 @@
         <analyzer class="org.wltea.analyzer.lucene.IKAnalyzer"/>
     </fieldType>
     
+    <!-- solrQueryParser 可以指定搜索时多个词之间的关系，可以是 (AND|OR) 两种，默认是 OR，表示或的关系。-->
+    <!-- 假设在 OR 的情况，我们搜索：小米 手机。则只要含有：小米 或者是：手机的内容都会出现，比如出现：小米手环-->
+    <!-- 假设在 OR 的情况，我们搜索：小米 手机。则必须含有：小米 和 手机，两个关键字的内容-->
+    <solrQueryParser defaultOperator="AND"/>
+
     
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
     <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
@@ -78,6 +83,7 @@
 
 </schema>
 ```
+
 
 - 编辑配置文件：`vim /usr/program/solr-4.10.2/example/ssm-solr/user/conf/solrconfig.xml`，内容改为如下：
     - 需要修改的内容有：
