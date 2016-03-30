@@ -18,7 +18,7 @@
 - 我这里使用 solr-4.10.2.zip：（大小：148 M）
     - 解压：`unzip solr-4.10.2.zip`
     - 移动到我个人安装目录：`mv solr-4.10.2/ /usr/program/`
-    - 进入解压后目录：`cd /usr/program/solr-4.10.2/`
+    - 进入解压后目录：`cd /usr/program/solr-4.10.2/example/`
     - 启动 Solr 自带测试案例：`java -jar start.jar`
     - 打开浏览器，访问：`http://192.168.1.115:8983/solr/`，可以看到 Solr 相关页面就表示成功了
     - 给 Solr 这个默认测试案例添加数据：`cd /usr/program/solr-4.10.2/example/exampledocs ; java -jar post.jar solr.xml monitor.xml`
