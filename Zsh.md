@@ -44,7 +44,7 @@
 - 在以 root 用户为前提下，Zsh 的配置文件位置：**/root/.zshrc**
 - 为 root 用户设置 zsh 为系统默认 shell：`chsh -s /bin/zsh root`
 - 如果你要重新恢复到 bash：`chsh -s /bin/bash root`
-- 现在重启下系统：`reboot`，重启完你就可以看到你连接上 shell 效果变了，现在开头是一个箭头了，如下图：
+- 现在你关掉终端或是重新连上 shell，现在开头是一个箭头了，如下图：
     - ![oh-my-zsh 安装](images/Zsh-b-1.jpg)
 
 
