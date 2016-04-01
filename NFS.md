@@ -1,16 +1,8 @@
-<h1 id="nfs0">NFS（Network FileSystem）介绍</h1>
+# NFS（Network FileSystem）介绍
 
-------
 
-*   [NFS（Secure Shell）介绍](#nfs0)
-    *   [NFS 安装](#nfs1)
-    *   [NFS 服务器配置文件常用参数](#nfs2)
-    *   [NFS 客户端访问](#nfs3)
-    *   [NFS 资料](#nfs4)
 
-------
-
-<h2 id="nfs1">NFS 安装</h2>
+## NFS 安装
 
 - 查看是否已安装：
  - CentOS：`rpm -qa | grep nfs-*`
@@ -21,7 +13,7 @@
  - CentOS 6：`sudo yum install -y nfs-utils rpcbind`
  - Ubuntu：`sudo apt-get install -y nfs-common nfs-kernel-server`
 
-<h2 id="nfs2">NFS 服务器配置文件常用参数</h2>
+## NFS 服务器配置文件常用参数
 
 - 配置文件介绍（记得先备份）：`sudo vim /etc/exports`
  - 默认配置文件里面是没啥内容的，我们需要自己加上配置内容，一行表示共享一个目录。为了方便使用，共享的目录最好将权限设置为 777（`chmod 777 folderName`）。
@@ -40,14 +32,14 @@
  - `/etc/init.d/rpcbind restart`
  - `/etc/init.d/nfs-kernel-server restart`
 
-<h2 id="nfs3">NFS 客户端访问</h2>
+## NFS 客户端访问
 
 - 客户端要访问服务端的共享目录需要对其共享的目录进行挂载，在挂载之前先检查下：`showmount -e 192.168.1.25`（这个 IP 是 NFS 的服务器端 IP）
  - 如果显示：/opt/mytest 相关信息表示成功了。
 - 现在开始对其进行挂载：`mount -t nfs 192.168.1.25:/opt/mytest/ /mytest/`
  - 在客户端机器上输入命令：`df -h` 可以看到多了一个 mytest 分区。然后我们可以再创建一个软链接，把软链接放在 war 包的目录下，这样上传的图片都会跑到另外一台服务器上了。软链接相关内容请自行搜索。
 
-<h2 id="nfs4">NFS 资料</h2>
+## NFS 资料
 
 - <http://wiki.jikexueyuan.com/project/linux/nfs.html> 
 - <http://www.jb51.net/os/RedHat/77993.html> 

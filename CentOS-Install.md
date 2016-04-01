@@ -1,19 +1,14 @@
-<h1 id="centos0">CentOS 安装 </h1>
+# CentOS 安装 
 
-------
 
-*   [CentOS 安装](#centos0)
-    *   [VirtualBox 下安装 CentOS 过程](#virtualbox1)
-    *   [VMware 下安装 CentOS 过程](#vmware1)
-    
-------
+## 概括
 
 - 本教程中主要演示了 VirtualBox 和 VMware Workstation 下安装 `CentOS 6.6` 的过程。
 - VirtualBox 是免费开源，我个人在使用经历中遇到过很多次崩溃、安装有问题等，所以它不是我主推的虚拟机
 - VMware Workstation 是商业软件，很好用，一些辅助功能也很到位，主推该虚拟机。
 
 
-<h2 id="virtualbox1">VirtualBox 下安装 CentOS 过程</h2>
+## VirtualBox 下安装 CentOS 过程
 
 - VirtualBox 的介绍和下载
  - 官网：<https://www.virtualbox.org/>
@@ -65,7 +60,7 @@
  	- 安装完成后一定要把盘片删除，防止系统启动的时候去读盘，重新进入安装系统模式
 
 
-<h2 id="vmware1">VMware 下安装 CentOS 过程</h2>
+## VMware 下安装 CentOS 过程
 
 - VMware Workstation 的介绍和下载
  - 官网：<https://www.vmware.com/products/workstation>

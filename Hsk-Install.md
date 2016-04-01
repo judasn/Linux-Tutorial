@@ -1,14 +1,7 @@
-<h1 id="hsk0">花生壳 安装</h1>
+# 花生壳 安装
 
-------
 
-*   [花生壳 安装](#hsk0)
-    *   [CentOS 下过程](#hsk1)
-    *   [资料](#hsk2)
-    
-------
-
-<h2 id="hsk1">CentOS 下过程</h2>
+## CentOS 下过程
 
 - 官网：<http://hsk.oray.com/> 
 - 官网下载：<http://hsk.oray.com/download/#type=linux>
@@ -32,7 +25,7 @@
     - `sudo rpm -e phddns-2.0.6-1.el6.x86_64`
 
 
-<h2 id="jdk2">资料</h2>
+## 资料
 
  - <http://service.oray.com/question/1890.html>
  

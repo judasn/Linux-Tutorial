@@ -1,21 +1,11 @@
-<h1 id="iptables0">Iptables 介绍</h1>
+# Iptables 介绍
 
-------
 
-*   [Iptables 介绍](#iptables0)
-    *   [前提说明](#iptables1)
-    *   [Iptables 安装](#iptables2)
-    *   [Iptables 服务器配置文件常用参数](#iptables3)
-    *   [Iptables 例子](#iptables4)
-    *   [Iptables 资料](#iptables5)
-
-------
-
-<h2 id="iptables1">前提说明</h2>
+## 前提说明
 
 iptables 的设置在 CentOS 和 Ubuntu 下有些细节不一样，Ubuntu 这里不讲，文章底下贴的资料有部分关于 Ubuntu 的，有需要的可以自己看。一般大家会用到 iptables 都是服务器，而一般服务器大家普遍是用 CentOS）
 
-<h2 id="iptables2">Iptables 安装</h2>
+## Iptables 安装
 
 - 查看是否已安装：
  - CentOS：`rpm -qa | grep iptables`
@@ -23,7 +13,7 @@ iptables 的设置在 CentOS 和 Ubuntu 下有些细节不一样，Ubuntu 这里
 - 安装（一般系统是集成的）：
  - CentOS 6：`sudo yum install -y iptables`
 
-<h2 id="iptables3">Iptables 服务器配置文件常用参数</h2>
+## Iptables 服务器配置文件常用参数
 
 - 常用命令：
  - 查看已有规则列表，并且显示编号：`sudo iptables -L -n --line-numbers`
@@ -50,7 +40,7 @@ iptables 的设置在 CentOS 和 Ubuntu 下有些细节不一样，Ubuntu 这里
     - -d 目标 IP/网域：同 -s ，只不过这里指的是目标的 IP 或网域。
     - -j ：后面接动作，主要的动作有接受(ACCEPT)、丢弃(DROP)、拒绝(REJECT)及记录(LOG)
     
-<h2 id="iptables4">Iptables 例子</h2>
+## Iptables 例子
 
 - 开放指定端口
  - `sudo iptables -I INPUT -i lo -j ACCEPT` #允许本地回环接口(即运行本机访问本机)
@@ -65,7 +55,7 @@ iptables 的设置在 CentOS 和 Ubuntu 下有些细节不一样，Ubuntu 这里
  - `sudo iptables -I INPUT -j REJECT`  #禁止其他未允许的规则访问（使用该规则前一定要保证 22 端口是开着，不然就连 SSH 都会连不上）
  - `sudo iptables -I FORWARD -j REJECT`
 
-<h2 id="iptables5">Iptables 资料</h2>
+## Iptables 资料
 
 - <https://wsgzao.github.io/post/iptables/> 
 - <http://www.vpser.net/security/linux-iptables.html> 

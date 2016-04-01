@@ -1,17 +1,7 @@
-<h1 id="subversion0">Subversion 1.8 安装</h1>
+# Subversion 1.8 安装
 
-------
 
-*   [Subversion 1.8 安装](#subversion0)
-    *   [RPM 安装（推荐）](#subversion1)
-    *   [编译安装（不推荐）](#subversion2)
-    *   [SVN 配置](#subversion3)
-    *   [SVN 设置提交之后可修改提交的 Message 信息](#subversion4)
-    *   [资料](#subversion5)
-    
-------
-
-<h2 id="subversion1">RPM 安装（推荐）</h2>
+## RPM 安装（推荐）
 
 - wandisco 整理的 RPM 文件官网：<http://opensource.wandisco.com/centos/6/svn-1.8/RPMS/x86_64/>
 - 下载下面几个 RPM 文件：
@@ -35,7 +25,7 @@
     - `svn --version`
 
 
-<h2 id="subversion2">编译安装（不推荐）</h2>
+## 编译安装（不推荐）
 
 - subversion 1.8 编译安装（本人没有尝试成功，所以不推荐，下面内容只供参考）
     - 官网安装说明（查找关键字 `Dependency Overview`）：<http://svn.apache.org/repos/asf/subversion/trunk/INSTALL>
@@ -96,7 +86,7 @@
                 - `make install`
                 
                 
-<h2 id="subversion3">SVN 配置</h2>
+## SVN 配置
 
 - 在系统上创建一个目录用来存储所有的 SVN 文件：`mkdir -p /opt/svn/repo/`
 - 新建一个版本仓库：`svnadmin create /opt/svn/repo/`
@@ -168,7 +158,7 @@
     - 在 Windows 的 svn 客户端上访问:`svn://192.168.0.110`
 
 
-<h2 id="subversion4">SVN 设置提交之后可修改提交的 Message 信息</h2>
+## SVN 设置提交之后可修改提交的 Message 信息
 
 - 默认的 SVN 是无法修改提交后的 Message 信息的，修改会报如下错误：
 - ![SVN 设置提交之后可修改提交的 Message 信息](images/SVN-Install-And-Settings-a-4.jpg)
@@ -180,7 +170,7 @@
         - 你在该目录下也可以看到一个文件 `pre-revprop-change.tmpl`，这个其实就是 svn 提供给你模板，其他的那些你有兴趣也可以研究下
 
 
-<h2 id="subversion5">资料</h2>
+## 资料
 
 - <http://tecadmin.net/install-subversion-1-8-on-centos-rhel/>
 - <http://svn.apache.org/repos/asf/subversion/trunk/INSTALL>

@@ -1,15 +1,7 @@
-<h1 id="mysql0">Mysql 安装和配置</h1>
+# Mysql 安装和配置
 
-------
 
-*   [Mysql 安装和配置](#mysql0)
-    *   [Mysql 安装](#mysql1)
-    *   [Mysql 配置](#mysql2)
-    *   [资料](#mysql3)
-    
-------
-
-<h2 id="mysql1">Mysql 安装</h2>
+## Mysql 安装
 
 - Mysql 安装
     - 官网：<http://www.mysql.com/>
@@ -52,6 +44,6 @@
             - `sudo ln -s /usr/program/mysql/bin/mysql /usr/bin`
             - `sudo ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
 
-<h2 id="mysql3">资料</h2>
+## 资料
 
 - <http://www.cnblogs.com/xiongpq/p/3384681.html>

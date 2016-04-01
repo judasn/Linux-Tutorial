@@ -1,15 +1,7 @@
-<h1 id="jenkins0">Jenkins 安装和配置</h1>
+# Jenkins 安装和配置
 
-------
 
-*   [Jenkins 安装和配置](#jenkins0)
-    *   [Jenkins 安装](#jenkins1)
-    *   [Jenkins 配置](#jenkins2)
-    *   [资料](#jenkins3)
-    
-------
-
-<h2 id="jenkins1">Jenkins 安装</h2>
+## Jenkins 安装
 
 - Jenkins 安装
     - 官网：<http://jenkins-ci.org/>
@@ -48,6 +40,6 @@
     - 如果访问的时候报这个异常：`java.net.UnknownHostException`，可以查看这篇文章：<http://stackoverflow.com/questions/4969156/java-net-unknownhostexception>
 
 
-<h2 id="jenkins3">资料</h2>
+## 资料
 
 - <http://stackoverflow.com/questions/4969156/java-net-unknownhostexception>

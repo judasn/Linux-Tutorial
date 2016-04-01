@@ -1,15 +1,7 @@
-<h1 id="samba0">Samba 介绍</h1>
+# Samba 介绍
 
-------
 
-*   [Samba 介绍](#samba0)
-    *   [Samba 安装](#samba1)
-    *   [Samba 服务器配置文件常用参数](#samba2)
-    *   [Samba 资料](#samba3)
-
-------
-
-<h2 id="samba1">Samba 安装</h2>
+## Samba 安装
 
 - 查看是否已安装：
  - CentOS：`rpm -qa | grep samba`
@@ -19,7 +11,7 @@
  - CentOS 6：`XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`
  - Ubuntu：`sudo apt-get install -y samba samba-client`
 
-<h2 id="samba2">Samba 服务器配置文件常用参数</h2>
+## Samba 服务器配置文件常用参数
 
 - 配置文件介绍（记得先备份）：`sudo vim /etc/samba/smb.conf`
  - 该配置解释：
@@ -49,7 +41,7 @@
 - 启动服务：
  - `sudo service samba restart`
 
-<h2 id="samba3">Samba 资料</h2>
+## Samba 资料
 
 - <http://www.lvtao.net/linux/555.html> 
 - <https://www.centos.bz/2011/07/centos5-install-samba-windows-linux-fileshare/> 

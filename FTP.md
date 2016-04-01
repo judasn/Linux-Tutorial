@@ -1,18 +1,7 @@
-<h1 id="ftp0">FTP（File Transfer Protocol）介绍</h1>
+# FTP（File Transfer Protocol）介绍
 
-------
 
-*   [FTP（File Transfer Protocol）介绍](#ftp0)
-    *   [FTP 安装](#ftp1)
-    *   [FTP 使用之前要点](#ftp2)
-    *   [FTP 服务器配置文件常用参数](#ftp3)
-    *   [vsftpd 的两种传输模式](#ftp4)
-    *   [vsftpd 的两种运行模式](#ftp5)
-    *   [FTP 资料](#ftp6)
-
-------
-
-<h2 id="ftp1">FTP 安装</h2>
+## FTP 安装
 
 - 查看是否已安装：
  - CentOS：`rpm -qa | grep vsftpd`
@@ -22,7 +11,7 @@
  - CentOS 6：`sudo yum install -y vsftpd`
  - Ubuntu：`sudo apt-get install -y vsftpd`
 
-<h2 id="ftp2">FTP 使用之前要点</h2>
+## FTP 使用之前要点
 
 - 关闭 CentOS 上的 SELinux 组件（Ubuntu 体系是没有这东西的）。
  - 查看 SELinux 开启状态：`sudo getenforce`
@@ -38,7 +27,7 @@
         - 命令：`sudo vim /etc/selinux/config`
         - 将：`SELINUX=enforcing` 改为 `SELINUX=disbaled`，配置好之后需要重启系统。
 
-<h2 id="ftp3">FTP 服务器配置文件常用参数</h2>
+## FTP 服务器配置文件常用参数
 
 - vsftpd 默认是支持使用 Linux 系统里的账号进行登录的（登录上去可以看到自己的 home 目录内容），权限跟 Linux 的账号权限一样。但是建议使用软件提供的虚拟账号管理体系功能，用虚拟账号登录。
 - 配置文件介绍（记得先备份）：`sudo vim /etc/vsftpd/vsftpd.conf`，比较旧的系统版本是：`vim /etc/vsftpd.conf`
@@ -60,13 +49,13 @@
 - 启动服务：
  - `service vsftpd restart`
 
-<h2 id="ftp4">vsftpd 的两种传输模式</h2>
+## vsftpd 的两种传输模式
 
 - 分为：主动模式（PORT）和被动模式（PASV）。这两个模式会涉及到一些端口问题，也就涉及到防火墙问题，所以要特别注意。主动模式比较简单，只要在防火墙上放开放开 21 和 20 端口即可。被动模式则要根据情况放开一个端口段。
  - ![vsftpd 的两种传输模式](images/FTP-a-1.jpg)
  - 上图箭头：xftp 新建连接默认都是勾选被动模式的，所以如果要使用主动模式，在该连接的属性中是要去掉勾选。
 
-<h2 id="ftp5">vsftpd 的两种运行模式</h2>
+## vsftpd 的两种运行模式
 
 - 分为：xinetd 模式和 standalone 模式
  - xinetd 模式：由 xinetd 作为 FTP 的守护进程，负责 21 端口的监听，一旦外部发起对 21 端口的连接，则调用 FTP 的主程序处理，连接完成后，则关闭 FTP 主程序，释放内存资源。好处是资源占用少，适合 FTP 连接数较少的场合。
@@ -91,7 +80,7 @@
             - Listen=YES（如果是注释掉则要打开注释）
     - 重启服务：`sudo service vsftpd restart`
         
-<h2 id="ftp6">FTP 资料</h2>
+## FTP 资料
 
 - <http://www.jikexueyuan.com/course/994.html>
 - <http://www.while0.com/36.html>

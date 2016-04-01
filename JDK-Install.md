@@ -1,4 +1,4 @@
-## JDK 安装
+# JDK 安装
 
 
 ## CentOS 下过程
@@ -17,17 +17,19 @@
 - 默认 CentOS 有安装 openJDK，建议先卸载掉
  - 检查 JDK 命令：`java -version`
  - 查询本地 JDK 安装程序情况； `rpm -qa|grep java`
-   - 我查询出来的结果如下：
-   ```
-   java-1.6.0-openjdk-1.6.0.38-1.13.10.0.el6_7.x86_64
-   java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64
-   tzdata-java-2015g-2.el6.noarch
-   ```
-   - 卸载上面三个文件（`--nodeps` 的作用：忽略依赖的检查）：
-   - `sudo rpm -e --nodeps java-1.6.0-openjdk-1.6.0.38-1.13.10.0.el6_7.x86_64`
-   - `sudo rpm -e --nodeps java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64`
-   - `sudo rpm -e --nodeps tzdata-java-2015g-2.el6.noarch`
+    - 我查询出来的结果如下：
+   
+    ```
+    java-1.6.0-openjdk-1.6.0.38-1.13.10.0.el6_7.x86_64
+    java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64
+    tzdata-java-2015g-2.el6.noarch
+    ```
 
+    - 卸载上面三个文件（`--nodeps` 的作用：忽略依赖的检查）：
+    - `sudo rpm -e --nodeps java-1.6.0-openjdk-1.6.0.38-1.13.10.0.el6_7.x86_64`
+    - `sudo rpm -e --nodeps java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64`
+    - `sudo rpm -e --nodeps tzdata-java-2015g-2.el6.noarch`
+    - 也可以一起卸载：`sudo rpm -e --nodeps java-1.6.0-openjdk-1.6.0.38-1.13.10.0.el6_7.x86_64 java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64 tzdata-java-2015g-2.el6.noarch`
 
 - JDK 1.8 安装
     - 我们以安装 `jdk-8u72-linux-x64.tar.gz` 为例

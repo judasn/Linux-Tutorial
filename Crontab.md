@@ -1,15 +1,7 @@
-<h1 id="crontab0">Crontab 介绍</h1>
+# Crontab 介绍
 
-------
 
-*   [Crontab 介绍](#crontab0)
-    *   [Crontab 安装](#crontab1)
-    *   [Crontab 服务器配置文件常用参数](#crontab2)
-    *   [Crontab 资料](#crontab3)
-
-------
-
-<h2 id="crontab1">Crontab 安装</h2>
+## Crontab 安装
 
 - 查看是否已安装：
  - CentOS：`rpm -qa | grep cron`
@@ -19,7 +11,7 @@
  - CentOS 6：`sudo yum install -y vixie-cron crontabs`
  - Ubuntu：`sudo apt-get install -y cron`
 
-<h2 id="crontab2">Crontab 服务器配置文件常用参数</h2>
+## Crontab 服务器配置文件常用参数
 
 - 配置文件介绍（记得先备份）：`sudo vim /etc/crontab`
  - 该配置格式解释：
@@ -35,7 +27,7 @@
     - 0,30 18-23 * * * service httpd restart    #每天 18:00 到 23：00 之间，每隔 30 分钟重启 apache（方法二）
 - 执行记录日志：`cd /var/log/cron`
 
-<h2 id="crontab3">Crontab 资料</h2>
+## Crontab 资料
 
 - <http://www.imooc.com/video/4498> 
 - <http://www.centoscn.com/image-text/config/2015/0901/6096.html> 

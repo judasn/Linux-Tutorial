@@ -1,15 +1,8 @@
-<h1 id="ntp0">NTP（Network Time Protocol）介绍</h1>
+## NTP（Network Time Protocol）介绍
 
-------
 
-*   [NTP（Network Time Protocol）介绍](#ntp0)
-    *   [NTP 安装](#ntp1)
-    *   [NTP 服务器配置文件常用参数](#ntp2)
-    *   [NTP 资料](#ntp3)
 
-------
-
-<h2 id="ntp1">NTP 安装</h2>
+## NTP 安装
 
 - 查看是否已安装：
  - CentOS：`rpm -qa | grep ntp-*`
@@ -19,7 +12,7 @@
  - CentOS 6：`sudo yum install -y ntp`
  - Ubuntu：`sudo apt-get install -y ntp`
 
-<h2 id="ntp2">NTP 服务器配置文件常用参数</h2>
+## NTP 服务器配置文件常用参数
 
 - 世界上可以校对时间节点：<http://www.pool.ntp.org/zh> 
 - 中国时间校对服务器节点：<http://www.pool.ntp.org/zone/cn> 
@@ -34,7 +27,7 @@
  - `sudo apt-get install -y sysv-rc-conf `
  - `sudo sysv-rc-conf ntpd on`
 
-<h2 id="ntp3">NTP 资料</h2>
+## NTP 资料
 
 - <http://www.jikexueyuan.com/course/1710.html> 
 - <http://www.pool.ntp.org/zh> 
