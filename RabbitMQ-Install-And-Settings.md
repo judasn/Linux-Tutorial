@@ -63,3 +63,5 @@
     - ![RabbitMQ-Add-User](images/RabbitMQ-Add-User-a-2.jpg)
 - 给添加的 Host 设置权限（如下图所示）：
     - ![RabbitMQ-Add-User](images/RabbitMQ-Add-User-a-3.gif)
+- 交换机绑定队列（如下图所示）：
+    - ![RabbitMQ-Bindings-Queue](images/RabbitMQ-Bindings-Queue-a-1.gif)
