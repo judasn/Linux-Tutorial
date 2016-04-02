@@ -47,6 +47,7 @@
 - [TeamCity 安装和配置](TeamCity-Install-And-Settings.md)
 - [Nginx 安装和配置](Nginx-Install-And-Settings.md)
 - [FastDFS 安装和配置](FastDFS-Install-And-Settings.md)
+- [RabbitMQ 安装和配置](RabbitMQ-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 
 
