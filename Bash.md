@@ -112,8 +112,8 @@
 - `du -sh /opt`，查看 opt 这个文件夹大小 （h 的意思 human-readable 用人类可读性较好方式显示，系统会自动调节单位，显示合适大小的单位）
 - `du -sh ./*`，查看当前目录下所有文件夹大小 （h 的意思 human-readable 用人类可读性较好方式显示，系统会自动调节单位，显示合适大小的单位）
 - `cat /etc/resolv.conf`，查看 DNS 设置
-- ``，
-- ``，
+- `cat /etc/group`，查看所有组
+- `cat /etc/passwd`，查看所有用户
 - ``，
 - ``，
 - ``，
