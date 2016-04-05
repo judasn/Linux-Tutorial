@@ -44,6 +44,14 @@
             - `sudo ln -s /usr/program/mysql/bin/mysql /usr/bin`
             - `sudo ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
 
+
+## 修改 root 账号密码
+
+- 默认安装情况下，root 的密码是空，所以为了方便我们可以设置一个密码，假设我设置为：123456
+- 终端下执行：`mysql -uroot`
+    - 现在进入了 mysql 命令行管理界面，输入：`SET PASSWORD = PASSWORD('123456');`
+
+
 ## 资料
 
 - <http://www.cnblogs.com/xiongpq/p/3384681.html>
