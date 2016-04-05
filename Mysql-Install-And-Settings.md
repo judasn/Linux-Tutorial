@@ -31,13 +31,13 @@
             - `sudo cp /usr/program/mysql-5.6.29/support-files/mysql.server  /etc/init.d/mysql`
             - `sudo chmod 755 /etc/init.d/mysql`
             - `sudo chkconfig mysql on`
-        - 初始化数据库：`sudo /usr/program/mysql/scripts/mysql_install_db --basedir=/usr/program/mysql --datadir=/usr/program/mysql/data --skip-name-resolve --user=mysql`
         - 复制一份配置文件： `sudo cp /usr/program/mysql-5.6.29/support-files/my-default.cnf /etc/my.cnf`
         - 删除安装的目录：`rm -rf /usr/program/mysql-5.6.29/`
         - 添加组和用户及安装目录权限
             - `sudo groupadd mysql` #添加组
             - `sudo useradd -g mysql mysql -s /bin/false` #创建用户mysql并加入到mysql组，不允许mysql用户直接登录系统
             - `sudo chown -R mysql:mysql /usr/program/mysql/data` #设置MySQL数据库目录权限
+        - 初始化数据库：`sudo /usr/program/mysql/scripts/mysql_install_db --basedir=/usr/program/mysql --datadir=/usr/program/mysql/data --skip-name-resolve --user=mysql`
         - 启动 Mysql 服务器：`service mysql start`
         - 查看是否已经启动了：`ps aux | grep mysql`
         - 常用命令软连接，才可以在终端直接使用：mysql 和 mysqladmin 命令
