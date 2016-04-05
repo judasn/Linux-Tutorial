@@ -102,7 +102,7 @@
 ## 差异
 
 - 我们现在增加系统变量在：/etc/profile 后，输入命令：source /etc/profile 之后，重启服务器发现刚刚的系统变量现在没效果。
-    - 解决办法：`vim ~/.zshrc`，在该配置文件里面增加一行：`source /etc/profile`，然后重启系统再试一下。
+    - 解决办法：`vim ~/.zshrc`，在该配置文件里面增加一行：`source /etc/profile`，然后刷新 zsh 的配置：`source ~/.zshrc`。
 
 
 ## 资料
