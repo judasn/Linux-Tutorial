@@ -44,6 +44,63 @@
             - `sudo ln -s /usr/program/mysql/bin/mysql /usr/bin`
             - `sudo ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
 
+
+## MySQL 主从复制
+
+- 假设有两台服务器，一台做主，一台做从
+    - MySQL 主信息：
+        - IP：**12.168.1.113**=
+        - 端口：**3306**
+    - MySQL 从信息：
+        - IP：**12.168.1.115**
+        - 端口：**3306**
+- 注意点
+	- 主 DB server 和从 DB server 数据库的版本一致
+	- 主 DB server 和从 DB server 数据库数据一致
+	- 主 DB server 开启二进制日志，主 DB server 和从 DB server 的 server_id 都必须唯一
+- 优先操作：
+    - 把主库的数据库复制到从库并导入
+- 主库操作步骤
+	- 创建一个目录：`mkdir -p /usr/program/mysql/data/log-bin`
+	- 主 DB 开启二进制日志功能：`vim /usr/program/mysql/my.cnf`，
+		- 添加一行：`log-bin = /usr/program/mysql/data/log-bin`
+        - 指定同步的数据库，如果不指定则同步全部数据库，其中 ssm 是我的数据库名：`binlog-do-db=ssm`
+    - 重启主库 MySQL 服务
+    - 进入 MySQL 命令行状态，执行 SQL 语句查询状态：`SHOW MASTER STATUS`
+        - 在显示的结果中，我们需要记录下 **File** 和 **Position** 值，等下从库配置有用。
+    - 设置授权用户 slave01 使用 123456 密码登录主库，这里 @ 后的 IP 为从库机子的 IP 地址，如果从库的机子有多个，我们需要多个这个 SQL 语句。
+
+    ``` SQL
+    grant replication slave on *.* to 'slave01'@'192.168.1.133' identified by '123456';
+    flush privileges;
+    ```
+
+- 从库操作步骤
+
+- 在进入 MySQL 的命令行状态下，输入下面 SQL：
+
+``` SQL
+CHANGE MASTER TO
+master_host='192.168.1.113',
+master_user='slave01',
+master_password='123456',
+master_port=3306,
+master_log_file='mysql3306-bin.000006',>>>这个值复制刚刚让你记录的值
+master_log_pos=1120;>>>这个值复制刚刚让你记录的值
+```
+
+- 执行该 SQL 语句，启动 slave 同步：`START SLAVE;`
+- 执行该 SQL 语句，查看从库机子同步状态：`SHOW SLAVE STATUS;`
+- 在查看结果中必须下面两个值都是 Yes 才表示配置成功：
+    - `Slave_IO_Running:Yes`
+    - `Slave_SQL_Running:Yes`
+- 如果你的 Slave_IO_Running 是 No， 那你可以检查从库下的错误日志：`cat /usr/program/mysql/data/mysql-error.log`
+    - 如果里面提示 uuid 错误，你可以编辑从库的这个配置文件：`vim /usr/program/mysql/data/auto.cnf`，把配置文件中的：server-uuid 值随便改一下，保证和主库是不一样的。
+
+
+
+
+
 ## 资料
 
 - <http://www.cnblogs.com/xiongpq/p/3384681.html>
