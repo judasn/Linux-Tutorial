@@ -52,9 +52,11 @@
 	- `ls -R`，显示出目录下以及其所有子目录的文件 / 文件夹（递归地方式，不显示隐藏的文件）
 	- `ls -a -R`，显示出目录下以及其所有子目录的文件 / 文件夹（递归地方式，显示隐藏的文件）
 	- `ls -l`，列出目录下所有文件的权限、所有者、文件大小、修改时间及名称（也就是显示详细信息，不显示隐藏文件）。显示出来的效果如下：
-		- -rwxr-xr-x. 1 root root 4096 3月 26 10:57，最前面的 **-** 表示这是一个普通文件
-		- lrwxrwxrwx. 1 root root 4096 3月 26 10:57，最前面的 **l** 表示这是一个链接文件，类似 Windows 的快捷方式
-		- drwxr-xr-x. 5 root root 4096 3月 26 10:57，最前面的 **d** 表示这是一个目录
+		``` nginx
+		-rwxr-xr-x. 1 root root 4096 3月 26 10:57，最前面的 **-** 表示这是一个普通文件
+		lrwxrwxrwx. 1 root root 4096 3月 26 10:57，最前面的 **l** 表示这是一个链接文件，类似 Windows 的快捷方式
+		drwxr-xr-x. 5 root root 4096 3月 26 10:57，最前面的 **d** 表示这是一个目录
+		```
 	- `ls -ld 目录名`，显示该目录的基本信息
 	- `ls -t`，依照文件最后修改时间的顺序列出文件名。
 	- `ls -F`，列出当前目录下的文件名及其类型。以 **/** 结尾表示为目录名，以 **\*** 结尾表示为可执行文件，以 **@** 结尾表示为符号连接
@@ -131,7 +133,7 @@
 		youmeek    ALL=(ALL)   ALL
 		```
 	- 另一种方法：
-		- 编辑系统用户的配置文件：`vim /etc/passwd`，找到 **root** 和 **youmeek** 各自开头的那一行，比如 root 是：*root:x:0:0:root:/root:/bin/zsh*，这个代表的含义为：*用户名:密码:UserId:GroupId:描述:家目录:登录使用的 shell*
+		- 编辑系统用户的配置文件：`vim /etc/passwd`，找到 **root** 和 **youmeek** 各自开头的那一行，比如 root 是：`root:x:0:0:root:/root:/bin/zsh`，这个代表的含义为：*用户名:密码:UserId:GroupId:描述:家目录:登录使用的 shell*
 		- 通过这两行对比，我们可以直接修改 youmeek 所在行的 UserId 值 和 GroupId 值，都改为 0。
 - `groupadd judasn`，添加一个名为 judasn 的用户组
 - `groupdel judasn`，删除一个名为 judasn 的用户组（前提：先删除组下面的所有用户）
