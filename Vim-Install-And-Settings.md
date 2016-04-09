@@ -95,6 +95,14 @@
     - `:10,31s/YouMeek/Judasng`，把第 10 行到 31 行之间所有 YouMeek 替换为 Judasn
 
 
+## Vim 配置
+
+- 我个人本地不使用 Vim 的，基本上都是在操作服务器的时候使用，所以这里推荐这个配置文件
+	- [vim-for-server](https://github.com/wklken/vim-for-server)
+	- 在假设你已经备份好你的 Vim 配置文件后，使用该配置文件：`curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc`
+	- 效果如下：
+		- ![vim-for-server](https://raw.githubusercontent.com/wklken/gallery/master/vim/vim-for-server.png)
+
 ## 资料
 
 - [vim几个小技巧（批量替换，列编辑）](http://blogread.cn/it/article/1010?f=sa)
