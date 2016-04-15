@@ -18,8 +18,9 @@
     - Mysql 5.6 下载：`wget http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.29.tar.gz` （大小：31 M）
     - Mysql 5.7 下载：`wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.11.tar.gz` （大小：47 M）
     - 我们这次安装以 5.6 为实例
+        - 进入下载目录：`cd /opt/setups`
         - 解压压缩包：`tar zxvf mysql-5.6.29.tar.gz`
-        - 移到解压包：`mv mysql-5.6.29/ /usr/program/`
+        - 移到解压包：`mv /opt/setups/mysql-5.6.29 /usr/program/`
         - 安装依赖包、编译包：`yum install -y make gcc-c++ cmake bison-devel  ncurses-devel`
         - 进入解压目录：`cd /usr/program/mysql-5.6.29/`
         - 生成安装目录：`mkdir -p /usr/program/mysql/data`
