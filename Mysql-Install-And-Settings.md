@@ -105,7 +105,7 @@
 		- 添加一行：`log-bin = /usr/program/mysql/data/mysql-bin`
         - 指定同步的数据库，如果不指定则同步全部数据库，其中 ssm 是我的数据库名：`binlog-do-db=ssm`
     - 重启主库 MySQL 服务
-    - 进入 MySQL 命令行状态，执行 SQL 语句查询状态：`SHOW MASTER STATUS`
+    - 进入 MySQL 命令行状态，执行 SQL 语句查询状态：`SHOW MASTER STATUS;`
         - 在显示的结果中，我们需要记录下 **File** 和 **Position** 值，等下从库配置有用。
     - 设置授权用户 slave01 使用 123456 密码登录主库，这里 @ 后的 IP 为从库机子的 IP 地址，如果从库的机子有多个，我们需要多个这个 SQL 语句。
 
