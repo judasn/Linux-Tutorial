@@ -39,7 +39,7 @@
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
 - [Maven 安装和配置](Maven-Install-And-Settings.md)
 - [Nexus 安装和配置](Nexus-Install-And-Settings.md)
-- [Mysql 安装和配置](Mysql-Install-And-Settings.md)
+- [MySQL 安装和配置](Mysql-Install-And-Settings.md)
 - [Redis 安装和配置](Redis-Install-And-Settings.md)
 - [Solr 安装和配置](Solr-Install-And-Settings.md)
 - [Jira 安装和配置](Jira-Install-And-Settings.md)

@@ -24,8 +24,11 @@
 - 启动服务：
  - `sudo service ntpd start`
 - 服务加到启动项
- - `sudo apt-get install -y sysv-rc-conf `
- - `sudo sysv-rc-conf ntpd on`
+	- CentOS 系统
+		- `sudo chkconfig ntpd on`
+	- Ubuntu 系统
+		- `sudo apt-get install -y sysv-rc-conf `
+		- `sudo sysv-rc-conf ntpd on`
 
 ## NTP 资料
 
