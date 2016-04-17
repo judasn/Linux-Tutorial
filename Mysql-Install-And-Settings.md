@@ -76,7 +76,7 @@
     /usr/program/mysql/mysql-test/suite/ndb_rpl/my.cnf
 	```
 	- 保留 **/etc/my.cnf** 和 **/usr/program/mysql/mysql-test/** 目录下配置文件，其他删除掉。
-
+	- 我整理的一个单机版配置说明：[my.cnf](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my.cnf)
 
 
 ## MySQL 主从复制
@@ -104,6 +104,7 @@
 	- 主 DB 开启二进制日志功能：`vim /etc/my.cnf`，
 		- 添加一行：`log-bin = /usr/program/mysql/data/mysql-bin`
         - 指定同步的数据库，如果不指定则同步全部数据库，其中 ssm 是我的数据库名：`binlog-do-db=ssm`
+    - 主库关掉慢查询记录，用 SQL 语句查看当前是否开启：`SHOW VARIABLES LIKE '%slow_query_log%';`，如果显示 OFF 则表示关闭，ON 表示开启
     - 重启主库 MySQL 服务
     - 进入 MySQL 命令行状态，执行 SQL 语句查询状态：`SHOW MASTER STATUS;`
         - 在显示的结果中，我们需要记录下 **File** 和 **Position** 值，等下从库配置有用。
@@ -119,24 +120,25 @@
 
 
 - 从库操作步骤
-- 测试从库机子是否能连上主库机子：`sudo mysql -h 192.168.1.105 -u slave01 -p`，必须要连上下面的操作才有意义。
-	- 由于不能排除是不是系统防火墙的问题，所以建议连不上临时关掉防火墙：`service iptables stop`
-	- 或是添加防火墙规则：
-        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT`
-        - 保存规则：`sudo service iptables save`
-        - 重启 iptables：`sudo service iptables restart`
-- 修改配置文件：`vim /etc/my.cnf`，把 server-id 改为跟主库不一样
-- 在进入 MySQL 的命令行状态下，输入下面 SQL：
+    - 从库开启慢查询记录，用 SQL 语句查看当前是否开启：`SHOW VARIABLES LIKE '%slow_query_log%';`，如果显示 OFF 则表示关闭，ON 表示开启。
+	- 测试从库机子是否能连上主库机子：`sudo mysql -h 192.168.1.105 -u slave01 -p`，必须要连上下面的操作才有意义。
+		- 由于不能排除是不是系统防火墙的问题，所以建议连不上临时关掉防火墙：`service iptables stop`
+		- 或是添加防火墙规则：
+	        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT`
+	        - 保存规则：`sudo service iptables save`
+	        - 重启 iptables：`sudo service iptables restart`
+	- 修改配置文件：`vim /etc/my.cnf`，把 server-id 改为跟主库不一样
+	- 在进入 MySQL 的命令行状态下，输入下面 SQL：
 
-``` SQL
-CHANGE MASTER TO
-master_host='192.168.1.113',
-master_user='slave01',
-master_password='123456',
-master_port=3306,
-master_log_file='mysql3306-bin.000006',>>>这个值复制刚刚让你记录的值
-master_log_pos=1120;>>>这个值复制刚刚让你记录的值
-```
+	``` SQL
+	CHANGE MASTER TO
+	master_host='192.168.1.113',
+	master_user='slave01',
+	master_password='123456',
+	master_port=3306,
+	master_log_file='mysql3306-bin.000006',>>>这个值复制刚刚让你记录的值
+	master_log_pos=1120;>>>这个值复制刚刚让你记录的值
+	```
 
 - 执行该 SQL 语句，启动 slave 同步：`START SLAVE;`
 - 执行该 SQL 语句，查看从库机子同步状态：`SHOW SLAVE STATUS;`
