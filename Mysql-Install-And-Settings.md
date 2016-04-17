@@ -148,8 +148,8 @@
     - `Slave_IO_Running:Yes`
         - 如果不是 Yes 也不是 No，而是 Connecting，那就表示从机连不上主库，需要你进一步排查连接问题。
     - `Slave_SQL_Running:Yes`
-- 如果你的 Slave_IO_Running 是 No， 那你可以检查从库下的错误日志：`cat /usr/program/mysql/data/mysql-error.log`
-    - 如果里面提示 uuid 错误，你可以编辑从库的这个配置文件：`vim /usr/program/mysql/data/auto.cnf`，把配置文件中的：server-uuid 值随便改一下，保证和主库是不一样的。
+- 如果你的 Slave_IO_Running 是 No，一般如果你是在虚拟机上测试的话，从库的虚拟机是从主库的虚拟机上复制过来的，那一般都会这样的，因为两台的 MySQL 的 UUID 值一样。你可以检查从库下的错误日志：`cat /usr/program/mysql/data/mysql-error.log`
+    - 如果里面提示 uuid 错误，你可以编辑从库的这个配置文件：`vim /usr/program/mysql/data/auto.cnf`，把配置文件中的：server-uuid 值随便改一下，保证和主库是不一样即可。
 
 
 
