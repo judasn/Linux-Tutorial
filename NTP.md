@@ -21,6 +21,12 @@
  - 该配置解释：
     - 标注 1 是默认内容，我们这里进行了注释。
     - 标注 2 是新增内容，表示使用中国时间校对服务器节点地址。
+    ``` nginx
+	server 0.asia.pool.ntp.org
+	server 1.asia.pool.ntp.org
+	server 2.asia.pool.ntp.org
+	server 3.asia.pool.ntp.org
+    ```
 - 启动服务：
  - `sudo service ntpd start`
 - 服务加到启动项
