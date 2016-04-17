@@ -14,7 +14,7 @@
 - `grep 'physical id' /proc/cpuinfo | sort -u | wc -l`，查看物理 CPU 个数
     - 结果：2
     - 物理 CPU：物理 CPU 也就是机器外面就能看到的一个个 CPU，每个物理 CPU 还带有单独的风扇
-- `grep 'core id' /proc/cpuinfo | sort -u | wc -l`，查看每个物理 CPU 的核心数量
+- `grep 'core id' /proc/cpuinfo | sort -u | wc -l`，查看每个物理 CPU 的核心数量，一般也叫做：逻辑 CPU 数量
     - 结果：6，因为每个物理 CPU 是 6，所有 2 个物理 CPU 的总核心数量应该是：12
     - 核心数：一个核心就是一个物理线程，英特尔有个超线程技术可以把一个物理线程模拟出两个线程来用，充分发挥 CPU 性能，意思是一个核心可以有多个线程。
 - `grep 'processor' /proc/cpuinfo | sort -u | wc -l`，查看 CPU 线程数
