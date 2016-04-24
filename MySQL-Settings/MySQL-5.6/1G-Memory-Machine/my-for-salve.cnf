@@ -39,7 +39,18 @@ log-error = /usr/program/mysql/data/mysql-error.log
 # （重点修改）表示是本机的序号为1,一般配合设置主从的时候一定要修改的地方
 server-id = 1
 
-
+# 从库特有的设置 start
+read_only = true
+# 从库不自动开启主从设置，需要使用命令：START SLAVE;
+skip-slave-start = true
+log-slave-updates = true
+relay-log = /usr/program/mysql/data/relay-bin
+# 单位秒
+slave-net-timeout = 60
+sync_master_info = 1
+sync_relay_log = 1
+sync_relay_log_info = 1
+# 从库特有的设置 end
 
 # back_log 值指出在 MySQL 暂时停止回答新请求之前的短时间内多少个请求可以被存在堆栈中。如果 MySQL 的连接数据达到 max_connections 时，新来的请求将会被存在堆栈中，以等待某一连接释放资源，该堆栈的数量即 back_log，如果等待连接的数量超过 back_log，将不被授予连接资源。
 # 另外，这值（back_log）限于您的操作系统对到来的 TCP/IP 连接的侦听队列的大小。你的操作系统在这个队列大小上有它自己的限制（可以检查你的 OS 文档找出这个变量的最大值），试图设定 back_log 高于你的操作系统的限制将是无效的。  
