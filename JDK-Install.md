@@ -53,6 +53,8 @@
         - 执行命令，刷新该配置（必备操作）：`source /etc/profile`
         - 检查是否使用了最新的 JDK：`java -version`
 
+
+
 ## 其他
 
 - JDK 历史版本下载地址整理（不间断更新）：
@@ -66,4 +68,7 @@
 ## 资料
 
  - <http://www.jikexueyuan.com/course/480_1.html?ss=1>
+ - <>
+ - <>
+ - <>
  
