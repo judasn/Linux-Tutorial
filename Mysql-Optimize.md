@@ -24,7 +24,7 @@
 	- id，该列表示当前结果序号，无特殊意义，不重要
 	- select_type，表示 SELECT 语句的类型，有下面几种
 		- SIMPLE，表示简单查询，其中不包括连接查询和子查询
-		- PRIMARY，表示主查询，或者是最外面的查询语句。比如你使用一个子查询语句，比如这条 SQL：EXPLAIN SELECT * FROM (SELECT `sys_user_id` FROM `sys_user` WHERE `sys_user_id` = 1) AS temp_table;
+		- PRIMARY，表示主查询，或者是最外面的查询语句。比如你使用一个子查询语句，比如这条 SQL：`EXPLAIN SELECT * FROM (SELECT sys_user_id FROM sys_user WHERE sys_user_id = 1) AS temp_table;`
 			- 这条 SQL 有两个结果，其中有一个结果的类型就是 PRIMARY
 		- UNION，使用 UNION 的SQL是这个类型
 		- DERIVED，在 SQL 中 From 后面子查询
@@ -40,8 +40,8 @@
 			- ref_or_null，该联接类型如同ref，但是添加了MySQL可以专门搜索包含NULL值的行。在解决子查询中经常使用该联接类型的优化。
 		- 性能较差：
 			- index_merge，该联接类型表示使用了索引合并优化方法。在这种情况下，key列包含了使用的索引的清单，key_len包含了使用的索引的最长的关键元素。
-			- unique_subquery，该类型替换了下面形式的IN子查询的ref: value IN (SELECT primary_key FROM single_table WHERE some_expr)。unique_subquery是一个索引查找函数,可以完全替换子查询,效率更高。
-			- index_subquery，该联接类型类似于unique_subquery。可以替换IN子查询,但只适合下列形式的子查询中的非唯一索引: value IN (SELECT key_column FROM single_table WHERE some_expr)
+			- unique_subquery，该类型替换了下面形式的IN子查询的ref: `value IN (SELECT primary_key FROM single_table WHERE some_expr)`。unique_subquery 是一个索引查找函数,可以完全替换子查询,效率更高。
+			- index_subquery，该联接类型类似于unique_subquery。可以替换IN子查询,但只适合下列形式的子查询中的非唯一索引: `value IN (SELECT key_column FROM single_table WHERE some_expr)`
 			- range，只检索给定范围的行,使用一个索引来选择行。
 			- index，该联接类型与ALL相同,除了只有索引树被扫描。这通常比ALL快,因为索引文件通常比数据文件小。
 		- 性能最差：
@@ -91,20 +91,20 @@
 - 插入数据时，影响插入速度的主要是索引、唯一性校验、一次插入的数据条数等。
 - 开发环境情况下的考虑：
 	- 开发场景中，如果需要初始化数据，导入数据等一些操作，而且是开发人员进行处理的，可以考虑在插入数据之前，先禁用整张表的索引，
-		- 禁用索引使用 SQL：ALTER TABLE table_name DISABLE KEYS;
-		- 当导入完数据之后，重新让MySQL创建索引，并开启索引：ALTER TABLE table_name ENABLE KEYS;
+		- 禁用索引使用 SQL：`ALTER TABLE table_name DISABLE KEYS;`
+		- 当导入完数据之后，重新让MySQL创建索引，并开启索引：`ALTER TABLE table_name ENABLE KEYS;`
 	- 如果表中有字段是有唯一性约束的，可以先禁用，然后在开启：
-		- 禁用唯一性检查的语句：SET UNIQUE_CHECKS = 0;
-		- 开启唯一性检查的语句：SET UNIQUE_CHECKS = 1;
+		- 禁用唯一性检查的语句：`SET UNIQUE_CHECKS = 0;`
+		- 开启唯一性检查的语句：`SET UNIQUE_CHECKS = 1;`
 	- 禁用外键检查（建议还是少量用外键，而是采用代码逻辑来处理）
 		- 插入数据之前执行禁止对外键的检查，数据插入完成后再恢复，可以提供插入速度。
-		- 禁用：SET foreign_key_checks = 0;
-		- 开启：SET foreign_key_checks = 1;
+		- 禁用：`SET foreign_key_checks = 0;`
+		- 开启：`SET foreign_key_checks = 1;`
 	- 使用批量插入数据
 	- 禁止自动提交
 		- 插入数据之前执行禁止事务的自动提交，数据插入完成后再恢复，可以提供插入速度。
-		- 禁用：SET autocommit = 0;
-		- 开启：SET autocommit = 1;
+		- 禁用：`SET autocommit = 0;`
+		- 开启：`SET autocommit = 1;`
 
 
 
