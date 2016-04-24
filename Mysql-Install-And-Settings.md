@@ -77,8 +77,7 @@
 	```
 	- 保留 **/etc/my.cnf** 和 **/usr/program/mysql/mysql-test/** 目录下配置文件，其他删除掉。
 	- 我整理的一个单机版配置说明（MySQL 5.6，适用于 1G 内存的服务器）：
-		- [my.cnf 查看版本](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my.md)
-		- [my.cnf 下载版本](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my.cnf)
+		- [my.cnf](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my-for-comprehensive.cnf)
 
 
 ## MySQL 主从复制
