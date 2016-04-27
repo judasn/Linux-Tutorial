@@ -51,6 +51,8 @@
 - [FastDFS 安装和配置](FastDFS-Install-And-Settings.md)
 - [FastDFS 结合 GraphicsMagick](FastDFS-Nginx-Lua-GraphicsMagick.md)
 - [RabbitMQ 安装和配置](RabbitMQ-Install-And-Settings.md)
+- [Openfire 安装和配置](Openfire-Install-And-Settings.md)
+- [Rap 安装和配置](Rap-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 
 
