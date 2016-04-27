@@ -1,7 +1,7 @@
-# Mysql 安装和配置
+# MySQL 安装和配置
 
 
-## Mysql 安装
+## MySQL 安装
 
 - Mysql 安装
     - 官网：<http://www.mysql.com/>
@@ -44,7 +44,10 @@
         - 常用命令软连接，才可以在终端直接使用：mysql 和 mysqladmin 命令
             - `sudo ln -s /usr/program/mysql/bin/mysql /usr/bin`
             - `sudo ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
-
+	- 开放防火墙端口：
+		- `sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT`
+		- `sudo service iptables save`
+		- `sudo service iptables restart`
 
 ## 修改 root 账号密码
 
@@ -63,21 +66,23 @@
 		- 重启 MySQL 服务：`service mysql restart`
 
 
-## Mysql 配置
+## MySQL 配置
 
 - 官网配置参数解释：<http://dev.mysql.com/doc/refman/5.6/en/mysqld-option-tables.html>
 - 找一下当前系统中有多少个 my.cnf 文件：`find / -name "my.cnf"`，我查到的结果：
-	``` nginx
-	/etc/my.cnf
-    /usr/program/mysql/my.cnf
-    /usr/program/mysql/mysql-test/suite/ndb/my.cnf
-    /usr/program/mysql/mysql-test/suite/ndb_big/my.cnf
-    .............
-    /usr/program/mysql/mysql-test/suite/ndb_rpl/my.cnf
-	```
-	- 保留 **/etc/my.cnf** 和 **/usr/program/mysql/mysql-test/** 目录下配置文件，其他删除掉。
-	- 我整理的一个单机版配置说明（MySQL 5.6，适用于 1G 内存的服务器）：
-		- [my.cnf](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my-for-comprehensive.cnf)
+
+``` nginx
+/etc/my.cnf
+/usr/program/mysql/my.cnf
+/usr/program/mysql/mysql-test/suite/ndb/my.cnf
+/usr/program/mysql/mysql-test/suite/ndb_big/my.cnf
+.............
+/usr/program/mysql/mysql-test/suite/ndb_rpl/my.cnf
+```
+	
+- 保留 **/etc/my.cnf** 和 **/usr/program/mysql/mysql-test/** 目录下配置文件，其他删除掉。
+- 我整理的一个单机版配置说明（MySQL 5.6，适用于 1G 内存的服务器）：
+	- [my.cnf](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my-for-comprehensive.cnf)
 
 
 ## MySQL 主从复制
