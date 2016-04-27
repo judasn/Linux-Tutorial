@@ -39,31 +39,16 @@
             - `sudo useradd -g mysql mysql -s /bin/false` #创建用户mysql并加入到mysql组，不允许mysql用户直接登录系统
             - `sudo chown -R mysql:mysql /usr/program/mysql/data` #设置MySQL数据库目录权限
         - 初始化数据库：`sudo /usr/program/mysql/scripts/mysql_install_db --basedir=/usr/program/mysql --datadir=/usr/program/mysql/data --skip-name-resolve --user=mysql`
-        - 启动 Mysql 服务器：`service mysql start`
-        - 查看是否已经启动了：`ps aux | grep mysql`
+		- 开放防火墙端口：
+			- `sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT`
+			- `sudo service iptables save`
+			- `sudo service iptables restart`
+		- 禁用 selinux
+			- 编辑配置文件：`vim /etc/selinux/config`
+			- 把 `SELINUX=enforcing` 改为 `SELINUX=disabled`
         - 常用命令软连接，才可以在终端直接使用：mysql 和 mysqladmin 命令
             - `sudo ln -s /usr/program/mysql/bin/mysql /usr/bin`
             - `sudo ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
-	- 开放防火墙端口：
-		- `sudo iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT`
-		- `sudo service iptables save`
-		- `sudo service iptables restart`
-
-## 修改 root 账号密码
-
-- 默认安装情况下，root 的密码是空，所以为了方便我们可以设置一个密码，假设我设置为：123456
-- 终端下执行：`mysql -uroot`
-    - 现在进入了 mysql 命令行管理界面，输入：`SET PASSWORD = PASSWORD('123456');`
-- 修改密码后，终端下执行：`mysql -uroot -p`
-    - 根据提示，输入密码进度 mysql 命令行状态。
-- 如果你在其他机子上连接该数据库机子报：**Access denied for user 'root'@'localhost' (using password: YES)**
-	- 解决办法：
-	- 在终端中执行：`service mysql stop`
-	- 在终端中执行：`/usr/program/mysql/bin/mysqld --skip-grant-tables`
-		- 此时 MySQL 服务会一直处于监听状态，你需要另起一个终端窗口来执行接下来的操作
-		- 在终端中执行：`mysql -u root mysql`
-		- 进入 MySQL 命令后执行：`UPDATE user SET Password=PASSWORD('填写你要的新密码') where USER='root';FLUSH PRIVILEGES;`
-		- 重启 MySQL 服务：`service mysql restart`
 
 
 ## MySQL 配置
@@ -79,10 +64,30 @@
 .............
 /usr/program/mysql/mysql-test/suite/ndb_rpl/my.cnf
 ```
-	
+
+
 - 保留 **/etc/my.cnf** 和 **/usr/program/mysql/mysql-test/** 目录下配置文件，其他删除掉。
 - 我整理的一个单机版配置说明（MySQL 5.6，适用于 1G 内存的服务器）：
 	- [my.cnf](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my-for-comprehensive.cnf)
+
+## 修改 root 账号密码
+
+- 启动 Mysql 服务器：`service mysql start`
+- 查看是否已经启动了：`ps aux | grep mysql`
+- 默认安装情况下，root 的密码是空，所以为了方便我们可以设置一个密码，假设我设置为：123456
+- 终端下执行：`mysql -uroot`
+    - 现在进入了 mysql 命令行管理界面，输入：`SET PASSWORD = PASSWORD('123456');`
+- 修改密码后，终端下执行：`mysql -uroot -p`
+    - 根据提示，输入密码进度 mysql 命令行状态。
+- 如果你在其他机子上连接该数据库机子报：**Access denied for user 'root'@'localhost' (using password: YES)**
+	- 解决办法：
+	- 在终端中执行：`service mysql stop`
+	- 在终端中执行：`/usr/program/mysql/bin/mysqld --skip-grant-tables`
+		- 此时 MySQL 服务会一直处于监听状态，你需要另起一个终端窗口来执行接下来的操作
+		- 在终端中执行：`mysql -u root mysql`
+		- 进入 MySQL 命令后执行：`UPDATE user SET Password=PASSWORD('填写你要的新密码') where USER='root';FLUSH PRIVILEGES;`
+		- 重启 MySQL 服务：`service mysql restart`
+
 
 
 ## MySQL 主从复制
