@@ -4,9 +4,8 @@
 ## 本机环境
 
 - 系统：CentOS 6.7 64 位
-- JDK 1.8 64 位
+- JDK 1.7 64 位
 - MySQL 5.6
-
 
 
 ## Openfire 说明
@@ -37,34 +36,38 @@
 
 ## 安装 Openfire
 
-- JDK 1.7 或以上，我这里使用 1.7
+- 要求：JDK 1.7 或以上，我这里使用 1.7
 - CentOS 系列（Red Hat、Fedora）官网推荐安装 RPM 文件，因为有一些相关环境他们帮我们考虑了
 - 安装命令：`rpm -ivh openfire-4.0.2-1.i386.rpm`
 - Openfire 默认给我们生成安装目录：**/opt/openfire**
 - 修改 JDK VM 参数：`vim /etc/sysconfig/openfire`，找到 23 行，打开 OPENFIRE_OPTS 删除这一行注释，分配多少 VM 你根据自己的机子来配置。
-- 数据库的 my.cnf 文件建议采用我 MySQL 文章中推荐的 my.cnf。
 - 初始化数据库：
+	- 请确保数据库是运行状态
 	- 默认的初始化数据库脚本在（其他数据库类型的脚本也在这个目录下）：**/opt/openfire/resources/database/openfire_mysql.sql**
 	- 进入 MySQL 命令行状态：`mysql -u root -p`
-		- 创建数据库：`create database `openfire` character set utf8;`
-	- 退出 MySQL 命令行模式，在终端命令状态下，执行：`sudo mysql -u root -p openfire < /opt/openfire/resources/database/openfire_mysql.sql`
+		- 创建数据库并授权：`create database `openfire` character set utf8;grant all privileges on openfire.* to 'root'@'%';flush privileges;`
+	- **退出** MySQL 命令行模式，**在终端命令状态下**，执行：`sudo mysql -u root -p openfire < /opt/openfire/resources/database/openfire_mysql.sql`
 - 先停掉防火墙：`service iptables stop`
 - 启动：`/etc/init.d/openfire start`
 - 查看进程：`ps aux | grep openfire`
 - 停止：`/etc/init.d/openfire stop`
 - 重启：`/etc/init.d/openfire restart`
-- 访问：`http://192.168.1.113:9090`
-
-
-- 数据库 URL 需要特别注意的是需要加入编码设置：jdbc:mysql://192.168.1.113:3306/openfire?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
-- 找到配置文件：conf/openfire.xml，连接mysql的地址改为： ?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
-
-
-如果连接不了数据库，可以看错误日志：`cat /opt/openfire/logs/error.log`
-
-
 
 
 ## 配置
 
+- 访问：`http://192.168.1.113:9090`
+- 开始向导配置 Openfire 具体步骤看下列一系列图：
+	- 需要注意的是：在配置数据库 URL 需要特别注意的是需要加入编码设置（你可以按我的这个链接来，但是 IP 和数据库名你自己修改）：
+		- `jdbc:mysql://192.168.1.113:3306/openfire?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8`
+	- 如果连接不了数据库，可以看错误日志：`cat /opt/openfire/logs/error.log`
+- ![设置](images/Openfire-Settings-a-1.jpg)
+- ![设置](images/Openfire-Settings-a-2.jpg)
+- ![设置](images/Openfire-Settings-a-3.jpg)
+- ![设置](images/Openfire-Settings-a-4.jpg)
+- ![设置](images/Openfire-Settings-a-5.jpg)
+- ![设置](images/Openfire-Settings-a-6.jpg)
+- ![设置](images/Openfire-Settings-a-7.jpg)
+- ![设置](images/Openfire-Settings-a-8.jpg)
+- ![设置](images/Openfire-Settings-a-9.jpg)
 
