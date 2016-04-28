@@ -56,7 +56,7 @@
 
 ## 配置
 
-- 访问：`http://192.168.1.113:9090`
+- 访问 Web 管理界面：`http://192.168.1.113:9090`
 - 开始向导配置 Openfire 具体步骤看下列一系列图：
 	- 需要注意的是：在配置数据库 URL 需要特别注意的是需要加入编码设置（你可以按我的这个链接来，但是 IP 和数据库名你自己修改）：
 		- `jdbc:mysql://192.168.1.113:3306/openfire?rewriteBatchedStatements=true&useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8`
@@ -71,3 +71,17 @@
 - ![设置](images/Openfire-Settings-a-8.jpg)
 - ![设置](images/Openfire-Settings-a-9.jpg)
 
+
+## 使用 Spark 客户端
+
+- Spark 是一个类似 QQ 的 IM 软件，只是功能比较简单。
+- 官网下载：<http://www.igniterealtime.org/downloads/index.jsp>
+- 官网 Windows 下有两个版本：
+	- **spark_2_7_7.exe** Offline installation, includes Java JRE (推荐安装这个，即使你有本机已经有了 JDK 环境) 
+	- **spark_2_7_7_online.exe** Online installation, does not include Java JRE
+- 安装完 Spark，启动软件，更玩 QQ 一样道理，具体看下图。你可以用 Spark 登录 Admin 账号。
+- ![设置](images/Openfire-Settings-a-11.jpg)
+- ![设置](images/Openfire-Settings-a-12.jpg)
+- 现在访问 Web 管理界面，给所有在线的会员发个消息，如果你的 Spark 可以收到消息，那就说明整个环境是通的。
+- ![设置](images/Openfire-Settings-a-10.jpg)
+- ![设置](images/Openfire-Settings-a-13.jpg)
