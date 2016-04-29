@@ -54,7 +54,7 @@
     - 改为：`exec "$PRGDIR"/"$EXECUTABLE" stop 10 -force`
     
     
-## Tomcat 7 优化
+## Tomcat 8 优化
 
 - Tomcat 6/7/8 的优化参数有点不一样，最好按下面的方式看一下官网这个文档是否还保留着这个参数
 - 启动tomcat，访问该地址，下面要讲解的一些配置信息，在该文档下都有说明的：
@@ -128,7 +128,7 @@
         />
         ```
         - 重点参数解释：
-            - protocol，Tomcat 8 设置 nio2 更好：org.apache.coyote.http11.Http11Nio2Protocol
+            - protocol，Tomcat 8 设置 nio2 更好：org.apache.coyote.http11.Http11Nio2Protocol（如果这个用不了，就用下面那个）
             - protocol，Tomcat 6、7 设置 nio 更好：org.apache.coyote.http11.Http11NioProtocol
             - enableLookups，禁用DNS查询
             - acceptCount，指定当所有可以使用的处理请求的线程数都被使用时，可以放到处理队列中的请求数，超过这个数的请求将不予处理，默认设置 100
