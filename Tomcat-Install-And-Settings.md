@@ -89,7 +89,7 @@
             maxThreads="500" 
             minSpareThreads="100" 
             prestartminSpareThreads = "true"
-            maxQueueSize = 100
+            maxQueueSize = "100"
 	    />
 	    ```
         - 重点参数解释：
