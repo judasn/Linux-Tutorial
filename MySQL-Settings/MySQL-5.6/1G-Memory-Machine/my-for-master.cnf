@@ -154,12 +154,11 @@ innodb_log_files_in_group = 3
 innodb_max_dirty_pages_pct = 90
 innodb_lock_wait_timeout = 120
 innodb_additional_mem_pool_size = 2M
-innodb_flush_method = O_DIRECT
 bulk_insert_buffer_size = 8M
 # 用于设置在 REPAIR TABLE 和 CREATE INDEX 创建索引或 ALTER TABLE 的过程中排序索引所分配的缓冲区大小，可设置范围：4MB~4GB，默认8MB，4G内存的服务器可以设置为32M~64M
 myisam_sort_buffer_size = 8M
 # 32位系统默认值是2147483648=2G，64位系统，默认值是9223372036854775807，单位是bytes.
-myisam_max_sort_file_size = 2147483648
+myisam_max_sort_file_size = 100G
 myisam_repair_threads = 1
 
 # 服务器关闭交互式连接前等待活动的秒数。单位秒
