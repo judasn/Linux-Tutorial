@@ -54,7 +54,7 @@
     - 改为：`exec "$PRGDIR"/"$EXECUTABLE" stop 10 -force`
     
     
-## Tomcat 7 优化
+## Tomcat 8 优化
 
 - Tomcat 6/7/8 的优化参数有点不一样，最好按下面的方式看一下官网这个文档是否还保留着这个参数
 - 启动tomcat，访问该地址，下面要讲解的一些配置信息，在该文档下都有说明的：
