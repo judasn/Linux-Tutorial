@@ -25,6 +25,7 @@
 - [Linux 下常用压缩文件的解压、压缩](File-Extract-Compress.md)
 - [Yum 下载安装包及对应依赖包](Off-line-Yum-Install.md)
 - [Zsh 入门](Zsh.md)
+- [nmon 系统性能监控工具](Nmon.md)
 - [SSH（Secure Shell）介绍](SSH.md)
 - [FTP（File Transfer Protocol）介绍](FTP.md)
 - [VPN（Virtual Private Network）介绍](VPN.md)
