@@ -103,7 +103,9 @@
 
 ## Nginx 配置
 
-## Nginx 在 1.8.1 版本下的默认配置（去掉注释）
+- Nginx 默认配置文件：`vim /usr/local/nginx/conf/nginx.conf`
+
+### Nginx 在 1.8.1 版本下的默认配置（去掉注释）
 
 ``` nginx
 worker_processes  1;
