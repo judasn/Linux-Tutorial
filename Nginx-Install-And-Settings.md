@@ -101,6 +101,104 @@
     - 如果访问不了，或是出现其他信息看下错误立即：`vim /var/log/nginx/error.log`
 
 
+## 把 Nginx 添加到系统服务中
+
+- 新建文件：`vim /etc/init.d/nginx`
+- 添加如下内容：
+
+``` nginx
+#!/bin/bash
+
+
+#nginx执行程序路径需要修改
+nginxd=/usr/local/nginx/sbin/nginx
+
+# nginx配置文件路径需要修改
+nginx_config=/usr/local/nginx/conf/nginx.conf
+
+# pid 地址需要修改
+nginx_pid=/var/local/nginx/nginx.pid
+
+
+RETVAL=0
+prog="nginx"
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+# Source networking configuration.
+. /etc/sysconfig/network
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+[ -x $nginxd ] || exit 0
+
+# Start nginx daemons functions.
+start() {
+if [ -e $nginx_pid ];then
+   echo "nginx already running...."
+   exit 1
+fi
+
+echo -n $"Starting $prog: "
+daemon $nginxd -c ${nginx_config}
+RETVAL=$?
+echo
+[ $RETVAL = 0 ] && touch /var/lock/subsys/nginx
+return $RETVAL
+}
+
+# Stop nginx daemons functions.
+# pid 地址需要修改
+stop() {
+	echo -n $"Stopping $prog: "
+	killproc $nginxd
+	RETVAL=$?
+	echo
+	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/nginx /var/local/nginx/nginx.pid
+}
+
+# reload nginx service functions.
+reload() {
+	echo -n $"Reloading $prog: "
+	#kill -HUP `cat ${nginx_pid}`
+	killproc $nginxd -HUP
+	RETVAL=$?
+	echo
+}
+
+# See how we were called.
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	reload)
+		reload
+		;;
+	restart)
+		stop
+		start
+		;;
+	status)
+		status $prog
+		RETVAL=$?
+		;;
+	*)
+
+	echo $"Usage: $prog {start|stop|restart|reload|status|help}"
+	exit 1
+
+esac
+exit $RETVAL
+```
+
+- 修改权限：`chmod 755 /etc/init.d/nginx`
+- 启动服务：`service nginx start`
+- 停止服务：`service nginx stop`
+- 重启服务：`service nginx restart`
+
+
 ## Nginx 配置
 
 - Nginx 默认配置文件：`vim /usr/local/nginx/conf/nginx.conf`
@@ -358,25 +456,11 @@ limit_conn slimits 5;
 - [nginx实现简体繁体字互转以及中文转拼音](https://www.ttlsa.com/nginx/nginx-modules-ngx_set_cconv/)
 - [nginx记录分析网站响应慢的请求(ngx_http_log_request_speed)](https://www.ttlsa.com/nginx/nginx-modules-ngx_http_log_request_speed/)
 - [nginx空白图片(empty_gif模块)](https://www.ttlsa.com/nginx/nginx-modules-empty_gif/)
-- []()
-- []()
-- []()
-- []()
-- []()
-- []()
-- []()
 
 
 
 ## 资料
 
 - <https://help.aliyun.com/knowledge_detail/5974693.html?spm=5176.788314853.2.18.s4z1ra>
-- <>
-- <>
-- <>
-- <>
-- <>
-- <>
-- <>
-- <>
+- <http://www.ydcss.com/archives/466>
 

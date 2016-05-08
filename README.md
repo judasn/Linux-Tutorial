@@ -2,11 +2,12 @@
 
 ## 初衷(Original Intention)
 
-- 本系列历时半年之久，初稿预计 2016-04 期间可以结束，所有有些文章是空白或是不完善的。感谢自己坚持下来了。
 - 整理下自己所学
 - 带动更多的人进入 Linux 世界，特别是做 Java 开发的人
-- **学得越多越是明白一个人的力量是不够的，希望你能一起参与，真心希望！！！（鞠躬）**
 - Github 项目地址，欢迎 `Fork`、`Star`：<https://github.com/judasn/Linux-Tutorial>
+- 文章中用到的一些安装包归纳整理：<http://pan.baidu.com/s/1skAwrFn>
+- **学得越多越是明白一个人的力量是不够的，我只是起了一个引子，希望你能一起参与，真心希望！！！（鞠躬）**
+
 
 ## 目录(Contents)
 
@@ -61,8 +62,8 @@
 ## 下一步(Next)
 
 - Apache 安装和配置
-- Keepalived 安装和配置
-- LVS 安装和配置
+- LVS + Keepalived 高可用
+- MySQL + Keepalived 高可用
 - Zookeeper 安装和配置
 - ActiveMQ 服务安装和配置
 - GitLab 安装和配置
@@ -81,7 +82,7 @@
 - 欢迎捐赠 ^_^：<http://www.youmeek.com/donate>
 
 
-## Gtihub 协同视频教程(Participate)
+## Github 协同视频教程(Participate)
 
 - 如果您不会使用 Git 或是 Github 也没关系，请认真学习下面视频教程：
 - Judas.n 录制
