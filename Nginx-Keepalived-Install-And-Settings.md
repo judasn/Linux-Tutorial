@@ -92,6 +92,7 @@
 	- 健康监测脚本（我个人放在：/opt/bash 目录下）：[nginx_check.sh](Keepalived-Settings/nginx_check.sh)
 	- 健康监测脚本添加执行权限：`chmod 755 /opt/bash/nginx_check.sh`
 	- 运行监测脚本，看下是否有问题：`sh /opt/bash/nginx_check.sh`，如果没有报错，则表示改脚本没有问题
+		- 这个脚本很重要，如果脚本没法用，在启用 Keepalived 的时候可能会报：`Keepalived_vrrp[5684]: pid 5959 exited with status 1`
 	- nginx 配置（两台一样配置）：
 	
 	``` nginx
@@ -221,7 +222,12 @@
 		- 重启 Keepalived 服务：`service keepalived restart`
 		- 如果第一台机重新接管了，则表示成功
 - 可以优化的地方，改为双主热备，监控脚本上带有自启动相关细节，后续再进行。
-
+- 日志中常用的几句话解释：
+	- `Entering to MASTER STATE`，变成 Master 状态
+		- `Netlink reflector reports IP 192.168.1.50 added`，一般变为 Master 状态，都要重新加入虚拟 IP，一般叫法叫做：虚拟 IP 重新漂移到 Master 机子上
+	- `Entering BACKUP STATE`，变成 Backup 状态
+		- `Netlink reflector reports IP 192.168.1.50 removed`，一般变为 Backup 状态，都要移出虚拟 IP，一般叫法叫做：虚拟 IP 重新漂移到 Master 机子上
+	- `VRRP_Script(check_nginx) succeeded`，监控脚本执行成功
 
 
 ## 资料
