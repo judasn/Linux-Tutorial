@@ -54,6 +54,7 @@
 - [RabbitMQ 安装和配置](RabbitMQ-Install-And-Settings.md)
 - [Openfire 安装和配置](Openfire-Install-And-Settings.md)
 - [Rap 安装和配置](Rap-Install-And-Settings.md)
+- [Nginx + Keepalived 高可用](Rap-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 
 
@@ -64,7 +65,6 @@
 - LVS 安装和配置
 - Zookeeper 安装和配置
 - ActiveMQ 服务安装和配置
-- RabbitMQ 服务安装和配置
 - GitLab 安装和配置
 - Zabbix 安装和配置
 - Nagios 安装和配置
