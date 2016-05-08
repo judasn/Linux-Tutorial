@@ -27,29 +27,16 @@
 
 ## Tomcat 8 配置
 
-- 设置 Tomcat 环境变量：
-    - `sudo vim /etc/profile`
-    - 最文件最尾巴添加下面内容：
-    
-    ``` ini
+- 设置 Tomcat 相关变量：
+    - `sudo vim /usr/program/tomcat8/bin/catalina.sh`
+	- 在配置文件的可编辑内容最上面（98 行开始），加上如下内容（具体参数根据你服务器情况自行修改）：
+	``` ini
+	JAVA_HOME=/usr/program/jdk1.8.0_72
     CATALINA_HOME=/usr/program/tomcat8
-    export CATALINA_HOME
-    
-    # 下面参数根据自己机子内存进行配置
-    # CATALINA_OPTS 只配置给 Tomcat 的 VM
-    # JAVA_OPTS 配置给所有调用 Java 的程序的 VM
-    # 有 CATALINA_OPTS 的时候 Tomcat 优先读这个
-    # 其中：-server 表示启用 jdk 的 server 版，一定要作为第一个参数，在多个 CPU 时性能佳;  
     CATALINA_OPTS="-server -Xms528m -Xmx528m -XX:PermSize=256m -XX:MaxPermSize=358m"
-    export CATALINA_OPTS
-    
-    # 设置生成的 PID 位置
     CATALINA_PID=$CATALINA_HOME/catalina.pid
-    export CATALINA_PID
-    ```
-
-    - 刷新变量配置：`source /etc/profile`
-- 如果使用 `shutdown.sh` 无法停止 tomcat，可以修改其配置：`vim /usr/program/tomcat8/bin/shutdown.sh`
+	```
+- 如果使用 `shutdown.sh` 还无法停止 tomcat，可以修改其配置：`vim /usr/program/tomcat8/bin/shutdown.sh`
     - 把最尾巴这一行：`exec "$PRGDIR"/"$EXECUTABLE" stop "$@"`
     - 改为：`exec "$PRGDIR"/"$EXECUTABLE" stop 10 -force`
     
@@ -192,3 +179,4 @@
 - <http://ihuangweiwei.iteye.com/blog/1233941>
 - <http://www.cnblogs.com/ggjucheng/archive/2013/04/16/3024731.html>
 - <https://tomcat.apache.org/tomcat-8.0-doc/config/http.html#Connector_Comparison>
+- <http://www.apelearn.com/study_v2/chapter23.html>

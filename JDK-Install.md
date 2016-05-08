@@ -41,6 +41,7 @@
         - 编辑配置文件：`sudo vim /etc/profile`
         - 在该文件的最尾巴，添加下面内容：
         ```
+        # JDK
         JAVA_HOME=/usr/program/jdk1.8.0_72
         JRE_HOME=$JAVA_HOME/jre
         PATH=$PATH:$JAVA_HOME/bin
