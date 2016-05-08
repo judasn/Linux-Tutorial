@@ -23,13 +23,16 @@
 	- JDK：**8u72**
 	- Tomcat：**8.0.32**
 - 部署环境：
-	- VIP：192.168.1.50
-	- 第一台主机：Nginx 1 + Keepalived 1 + Tomcat 1 == 192.168.1.120（Master）
-	- 第二台主机：Nginx 2 + Keepalived 2 + Tomcat 2 == 192.168.1.121（Backup）
-- 两台机子进行时间校准：[NTP（Network Time Protocol）介绍](NTP.md)
-- 第一台主机部署（第二台主机也是按着这样完全配置）：
+	- 虚拟 IP（VIP）：192.168.1.50
+	- 第一台主机：Nginx 1 + Keepalived 1 == 192.168.1.120（Master）
+	- 第二台主机：Nginx 2 + Keepalived 2 == 192.168.1.121（Backup）
+	- 第三台主机：Tomcat 1 == 192.168.1.122（Web 1）
+	- 第四台主机：Tomcat 2 == 192.168.1.123（Web 2）
+- 所有机子进行时间校准：[NTP（Network Time Protocol）介绍](NTP.md)
+- 第三、第四台主机部署：
 	- JDK 的安装：[JDK 安装](JDK-Install.md)
 	- Tomcat 的安装：[Tomcat 安装和配置、优化](Tomcat-Install-And-Settings.md)
+- 第一台主机部署（第二台主机也是按着这样完全配置）：
 	- Nginx 的安装：[Nginx 安装和配置](Nginx-Install-And-Settings.md)
 	- 添加虚拟 IP：
 		- 复制一个网卡信息：`sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0:0`
@@ -87,8 +90,8 @@
 		- 启动服务：`service keepalived start`
 		- 加入随机启动：`chkconfig keepalived on`
 - 第一台主机配置：
-	- ``
-	- ``
+	- 健康监测脚本：``
+	- Keepalived 配置文件编辑：``
 	- ``
 	- ``
 	- ``
@@ -98,6 +101,16 @@
 	- ``
 - 第二台主机配置：
 
+
+### 高可用测试
+
+- 模拟 Keepalived 挂掉
+	- 关闭 Master 主机的 Keepalived，查看 Master 和 Backup 两台主机的对应日志：`cat /var/log/messages`
+	- 重新开启 Master 主机的 Keepalived，查看 Master 和 Backup 两台主机的对应日志：`cat /var/log/messages`
+- 模拟 Nginx 挂掉
+	- 关闭 Master 主机的 Nginx，查看 Master 和 Backup 两台主机的对应日志：`cat /var/log/messages`
+	- 重新开启 Master 主机的 Nginx，查看 Master 和 Backup 两台主机的对应日志：`cat /var/log/messages`
+- 完善脚本，增加 Nginx 挂掉后自动重启脚本
 
 
 
