@@ -54,7 +54,7 @@
 - [RabbitMQ 安装和配置](RabbitMQ-Install-And-Settings.md)
 - [Openfire 安装和配置](Openfire-Install-And-Settings.md)
 - [Rap 安装和配置](Rap-Install-And-Settings.md)
-- [Nginx + Keepalived 高可用](Rap-Install-And-Settings.md)
+- [Nginx + Keepalived 高可用](Nginx-Keepalived-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 
 
