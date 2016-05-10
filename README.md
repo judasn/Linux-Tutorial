@@ -43,6 +43,7 @@
 - [Maven 安装和配置](Maven-Install-And-Settings.md)
 - [Nexus 安装和配置](Nexus-Install-And-Settings.md)
 - [MySQL 安装和配置](Mysql-Install-And-Settings.md)
+- [Mysql 优化](Mysql-Optimize.md)
 - [MySQL 教程](Mysql-Tutorial.md)
 - [Redis 安装和配置](Redis-Install-And-Settings.md)
 - [Solr 安装和配置](Solr-Install-And-Settings.md)
