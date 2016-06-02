@@ -80,6 +80,7 @@
 
 - Email：judas.n@qq.com（常用） or admin@youmeek.com（备用）
 - Blog：<http://code.YouMeek.com>
+- QQ 群交流，入群请看：<https://github.com/judasn/IntelliJ-IDEA-Java-Conversation>
 - 欢迎捐赠 ^_^：<http://www.youmeek.com/donate>
 
 
