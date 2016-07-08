@@ -7,7 +7,7 @@
 - Github 项目地址，欢迎 `Fork`、`Star`：<https://github.com/judasn/Linux-Tutorial>
 - 文章中用到的一些安装包归纳整理：<http://pan.baidu.com/s/1skAwrFn>
 - **学得越多越是明白一个人的力量是不够的，我只是起了一个引子，希望你能一起参与，真心希望！！！（鞠躬）**
-
+- 2016-06，这段期间自己在写一个项目，教程暂时无法继续更新，后面写好项目会再继续完善。
 
 ## 目录(Contents)
 
