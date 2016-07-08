@@ -18,6 +18,7 @@
 ```
 
 - 安装下载的 rpm 文件：`sudo rpm -ivh *.rpm`
+- 利用 yum 安装 rpm 文件，并自动满足依赖的 rpm 文件：`sudo yum localinstall *.rpm`
 
 
 ## 资料
