@@ -12,6 +12,10 @@
 		- `rpm -qa | grep jdk`，查看 jdk 是否被安装
 	- 卸载
 		- `rpm -e jdk`，卸载 jdk（一般卸载的时候都要先用 rpm -qa 看下整个软件的全名）
+- 查看某个配置文件，排除掉里面以 # 开头的注释内容：
+    - `grep '^[^#]' /etc/openvpn/server.conf`
+- 查看某个配置文件，排除掉里面以 # 开头和 ; 开头的注释内容：
+    - `grep '^[^#;]' /etc/openvpn/server.conf`
 
 ## 资料
 
