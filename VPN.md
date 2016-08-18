@@ -210,9 +210,7 @@ push "dhcp-option DOMAIN-SEARCH ec2.drawbrid.ge"
 ### 配置内核和防火墙，开启nat功能，启动服务
 
 - 开启路由转发功能
-    - 修改配置信息该值改为 1：
-        - `net.ipv4.ip_forward=1` # 默认是注释掉的，要取消注释，也有出现是没有注释，但是默认是0：`net.ipv4.ip_forward=0`
-        - 其他方式更改值：`sed -i '/net.ipv4.ip_forward/s/0/1/' /etc/sysctl.conf`
+    - `sed -i '/net.ipv4.ip_forward/s/0/1/' /etc/sysctl.conf`
     - 刷新配置：`sudo sysctl -p`
 
 辨别你的 VPS 是属于那种虚拟方式，主流有：Xen KVM OpenVZ，方法：
@@ -226,12 +224,11 @@ push "dhcp-option DOMAIN-SEARCH ec2.drawbrid.ge"
 - 设置IP转发，若你的 VPS 虚拟方案是：Xen 或 KVM的请输入：（eth0要根据具体的网卡标示来，可以通过ifconfig查看），其中：10.192.170.0/16 表示客户端连接上去后从这个区间中分配给客户端的IP地址
     - `iptables -t nat -A POSTROUTING -s 10.192.170.0/16 -o eth0 -j MASQUERADE`
 
-- 若你的 VPS 虚拟方案是：OpenVZ 的请输入：（45.32.90.12是你VPS的IP）
-    - `iptables -t nat -A POSTROUTING -s 10.192.170.0/16 -j SNAT --to-source 45.32.90.12`
+- 若你的 VPS 虚拟方案是：OpenVZ 的请输入：（45.32.90.22是你VPS的IP）
+    - `iptables -t nat -A POSTROUTING -s 10.192.170.0/16 -j SNAT --to-source 45.32.90.22`
 - 保存防火墙配置
     - `service iptables save`
     - `service iptables restart`
-    - `chkconfig iptables on`
 
  
 ### 启动openvpn并设置为开机启动
@@ -262,7 +259,7 @@ http://code.google.com/p/tunnelblick/
 client        #这个client不是自定义名称 不能更改
 dev tun       #要与前面server.conf中的配置一致。
 proto udp              #要与前面server.conf中的配置一致。
-remote 45.32.90.12 1194    #将45.32.90.12替换为你VPS的IP，端口也与前面的server.conf中配置一致。
+remote 45.32.90.22 1194    #将45.32.90.22替换为你VPS的IP，端口也与前面的server.conf中配置一致。
 resolv-retry infinite
 nobind
 persist-key
