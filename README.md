@@ -58,6 +58,7 @@
 - [Rap 安装和配置](Rap-Install-And-Settings.md)
 - [Nginx + Keepalived 高可用](Nginx-Keepalived-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
+- [Shadowsocks 安装和配置](http://code.youmeek.com/2016/08/19/2016/08/VPS/)
 
 
 ## 下一步(Next)
@@ -71,7 +72,6 @@
 - Zabbix 安装和配置
 - Nagios 安装和配置
 - Docker 安装和配置
-- ShadowSocks 安装和配置
 - Tmux 安装和配置
 - sed 学习
 - 常用脚本
