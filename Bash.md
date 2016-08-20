@@ -104,7 +104,7 @@
 	- `find /opt -type d -iname .oh-my-zsh`，其中 /opt 代表目录名，-type d 代表只找目录，.oh-my-zsh 代表搜索的是隐藏文件夹名字为 oh-my-zsh 的
 	- `find . -name "lin*" -execls -l{}\;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中 -exec 和 {}\; 都是固定格式
 - `cat /etc/resolv.conf`，查看 DNS 设置
-- ``，
+- `netstat -tlunp`，查看当前运行的服务
 - ``，
 - ``，
 - ``，
