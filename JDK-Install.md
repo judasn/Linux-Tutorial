@@ -62,6 +62,8 @@
     - **JDK 9**：<https://jdk9.java.net/download/>
     - **JDK 8**：<http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>
     - **JDK 7**：<http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html>
+        - JDK 7 - 64 位：`wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz`
+        - JDK 7 - 32 位：`wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-i586.tar.gz`
     - **JDK 6**：<http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html>
 
 
