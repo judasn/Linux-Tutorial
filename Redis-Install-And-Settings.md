@@ -94,6 +94,12 @@ hz 10
 aof-rewrite-incremental-fsync yes
 ```
 
+## 设置 Redis 请求密码
+
+- 打开 `vim /usr/program/redis-3.0.7/redis.conf` 配置文件，找到默认是被注释的这一行：`# requirepass foobared`
+- 去掉注释，把 `foobared` 改为你想要设置的密码，比如我打算设置为：123456，所以我改为：`requirepass 123456`
+- 修改之后重启下服务
+- 有了密码之后，进入客户端，就得这样访问：`redis-cli -h 127.0.0.1 -p 6379 -a 123456 `
 
 ## Redis 常用命令
 
