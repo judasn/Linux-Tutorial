@@ -107,18 +107,10 @@
 	- `du -hm --max-depth=2 | sort -nr | head -12`，找出系统中占用容量最大的前 12 个目录
 - `cat /etc/resolv.conf`，查看 DNS 设置
 - `netstat -tlunp`，查看当前运行的服务
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
+- `env`，查看所有系统变量
+- `export`，查看所有系统变量
+- `echo $JAVA_HOME`，查看指定系统变量的值，这里查看的是自己配置的 JAVA_HOME。
+- `unset $JAVA_HOME`，删除指定的环境变量
 
 
 ## 用户、权限-相关命令
@@ -171,13 +163,6 @@
 - `umount /newDir/`，卸载挂载，用目录名
 	- 如果这样卸载不了可以使用：`umount -l /newDir/`
 - `umount /dev/sdb5`，卸载挂载，用分区名
-
-
-
-
-
-
-
 
 
 
