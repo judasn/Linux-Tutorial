@@ -13,7 +13,7 @@
 
 ## Mycat 安装
 
-- 官网：<http://mycat.io/>
+- 官网（页头有一个 PDF 要记得下载）：<http://mycat.io/>
 - 官网下载（官网下载地址很乱，如果哪天右边这个地址不行了，到官网加群问下吧）：<http://dl.mycat.io/>
 - 项目 Github：<https://github.com/MyCATApache/Mycat-Server>
 - 此时（20170122） 最新稳定版本为：**1.6**，下载下来的文件名称：**Mycat-server-1.6-RELEASE-20161028204710-linux.tar.gz**
@@ -35,7 +35,7 @@ export PATH=$PATH:$MYCAT_HOME/bin
 	- 刷新配置：`source /etc/profile`
 	- 到这里就安装好了，但是先不启动，需要先去配置相应的配置文件。
 	
-## MySQL 配置
+## Mycat 配置
 
 - 使用 Mycat 这几个配置文件必定会改动到。这一个文件所代表的含义几句话说不了，还请你自己看下官网的文档。
 	- `rule.xml`，设置分片规则。
@@ -52,7 +52,6 @@ export PATH=$PATH:$MYCAT_HOME/bin
 		- 如果只是临时测试，可以临时关掉防火墙：`service iptables stop`
 		- 不然就添加防火墙规则：
 	        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 8066 -j ACCEPT`
-	        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 9066 -j ACCEPT`
 	        - 保存规则：`sudo service iptables save`
 	        - 重启 iptables：`sudo service iptables restart`
 - 启动/停止/重启
@@ -66,8 +65,8 @@ export PATH=$PATH:$MYCAT_HOME/bin
 	- 连接 Mycat 的过程跟连接普通的 MySQL 表面上是没啥区别的，使用的命令都是一个样。但是需要注意的是，很容易出问题。对连接客户端有各种意外，目前我做了总结：
 	- 连接命令：`mysql -h192.168.1.112 -uroot -p -P8066`，然后输入 mycat 的 root 用户密码（在上面介绍的 server.xml 中配置的）
 	- **不建议** 的连接方式：
-		- SQLyog 软件，我这边是报：find no Route:select * from `youmeek_nav`.`nav_url` limit 0, 1000
-		- Windows 系统下使用 cmd 去连接，我这边是报：ERROR 1105 (HY000): Unknown character set: 'gbk'
+		- SQLyog 软件，我这边是报：*find no Route:select * from `youmeek_nav`.`nav_url` limit 0, 1000*
+		- Windows 系统下使用 cmd 去连接，我这边是报：*ERROR 1105 (HY000): Unknown character set: 'gbk'*
 		- MySQL-Front 软件，没用过，但是别人说是有兼容性问题
 	- **建议** 的连接方式：
 		- Navicat for mysql 软件
