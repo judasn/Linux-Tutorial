@@ -47,3 +47,4 @@
 - [Nginx + Keepalived 高可用](Nginx-Keepalived-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 - [Shadowsocks 安装和配置](http://code.youmeek.com/2016/08/19/2016/08/VPS/)
+- [Mycat 安装和配置](Mycat-Install-And-Settings.md)
