@@ -48,7 +48,7 @@ export PATH=$PATH:$MYCAT_HOME/bin
     <dataNode name="dn3" dataHost="localhost1" database="db3" />
 ```
 - 假设你上面的配置文件都配置好了：
-	- 开放 8066、9066 两个端口
+	- 开放 8066 端口
 		- 如果只是临时测试，可以临时关掉防火墙：`service iptables stop`
 		- 不然就添加防火墙规则：
 	        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 8066 -j ACCEPT`
