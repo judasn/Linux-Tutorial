@@ -13,7 +13,7 @@
 
 ## Mycat 安装
 
-- 官网（页头有一个 PDF 要记得下载）：<http://mycat.io/>
+- 官网（页头有一个 PDF 要记得下载，这本资料写得很好）：<http://mycat.io/>
 - 官网下载（官网下载地址很乱，如果哪天右边这个地址不行了，到官网加群问下吧）：<http://dl.mycat.io/>
 - 项目 Github：<https://github.com/MyCATApache/Mycat-Server>
 - 此时（20170122） 最新稳定版本为：**1.6**，下载下来的文件名称：**Mycat-server-1.6-RELEASE-20161028204710-linux.tar.gz**
