@@ -82,10 +82,11 @@
 - 如果你在其他机子上连接该数据库机子报：**Access denied for user 'root'@'localhost' (using password: YES)**
 	- 解决办法：
 	- 在终端中执行：`service mysql stop`
-	- 在终端中执行：`/usr/program/mysql/bin/mysqld --skip-grant-tables`
+	- 在终端中执行（前面添加的 Linux 用户 mysql 必须有存在）：`/usr/program/mysql/bin/mysqld --skip-grant-tables --user=mysql`
 		- 此时 MySQL 服务会一直处于监听状态，你需要另起一个终端窗口来执行接下来的操作
 		- 在终端中执行：`mysql -u root mysql`
 		- 进入 MySQL 命令后执行：`UPDATE user SET Password=PASSWORD('填写你要的新密码') where USER='root';FLUSH PRIVILEGES;`
+		- 先停止 MySQL 服务，让另外一个终端停止：`service mysql stop`
 		- 重启 MySQL 服务：`service mysql restart`
 
 
