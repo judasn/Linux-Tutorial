@@ -32,7 +32,7 @@ default-storage-engine = InnoDB
 socket = /usr/program/mysql/data/mysql.sock
 pid-file = /usr/program/mysql/data/mysql.pid
 
-collation-server = utf8_unicode_ci
+collation-server = utf8_general_ci
 init_connect = 'SET NAMES utf8'
 character-set-server = utf8
 basedir = /usr/program/mysql
