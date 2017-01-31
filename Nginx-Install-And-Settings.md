@@ -206,6 +206,7 @@ exit $RETVAL
 ### Nginx 在 1.8.1 版本下的默认配置（去掉注释）
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -243,6 +244,7 @@ http {
 - 设置两个虚拟主机（通过**端口**来区分开）
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -295,6 +297,7 @@ http {
 - 设置两个虚拟主机（通过**域名**来区分开）
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -356,6 +359,7 @@ http {
 - Nginx 配置：
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
