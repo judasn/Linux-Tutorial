@@ -23,7 +23,11 @@
     - 启动 Tomcat：`sh /usr/program/tomcat8/bin/startup.sh ; tail -200f /usr/program/tomcat8/logs/catalina.out`
     - 访问：`http://服务器 IP 地址:8080/`
     - 停止 Tomcat：`sh /usr/program/tomcat8/bin/shutdown.sh`
-
+- 如果启动报：`java.net.UnknownHostException 或 localhost. This prevents creation of a GUID`
+    - 解决办法：
+        - 修改配置文件：`vim /etc/sysconfig/network`，把里面的 HOSTNAME 改为你自己设置的一个名字，比如我这边改为：youmeek
+        - 修改配置文件：`vim /etc/hosts`，把第一行的 127.0.0.1 这一行删掉，然后再最后一行增加这句：`127.0.0.1 localhost youmeek`，这里最后的 youmeek 就是主机名
+        - 然后重启计算机：`reboot`
 
 ## Tomcat 8 配置
 
