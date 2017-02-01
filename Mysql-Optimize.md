@@ -154,4 +154,5 @@
 
 ## 资料
 
-
+- <https://my.oschina.net/jsan/blog/653697>
+- <https://blog.imdst.com/mysql-5-6-pei-zhi-you-hua/>
