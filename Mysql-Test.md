@@ -19,7 +19,7 @@
 - 自动生成复杂测试数据并测试：`mysqlslap --defaults-file=/etc/my.cnf --concurrency=50,100,200 --iterations=2 --number-int-cols=7 --number-char-cols=13 --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-load-type=mixed --engine=innodb --number-of-queries=1000 --debug-info -S /tmp/mysql.sock -uroot -p123456`
     - `-number-int-cols=7` 表示生成的表中必须有 7 个 int 类型的列
     - `-number-char-cols=13` 表示生成的表中必须有 13 个 char 类型的列
-
+- 实际场景请求数较大的时候测试：`mysqlslap --defaults-file=/etc/my.cnf --concurrency=50,100,200,500,1000 --iterations=5 --number-int-cols=7 --number-char-cols=13 --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-load-type=mixed --engine=innodb --number-of-queries=10000 --debug-info -S /tmp/mysql.sock -uroot -p123456`
 
 ### 测试结果含义解释：
 
