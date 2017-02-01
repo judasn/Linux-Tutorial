@@ -14,7 +14,7 @@
 - 先做软链接：`ln -s /usr/program/mysql/bin/mysqlslap /usr/bin`
 - 自动生成简单测试数据并测试：`mysqlslap --defaults-file=/etc/my.cnf -a --auto-generate-sql-load-type=mixed --auto-generate-sql-add-autoincrement --engine=innodb --concurrency=50,100 --number-of-queries=1000 --iterations=2 --debug-info -uroot -p123456`
     - 该语句表示测试并发为50和100的情况，进行1000次访问(该值一般这样预估出来：并发客户数×每客户查询次数)。这样的测试方法迭代2次，最终显示最大、最小、平均值
-    - 其中：`-a`，表示自动生成要测试的数据
+    - 其中：`-a`，表示自动生成要测试的数据，等同于：`--auto-generate-sql`
     - 其中：`--debug-info`，代表要额外输出 CPU 以及内存的相关信息。
 - 自动生成复杂测试数据并测试：`mysqlslap --defaults-file=/etc/my.cnf --concurrency=50,100,200 --iterations=2 --number-int-cols=7 --number-char-cols=13 --auto-generate-sql --auto-generate-sql-add-autoincrement --auto-generate-sql-load-type=mixed --engine=innodb --number-of-queries=1000 --debug-info -S /tmp/mysql.sock -uroot -p123456`
     - `-number-int-cols=7` 表示生成的表中必须有 7 个 int 类型的列
