@@ -32,7 +32,7 @@
 - 把 csv 转换成 Excel 图表文件：
 	- 打开 nmon analyser 分析工具：nmon analyser v50_2.xlsm
 		- 点击 Analyse nmon data 会弹出一个弹出框，选择刚刚转换的 csv 文件，然后就会自动再转化成 excel 文件
-
+- 导出的综合报表的参数说明：<http://www.51testing.com/html/25/15146625-3714909.html>
 
 ## 资料
 
