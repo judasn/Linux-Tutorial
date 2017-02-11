@@ -3,6 +3,10 @@
 
 ## 常用压缩包**解压**命令整理
 
+- Linux 后缀为 `.war` 格式的文件（一般用在部署 Tomcat 项目的时候）
+- 命令：`unzip -oq XXXXXX.war -d ROOT`
+	- 如果没有 ROOT 目录会自动创建 ROOT 目录。
+
 - Linux 后缀为 `.tar.gz` 格式的文件-解压
 - 命令：`tar zxvf XXXXXX.tar.gz`
 
@@ -27,6 +31,7 @@
 
 - Linux 后缀为 `.tar.xz` 格式的文件-解压，解压出来是tar，再对tar进行解压
 - 命令：`tar xf XXXXXX.tar.xz`
+
 
 
 -----------------------------------------------------------
