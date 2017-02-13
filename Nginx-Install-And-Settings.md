@@ -455,6 +455,66 @@ limit_conn slimits 5;
 
 
 
+## 使用 logrotate 做 nginx 日志轮询分割
+
+- 前提：
+	- 我 nginx 的成功日志路径：/var/log/nginx/access.log
+	- 我 nginx 的错误日志路径：/var/log/nginx/error.log
+	- pid 路径：/var/local/nginx/nginx.pid
+
+- 一般情况 CentOS 是装有：logrotate，你可以检查下：`rpm -ql logrotate`，如果有相应结果，则表示你也装了。
+- logrotate 配置文件一般在：
+	- 全局配置：/etc/logrotate.conf 通用配置文件，可以定义全局默认使用的选项。
+	- 自定义配置，放在这个目录下的都算是：/etc/logrotate.d/
+
+- 针对 nginx 创建自定义的配置文件：`vim /etc/logrotate.d/nginx`
+- 文件内容如下：
+
+``` ini
+
+/var/log/nginx/access.log /var/log/nginx/error.log {
+	create 644 root root
+	notifempty
+	daily
+	rotate 15
+	missingok
+	dateext
+	sharedscripts
+	postrotate
+	    if [ -f /var/local/nginx/nginx.pid ]; then
+	        kill -USR1 `cat /var/local/nginx/nginx.pid`
+	    fi
+	endscript
+}
+
+```
+
+- /var/log/nginx/access.log /var/log/nginx/error.log：多个文件用空格隔开，也可以用匹配符：/var/log/nginx/*.log
+- notifempty：如果是空文件的话，不转储
+- create 644 root root：create mode owner group 转储文件，使用指定的文件模式创建新的日志文件
+- 调用频率，有：daily，weekly，monthly可选
+- rotate 15：一次将存储15个归档日志。对于第16个归档，时间最久的归档将被删除。
+- sharedscripts：所有的日志文件都轮转完毕后统一执行一次脚本
+- missingok：如果日志文件丢失，不报错继续执行下一个
+- dateext：文件后缀是日期格式,也就是切割后文件是:xxx.log-20131216.gz 这样,如果注释掉,切割出来是按数字递增,即前面说的 xxx.log-1 这种格式
+- postrotate：执行命令的开始标志
+- endscripthttp:执行命令的结束标志
+- if 判断的意思不是中止Nginx的进程，而是传递给它信号重新生成日志，如果nginx没启动不做操作    
+- 更多参数可以看：<http://www.cnblogs.com/zengkefu/p/5498324.html>
+
+
+- 手动执行测试：`/usr/sbin/logrotate -vf /etc/logrotate.d/nginx`
+- 参数：‘-f’选项来强制logrotate轮循日志文件，‘-v’参数提供了详细的输出。
+- 验证是否手动执行成功，查看 cron 的日志即可：`grep logrotate /var/log/cron`
+- 设置 crontab 定时任务：`vim /etc/crontab`，添加下面内容：
+
+``` ini
+//每天02点10分执行一次
+10 02 * * *  /usr/sbin/logrotate -f /etc/logrotate.d/nginx
+```
+
+
+
 ### 杂七杂八
 
 - [nginx实现简体繁体字互转以及中文转拼音](https://www.ttlsa.com/nginx/nginx-modules-ngx_set_cconv/)
