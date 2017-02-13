@@ -170,6 +170,82 @@ set JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF8" -Dde
 set JAVA_OPTS=%JAVA_OPTS% -server -Xms1024m -Xmx1024m -XX:MaxNewSize=512m -XX:PermSize=256m -XX:MaxPermSize=512m
 ```
 
+## Tomcat 8 的 Log 分割
+
+
+- 修改前提：本人为 Tomcat8，安装目录为：/usr/program/tomcat8
+- 网络上的官网地址现在打不开：<http://cronolog.org/download/index.html>
+- 阿里云的 CentOS 有 epel 源所以可以直接下载：`yum install cronolog`，此时：2017-02，最新版本为：1.6.2-10.el6
+- 安装完后，查看下安装后的目录位置：`which cronolog`，我这边得到的结果是：`/usr/sbin/cronolog`，记下这个结果，后面有用到。
+- 修改 catalina.sh 中的内容：`vim /usr/program/tomcat8/bin/catalina.sh`
+- 找到这段代码（预计在 416 行前后）：
+
+``` ini
+
+shift
+touch "$CATALINA_OUT"
+if [ "$1" = "-security" ] ; then
+if [ $have_tty -eq 1 ]; then
+  echo "Using Security Manager"
+fi
+shift
+eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+  -classpath "\"$CLASSPATH\"" \
+  -Djava.security.manager \
+  -Djava.security.policy=="\"$CATALINA_BASE/conf/catalina.policy\"" \
+  -Dcatalina.base="\"$CATALINA_BASE\"" \
+  -Dcatalina.home="\"$CATALINA_HOME\"" \
+  -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+  org.apache.catalina.startup.Bootstrap "$@" start \
+  >> "$CATALINA_OUT" 2>&1 "&"
+
+else
+eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+  -classpath "\"$CLASSPATH\"" \
+  -Dcatalina.base="\"$CATALINA_BASE\"" \
+  -Dcatalina.home="\"$CATALINA_HOME\"" \
+  -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+  org.apache.catalina.startup.Bootstrap "$@" start \
+  >> "$CATALINA_OUT" 2>&1 "&"
+
+fi
+
+```
+
+- 将上面代码改为如下，其中请注意这个关键字：`/usr/sbin/cronolog`，这个是我上面提到的安装路径，你如果跟我不一样，需要自己修改该相关。
+
+``` ini
+
+shift
+# touch "$CATALINA_OUT"
+if [ "$1" = "-security" ] ; then
+if [ $have_tty -eq 1 ]; then
+  echo "Using Security Manager"
+fi
+shift
+eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+  -classpath "\"$CLASSPATH\"" \
+  -Djava.security.manager \
+  -Djava.security.policy=="\"$CATALINA_BASE/conf/catalina.policy\"" \
+  -Dcatalina.base="\"$CATALINA_BASE\"" \
+  -Dcatalina.home="\"$CATALINA_HOME\"" \
+  -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+  org.apache.catalina.startup.Bootstrap "$@" start 2>&1 | /usr/sbin/cronolog "$CATALINA_BASE"/logs/catalina.%Y-%m-%d.out >> /dev/null &
+
+else
+eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+  -classpath "\"$CLASSPATH\"" \
+  -Dcatalina.base="\"$CATALINA_BASE\"" \
+  -Dcatalina.home="\"$CATALINA_HOME\"" \
+  -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+  org.apache.catalina.startup.Bootstrap "$@" start 2>&1 | /usr/sbin/cronolog "$CATALINA_BASE"/logs/catalina.%Y-%m-%d.out >> /dev/null &
+
+fi
+
+```
+
+
+
 ## 其他
 
 - Tomcat 历史版本下载地址整理（不间断更新）：
@@ -188,3 +264,5 @@ set JAVA_OPTS=%JAVA_OPTS% -server -Xms1024m -Xmx1024m -XX:MaxNewSize=512m -XX:Pe
 - <http://www.cnblogs.com/ggjucheng/archive/2013/04/16/3024731.html>
 - <https://tomcat.apache.org/tomcat-8.0-doc/config/http.html#Connector_Comparison>
 - <http://www.apelearn.com/study_v2/chapter23.html>
+- <http://blog.csdn.net/hanzheng260561728/article/details/51236131>
+- <http://blog.csdn.net/attagain/article/details/38639007>
