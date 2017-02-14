@@ -50,6 +50,9 @@
         - 常用命令软连接，才可以在终端直接使用：mysql 和 mysqladmin 命令
             - `ln -s /usr/program/mysql/bin/mysql /usr/bin`
             - `ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
+            - `ln -s /usr/program/mysql/bin/mysqldump /usr/bin`
+            - `ln -s /usr/program/mysql/bin/mysqlslap /usr/bin`
+            - `ln -s /usr/program/mysql/data/mysql.sock /tmp/mysql.sock`
 
 
 ## MySQL 配置
