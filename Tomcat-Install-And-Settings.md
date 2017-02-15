@@ -110,6 +110,7 @@
            enableLookups="false" 
            acceptCount="100" 
            maxPostSize="10485760" 
+           maxHttpHeaderSize="8192" 
            compression="on" 
            disableUploadTimeout="true" 
            compressionMinSize="2048" 
@@ -125,6 +126,7 @@
             - acceptCount，指定当所有可以使用的处理请求的线程数都被使用时，可以放到处理队列中的请求数，超过这个数的请求将不予处理，默认设置 100
             - maxPostSize，以 FORM URL 参数方式的 POST 提交方式，限制提交最大的大小，默认是 2097152(2兆)，它使用的单位是字节。10485760 为 10M。如果要禁用限制，则可以设置为 -1。
             - acceptorThreadCount，用于接收连接的线程的数量，默认值是1。一般这个指需要改动的时候是因为该服务器是一个多核CPU，如果是多核 CPU 一般配置为 2.
+            - maxHttpHeaderSize，http请求头信息的最大程度，超过此长度的部分不予处理。一般8K。
 	- 禁用 AJP（如果你服务器没有使用 Apache） 
 		- 把下面这一行注释掉，默认 Tomcat 是开启的。
 		``` xml
