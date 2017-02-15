@@ -175,7 +175,7 @@ set JAVA_OPTS=%JAVA_OPTS% -server -Xms1024m -Xmx1024m -XX:MaxNewSize=512m -XX:Pe
 ## Tomcat 8 的 Log 分割
 
 
-- 修改前提：本人为 Tomcat8，安装目录为：/usr/program/tomcat8
+- 修改前提：本人为 Tomcat8.5，安装目录为：/usr/program/tomcat8
 - 网络上的官网地址现在打不开：<http://cronolog.org/download/index.html>
 - 阿里云的 CentOS 有 epel 源所以可以直接下载：`yum install cronolog`，此时：2017-02，最新版本为：1.6.2-10.el6
 - 安装完后，查看下安装后的目录位置：`which cronolog`，我这边得到的结果是：`/usr/sbin/cronolog`，记下这个结果，后面有用到。
