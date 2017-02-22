@@ -6,7 +6,7 @@ cd /opt/setups
 
 tar zxvf mysql-5.6.35.tar.gz
 
-mv /opt/mysql-5.6.35 /usr/program/
+mv /opt/setups/mysql-5.6.35 /usr/program/
 
 yum install -y make gcc-c++ cmake bison-devel ncurses-devel
 
@@ -41,5 +41,11 @@ chown -R mysql:mysql /usr/program/mysql/data
 ln -s /usr/program/mysql/bin/mysql /usr/bin
 
 ln -s /usr/program/mysql/bin/mysqladmin /usr/bin
+
+ln -s /usr/program/mysql/bin/mysqldump /usr/bin
+
+ln -s /usr/program/mysql/bin/mysqlslap /usr/bin
+
+ln -s /usr/program/mysql/data/mysql.sock /tmp/mysql.sock
 
 echo "安装 mysql 结束，现在需要手动设置防火墙和禁用 selinux."

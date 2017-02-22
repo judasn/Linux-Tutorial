@@ -2,16 +2,16 @@
 
 echo "安装 vim 和对应配置"
 
-sudo yum install -y vim
+yum install -y vim
 
 curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
 
 
 echo "安装 zsh 和 oh-my-zsh"
 
-sudo yum install -y zsh
+yum install -y zsh
 
-sudo yum install -y git
+yum install -y git
 
 wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh
 

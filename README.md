@@ -62,6 +62,7 @@
 - [黑客入侵检查](Was-Hacked.md)
 - [Shadowsocks 安装和配置](http://code.youmeek.com/2016/08/19/2016/08/VPS/)
 - [Mycat 安装和配置](Mycat-Install-And-Settings.md)
+- [Zookeeper 安装和配置](Zookeeper-Install.md)
 
 
 ## 下一步(Next)
@@ -69,7 +70,6 @@
 - Apache 安装和配置
 - LVS + Keepalived 高可用
 - MySQL + Keepalived 高可用
-- Zookeeper 安装和配置
 - ActiveMQ 服务安装和配置
 - GitLab 安装和配置
 - Zabbix 安装和配置
