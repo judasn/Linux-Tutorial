@@ -30,14 +30,14 @@
         - 关闭客户端：`redis-cli shutdown`
         - 开机启动配置：`echo "/usr/local/bin/redis-server /etc/redis.conf" >> /etc/rc.local`
         - 开放防火墙端口：
-            - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 6379 -j ACCEPT`
-            - 保存规则：`sudo /etc/rc.d/init.d/iptables save`
-            - 重启 iptables：`sudo service iptables restart`
+            - 添加规则：`iptables -I INPUT -p tcp -m tcp --dport 6379 -j ACCEPT`
+            - 保存规则：`service iptables save`
+            - 重启 iptables：`service iptables restart`
 
 
 ## Redis 配置
 
-- 编辑配置文件：`vim /usr/program/redis-3.0.7/redis.conf`
+- 编辑配置文件：`vim /etc/redis.conf`
 - Redis 默认的配置文件内容：
 
 ``` ini
@@ -96,7 +96,7 @@ aof-rewrite-incremental-fsync yes
 
 ## 设置 Redis 请求密码
 
-- 打开 `vim /usr/program/redis-3.0.7/redis.conf` 配置文件，找到默认是被注释的这一行：`# requirepass foobared`
+- 打开 `vim /etc/redis.conf` 配置文件，找到默认是被注释的这一行：`# requirepass foobared`
 - 去掉注释，把 `foobared` 改为你想要设置的密码，比如我打算设置为：123456，所以我改为：`requirepass 123456`
 - 修改之后重启下服务
 - 有了密码之后，进入客户端，就得这样访问：`redis-cli -h 127.0.0.1 -p 6379 -a 123456 `

@@ -48,4 +48,10 @@ ln -s /usr/program/mysql/bin/mysqlslap /usr/bin
 
 ln -s /usr/program/mysql/data/mysql.sock /tmp/mysql.sock
 
+iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
+
+service iptables save
+
+service iptables restart
+
 echo "安装 mysql 结束，现在需要手动设置防火墙和禁用 selinux."

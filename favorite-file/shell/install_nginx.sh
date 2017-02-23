@@ -18,4 +18,10 @@ make
 
 make install
 
+iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+
+service iptables save
+
+service iptables restart
+
 echo "完成安装 nginx，把端口加到防火墙中"
