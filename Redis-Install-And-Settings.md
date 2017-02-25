@@ -25,6 +25,7 @@
             - 把旧值：`daemonize no` 
             - 改为新值：`daemonize yes` 
         - 启动：`/usr/local/bin/redis-server /etc/redis.conf`
+        - 关闭：`redis-cli -h 127.0.0.1 -p 6379 shutdown`
         - 查看是否启动：`ps -ef | grep redis`
         - 进入客户端：`redis-cli`
         - 关闭客户端：`redis-cli shutdown`
@@ -100,6 +101,12 @@ aof-rewrite-incremental-fsync yes
 - 去掉注释，把 `foobared` 改为你想要设置的密码，比如我打算设置为：123456，所以我改为：`requirepass 123456`
 - 修改之后重启下服务
 - 有了密码之后，进入客户端，就得这样访问：`redis-cli -h 127.0.0.1 -p 6379 -a 123456 `
+- 如果用 IP 进入客户端，但是报：`Could not connect to Redis at 192.168.1.121:6379: Connection refused`
+	- 原因：Redis 默认只允许本机访问，可是有时候我们也需要 Redis 被远程访问。         
+	- 解决办法：
+        - 修改 Redis 配置文件：`vim /etc/redis.conf`
+        - 找到 bind 那行配置，默认是：`# bind 127.0.0.1`
+        - 去掉 # 注释并改为：`bind 0.0.0.0`
 
 ## Redis 常用命令
 
@@ -123,6 +130,106 @@ aof-rewrite-incremental-fsync yes
 - `PERSIST key`，清除生成时间，重新变成永久存储（重新设置 key 的值也可以起到清除生存时间的效果）
 - `FLUSHDB`，清空当前数据库所有键值
 - `FLUSHALL`，清空所有数据库的所有键值
+
+
+## 把 redis 添加到系统服务中
+
+- 新建文件：`vim /etc/init.d/redis`
+- 添加如下内容：
+
+``` nginx
+#!/bin/sh  
+#  
+# redis - this script starts and stops the redis-server daemon  
+#  
+# chkconfig:   - 85 15  
+# description:  Redis is a persistent key-value database  
+# processname: redis-server  
+# config:      /usr/local/redis-2.4.X/bin/redis-server  
+# config:      /usr/local/ /redis-2.4.X/etc/redis.conf  
+# Source function library.  
+. /etc/rc.d/init.d/functions  
+# Source networking configuration.  
+. /etc/sysconfig/network  
+# Check that networking is up.  
+[ "$NETWORKING" = "no" ] && exit 0  
+redis="/usr/local/bin/redis-server" 
+prog=$(basename $redis)  
+REDIS_CONF_FILE="/etc/redis.conf" 
+[ -f /etc/sysconfig/redis ] && . /etc/sysconfig/redis  
+lockfile=/var/lock/subsys/redis  
+start() {  
+    [ -x $redis ] || exit 5  
+    [ -f $REDIS_CONF_FILE ] || exit 6  
+    echo -n $"Starting $prog: "  
+    daemon $redis $REDIS_CONF_FILE  
+    retval=$?  
+    echo  
+    [ $retval -eq 0 ] && touch $lockfile  
+    return $retval  
+}  
+stop() {  
+    echo -n $"Stopping $prog: "  
+    killproc $prog -QUIT  
+    retval=$?  
+    echo  
+    [ $retval -eq 0 ] && rm -f $lockfile  
+    return $retval  
+}  
+restart() {  
+    stop  
+    start  
+}  
+reload() {  
+    echo -n $"Reloading $prog: "  
+    killproc $redis -HUP  
+    RETVAL=$?  
+    echo  
+}  
+force_reload() {  
+    restart  
+}  
+rh_status() {  
+    status $prog  
+}  
+rh_status_q() {  
+    rh_status >/dev/null 2>&1  
+}  
+case "$1" in  
+    start)  
+        rh_status_q && exit 0  
+        $1  
+        ;;  
+    stop)  
+        rh_status_q || exit 0  
+        $1  
+        ;;  
+    restart|configtest)  
+        $1  
+        ;;  
+    reload)  
+        rh_status_q || exit 7  
+        $1  
+        ;;  
+    force-reload)  
+        force_reload  
+        ;;  
+    status)  
+        rh_status  
+        ;;  
+    condrestart|try-restart)  
+        rh_status_q || exit 0  
+    ;;  
+    *)  
+        echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart| reload|orce-reload}"  
+        exit 2  
+esac
+```
+
+- 修改权限：`chmod 755 /etc/init.d/redis`
+- 启动服务：`service redis start`
+- 停止服务：`service redis stop`
+- 重启服务：`service ngredisnx restart`
 
 
 ## Redis 客户端
