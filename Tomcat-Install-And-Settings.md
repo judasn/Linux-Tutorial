@@ -74,13 +74,14 @@
 	    ```
 	    - 修改为：
 	    ``` xml
-	    <Executor 
-	        name="tomcatThreadPool" 
-	        namePrefix="catalina-exec-"
-            maxThreads="500" 
-            minSpareThreads="100" 
-            prestartminSpareThreads = "true"
-            maxQueueSize = "100"
+	    <Executor
+	            name="tomcatThreadPool"
+	            namePrefix="catalina-exec-"
+	            maxThreads="500"
+	            minSpareThreads="30"
+	            maxIdleTime="60000"
+	            prestartminSpareThreads = "true"
+	            maxQueueSize = "100"
 	    />
 	    ```
         - 重点参数解释：
@@ -88,6 +89,7 @@
             - minSpareThreads，Tomcat 初始化时创建的线程数，默认设置 25
             - prestartminSpareThreads，在 Tomcat 初始化的时候就初始化 minSpareThreads 的参数值，如果不等于 true，minSpareThreads 的值就没啥效果了
             - maxQueueSize，最大的等待队列数，超过则拒绝请求
+            - maxIdleTime，如果当前线程大于初始化线程，那空闲线程存活的时间，单位毫秒，默认60000=60秒=1分钟。
     - 修改默认的链接参数配置：
         - 默认值：
         ``` xml
