@@ -48,6 +48,7 @@
 - [MySQL 测试](Mysql-Test.md)
 - [MySQL 教程](Mysql-Tutorial.md)
 - [Redis 安装和配置](Redis-Install-And-Settings.md)
+- [MongoDB 安装和配置](MongoDB-Install-And-Settings.md)
 - [Solr 安装和配置](Solr-Install-And-Settings.md)
 - [Jira 安装和配置](Jira-Install-And-Settings.md)
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
