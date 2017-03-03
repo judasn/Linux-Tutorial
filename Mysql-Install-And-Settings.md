@@ -52,7 +52,6 @@
             - `ln -s /usr/program/mysql/bin/mysqladmin /usr/bin`
             - `ln -s /usr/program/mysql/bin/mysqldump /usr/bin`
             - `ln -s /usr/program/mysql/bin/mysqlslap /usr/bin`
-            - `ln -s /usr/program/mysql/data/mysql.sock /tmp/mysql.sock`
 
 
 ## MySQL 配置

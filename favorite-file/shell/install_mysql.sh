@@ -46,8 +46,6 @@ ln -s /usr/program/mysql/bin/mysqldump /usr/bin
 
 ln -s /usr/program/mysql/bin/mysqlslap /usr/bin
 
-ln -s /usr/program/mysql/data/mysql.sock /tmp/mysql.sock
-
 iptables -I INPUT -p tcp -m tcp --dport 3306 -j ACCEPT
 
 service iptables save
