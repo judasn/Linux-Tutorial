@@ -17,7 +17,7 @@
     - 一种方式：先关闭 iptables，防止出现拦截问题而测试不了：`service iptables stop`
     - 一种方式：在 iptables 中添加允许规则（Tomcat 默认端口是 8080）：
         - 添加规则：`iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT`
-        - 保存规则：`/etc/rc.d/init.d/iptables save`
+        - 保存规则：`service iptables save`
         - 重启 iptables：`service iptables restart`
 - 测试安装好后的 Tomcat：
     - 启动 Tomcat：`sh /usr/program/tomcat8/bin/startup.sh ; tail -200f /usr/program/tomcat8/logs/catalina.out`
