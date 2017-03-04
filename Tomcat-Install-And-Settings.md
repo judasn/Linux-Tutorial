@@ -16,9 +16,9 @@
 - 设置 Iptables 规则（这一步是必须设置的）：
     - 一种方式：先关闭 iptables，防止出现拦截问题而测试不了：`service iptables stop`
     - 一种方式：在 iptables 中添加允许规则（Tomcat 默认端口是 8080）：
-        - 添加规则：`sudo iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT`
-        - 保存规则：`sudo /etc/rc.d/init.d/iptables save`
-        - 重启 iptables：`sudo service iptables restart`
+        - 添加规则：`iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT`
+        - 保存规则：`/etc/rc.d/init.d/iptables save`
+        - 重启 iptables：`service iptables restart`
 - 测试安装好后的 Tomcat：
     - 启动 Tomcat：`sh /usr/program/tomcat8/bin/startup.sh ; tail -200f /usr/program/tomcat8/logs/catalina.out`
     - 访问：`http://服务器 IP 地址:8080/`
@@ -32,7 +32,7 @@
 ## Tomcat 8 配置
 
 - 设置 Tomcat 相关变量：
-    - `sudo vim /usr/program/tomcat8/bin/catalina.sh`
+    - `vim /usr/program/tomcat8/bin/catalina.sh`
 	- 在配置文件的可编辑内容最上面（98 行开始），加上如下内容（具体参数根据你服务器情况自行修改）：
 	``` ini
 	JAVA_HOME=/usr/program/jdk1.8.0_72
