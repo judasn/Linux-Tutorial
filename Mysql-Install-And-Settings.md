@@ -79,7 +79,7 @@
 - 查看是否已经启动了：`ps aux | grep mysql`
 - 默认安装情况下，root 的密码是空，所以为了方便我们可以设置一个密码，假设我设置为：123456
 - 终端下执行：`mysql -uroot`
-    - 现在进入了 mysql 命令行管理界面，输入：`SET PASSWORD = PASSWORD('123456');`
+    - 现在进入了 mysql 命令行管理界面，输入：`SET PASSWORD = PASSWORD('123456');FLUSH PRIVILEGES;`
 - 修改密码后，终端下执行：`mysql -uroot -p`
     - 根据提示，输入密码进度 mysql 命令行状态。
 - 如果你在其他机子上连接该数据库机子报：**Access denied for user 'root'@'localhost' (using password: YES)**
