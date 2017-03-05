@@ -86,9 +86,9 @@
 	- 清除测试数据：`sysbench /usr/local/share/sysbench/oltp_point_select.lua --threads=15 --report-interval=10 --time=120 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 cleanup`
 - 读写测试：
 	- 读写测试我开了线程比较多，也修改了 oltp_common.lua 内容，有可能会报：`MySQL error: 1461 "Can't create more than max_prepared_stmt_count statements`，那你需要在 MySQL 中执行这句临时设置 SQL：`SET GLOBAL max_prepared_stmt_count=100000;`
-	- 准备测试数据：`sysbench /usr/local/share/sysbench/oltp_read_write.lua --threads=200 --report-interval=10 --time=120 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 prepare`
-	- 开始测试：`sysbench /usr/local/share/sysbench/oltp_read_write.lua --threads=200 --report-interval=10 --time=120 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 run`
-	- 清除测试数据：`sysbench /usr/local/share/sysbench/oltp_read_write.lua --threads=200 --report-interval=10 --time=120 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 cleanup`
+	- 准备测试数据：`sysbench /usr/local/share/sysbench/oltp_read_write.lua --threads=100 --report-interval=10 --time=100 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 prepare`
+	- 开始测试：`sysbench /usr/local/share/sysbench/oltp_read_write.lua --threads=100 --report-interval=10 --time=100 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 run`
+	- 清除测试数据：`sysbench /usr/local/share/sysbench/oltp_read_write.lua --threads=100 --report-interval=10 --time=100 --mysql-user=root --mysql-password=123456... --mysql-host=127.0.0.1 --mysql-port=3306 cleanup`
 
 - 参数说明：
 	- `--threads=15` 表示发起 15 个并发连接
