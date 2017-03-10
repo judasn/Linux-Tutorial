@@ -1,17 +1,11 @@
-<h1 id="networkSettings0">CentOS 网络设置</h1>
+# CentOS 网络设置
 
-------
-
-*   [CentOS 安装](#networkSettings0)
-    *   [界面化下设置网络](#networkSettings1)
-    *   [命令行下设置网络](#networkSettings2)
-    
-------
 
 - 由于前面虚拟机中安装 CentOS 使用的是桥接模式，为了让虚拟机中的系统能上网，我们需要进行网络设置。
 
+## CentOS 6
 
-<h2 id="networkSettings1">界面化下设置网络（新手推荐使用这种）</h2>
+### 界面化下设置网络（新手推荐使用这种）
 
 - ![界面化设置](../images/CentOS-Network-Settings-a-1.jpg)
  - 选择上图箭头所示
@@ -21,7 +15,7 @@
  - 如上图标注 5 所示：填写你当前地区合适的 DNS 地址，我这边地区使用 360 测试出来的结果显示 114 的适合我，所以我这里填写该值
 
 
-<h2 id="networkSettings2">命令行下设置网络</h2>
+### 命令行下设置网络
 
 - 编辑网卡信息：
  - 备份：`cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0-20160205Back`
@@ -49,3 +43,37 @@
     LAST_CONNECT=1454626679   (使用图形界面设置后生成的) 
   ```
   - 重启网络配置：`service network restart`
+
+## CentOS 7
+
+### 命令行下设置网络
+
+- 查看系统下有哪些网卡：`ls /etc/sysconfig/network-scripts/`，新版本不叫 eth0 这类格式了，比如我当前这个叫做：ifcfg-ens33（你的肯定跟我不一样，但是格式类似）
+- 编辑该文件：`vim /etc/sysconfig/network-scripts/ifcfg-ens33`，改为如下信息：（IP 段自己改为自己的网络情况）
+
+``` ini
+TYPE=Ethernet
+BOOTPROTO=static
+IPADDR=192.168.1.126
+NETMASK=255.255.255.0
+GATEWAY=192.168.1.1
+DNS1=8.8.8.8
+DNS1=114.114.114.114
+DEFROUTE=yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=15a16b51-0369-44d7-87b4-667f715a68df
+DEVICE=ens33
+ONBOOT=yes
+```
+
+- 修改后，重启网络服务：`systemctl restart network.service`
