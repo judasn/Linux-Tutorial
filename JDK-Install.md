@@ -30,6 +30,7 @@
     - `sudo rpm -e --nodeps java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64`
     - `sudo rpm -e --nodeps tzdata-java-2015g-2.el6.noarch`
     - 也可以一起卸载：`sudo rpm -e --nodeps java-1.6.0-openjdk-1.6.0.38-1.13.10.0.el6_7.x86_64 java-1.7.0-openjdk-1.7.0.95-2.6.4.0.el6_7.x86_64 tzdata-java-2015g-2.el6.noarch`
+    - 如果是 CentOS 7 的话：`sudo rpm -e --nodeps javapackages-tools-3.4.1-11.el7.noarch java-1.8.0-openjdk-1.8.0.121-0.b13.el7_3.x86_64 java-1.7.0-openjdk-headless-1.7.0.131-2.6.9.0.el7_3.x86_64 python-javapackages-3.4.1-11.el7.noarch java-1.7.0-openjdk-1.7.0.131-2.6.9.0.el7_3.x86_64 java-1.8.0-openjdk-headless-1.8.0.121-0.b13.el7_3.x86_64 tzdata-java-2017a-1.el7.noarch`
 
 - JDK 1.8 安装
     - 我们以安装 `jdk-8u72-linux-x64.tar.gz` 为例

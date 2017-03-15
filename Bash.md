@@ -119,7 +119,8 @@
 - `hostname`，查看当前登陆用户全名
 - `cat /etc/group`，查看所有组
 - `cat /etc/passwd`，查看所有用户
-- `useradd youmeek -p 123456`，添加一个名为 youmeek 的用户，还有一个同名的组
+- `groups youmeek`，查看 youmeek 用户属于哪个组
+- `useradd youmeek -g judasn`，添加用户并绑定到 judasn 组下
 - `userdel -r youmeek`，删除名字为 youmeek 的用户
 	- 参数：`-r`，表示删除用户的时候连同用户的家目录一起删除
 - 修改普通用户 youmeek 的权限跟 root 权限一样：
@@ -137,6 +138,7 @@
 		- 通过这两行对比，我们可以直接修改 youmeek 所在行的 UserId 值 和 GroupId 值，都改为 0。
 - `groupadd judasn`，添加一个名为 judasn 的用户组
 - `groupdel judasn`，删除一个名为 judasn 的用户组（前提：先删除组下面的所有用户）
+- `usermod 用户名 -g 组名`，把用户修改到其他组下
 - `passwd youmeek`，修改 youmeek 用户的密码（前提：只有 root 用户才有修改其他用户的权限，其他用户只能修改自己的）
 - `chmod 777 文件名/目录`，给指定文件增加最高权限，系统中的所有人都可以进行读写。
 	- linux 的权限分为 rwx。r 代表：可读，w 代表：可写，x 代表：可执行
