@@ -19,7 +19,7 @@
     - 修改 IP 地址
     - 把 HWADDR 的值改为上面要求记下来的：00:0c:29:4c:46:01
     
-- 命令：`nmcli con`
+- 命令：`nmcli con > /opt/info.txt`
     - 如果显示两行 UUID 的信息的话，复制不是 System eth0 的那个 UUID 值，下面有用。
     - 编辑：`sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0`
     - 把文件中的 UUID 值 改为上面要求复制的 UUID 值。
