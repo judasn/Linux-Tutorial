@@ -16,7 +16,9 @@
 - [Ubuntu 安装](Ubuntu-Install.md)
 - [Ubuntu 设置（目录）](ubuntu-settings/ubuntu-settings-toc.md)
 - [CentOS 介绍](CentOS.md)
-- [CentOS 安装](CentOS-Install.md)
+- [CentOS 6 安装](CentOS-Install.md)
+- [CentOS 7 安装](CentOS-7-Install.md)
+- [CentOS 6 和 CentOS 7 差异](CentOS6-and-CentOS7.md)
 - [CentOS 设置（目录）](centos-settings/centos-settings-toc.md)
 - [Ubuntu 安装 VMware](Ubuntu-Install-VMware.md)
 - [VMware 克隆 CentOS 后网卡信息修改](CentOS-Virtual-Machine-Copy-Settings.md)
@@ -64,6 +66,9 @@
 - [Shadowsocks 安装和配置](http://code.youmeek.com/2016/08/19/2016/08/VPS/)
 - [Mycat 安装和配置](Mycat-Install-And-Settings.md)
 - [Zookeeper 安装和配置](Zookeeper-Install.md)
+- [Daemontools 工具介绍](Daemontools.md)
+- [Tmux 安装和配置](Tmux-Install-And-Settings.md)
+- [ELK 日志收集系统安装和配置](ELK-Install-And-Settings.md)
 
 
 ## 下一步(Next)
@@ -76,7 +81,6 @@
 - Zabbix 安装和配置
 - Nagios 安装和配置
 - Docker 安装和配置
-- Tmux 安装和配置
 - sed 学习
 - 常用脚本
 
