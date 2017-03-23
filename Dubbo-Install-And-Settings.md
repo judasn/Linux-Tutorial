@@ -200,3 +200,14 @@ dubbo.registry.address=zookeeper://192.168.1.121:2181?backup=192.168.1.111:2181,
 dubbo.admin.root.password=root
 dubbo.admin.guest.password=guest
 ```
+
+
+## Dubbox-Admin 搭建
+
+### 需要环境
+
+- CentOS 6
+- JDK 1.8（只测试过 1.8）
+- Tomcat 7 或 8（只测试过 8）
+- Dubbox 版本：dubbo-admin-2.8.4.war（fork 官网最新版本，自己编译的版本）
+- 不需要修改任何 pom.xml 文件，直接就可以运行。
