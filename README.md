@@ -69,6 +69,7 @@
 - [Daemontools 工具介绍](Daemontools.md)
 - [Tmux 安装和配置](Tmux-Install-And-Settings.md)
 - [ELK 日志收集系统安装和配置](ELK-Install-And-Settings.md)
+- [Dubbo 安装和配置](Dubbo-Install-And-Settings.md)
 
 
 ## 下一步(Next)
