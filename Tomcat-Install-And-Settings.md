@@ -37,7 +37,7 @@
 	``` ini
 	JAVA_HOME=/usr/program/jdk1.8.0_72
     CATALINA_HOME=/usr/program/tomcat8
-    CATALINA_OPTS="-server -Xms528m -Xmx528m -XX:PermSize=256m -XX:MaxPermSize=358m"
+    CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms2048m -Xmx2048m -Xmn1024m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:SurvivorRatio=10 -XX:MaxTenuringThreshold=15 -XX:NewRatio=2 -XX:+DisableExplicitGC"
     CATALINA_PID=$CATALINA_HOME/catalina.pid
 	```
 - 如果使用 `shutdown.sh` 还无法停止 tomcat，可以修改其配置：`vim /usr/program/tomcat8/bin/shutdown.sh`
