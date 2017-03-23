@@ -192,3 +192,11 @@ dubbo.registry.address=zookeeper://127.0.0.1:2181
 dubbo.admin.root.password=root
 dubbo.admin.guest.password=guest
 ```
+
+- 如果有多个节点构成的集群也可以这样写：
+
+``` ini
+dubbo.registry.address=zookeeper://192.168.1.121:2181?backup=192.168.1.111:2181,192.168.1.112:2181
+dubbo.admin.root.password=root
+dubbo.admin.guest.password=guest
+```
