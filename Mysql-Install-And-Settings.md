@@ -94,8 +94,7 @@
 ## 连接报错：Caused by: java.sql.SQLException: null,  message from server: "Host '192.168.1.133' is not allowed to connect to this MySQL server"
 
 - 不允许除了 localhost 之外去连接，解决办法，进入 MySQL 命令行，输入下面内容：
-- `GRANT ALL PRIVILEGES ON *.* TO ‘数据库用户名’@'%’ IDENTIFIED BY ‘数据库用户名的密码’ WITH GRANT OPTION;`
-
+- `GRANT ALL PRIVILEGES ON *.* TO '数据库用户名'@'%' IDENTIFIED BY '数据库用户名的密码' WITH GRANT OPTION;`
 
 ## MySQL 主从复制
 
