@@ -70,6 +70,7 @@
 - [Tmux 安装和配置](Tmux-Install-And-Settings.md)
 - [ELK 日志收集系统安装和配置](ELK-Install-And-Settings.md)
 - [Dubbo 安装和配置](Dubbo-Install-And-Settings.md)
+- [GitLab 安装和配置](Gitlab-Install-And-Settings.md)
 
 
 ## 下一步(Next)
@@ -78,7 +79,6 @@
 - LVS + Keepalived 高可用
 - MySQL + Keepalived 高可用
 - ActiveMQ 服务安装和配置
-- GitLab 安装和配置
 - Zabbix 安装和配置
 - Nagios 安装和配置
 - Docker 安装和配置
