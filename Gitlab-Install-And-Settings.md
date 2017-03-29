@@ -1,5 +1,8 @@
 # Gitlab 安装和配置
 
+## 本文前提
+
+- 本文只讲解 Gitlab 的搭建配置相关，至于开发流程本质跟 Github 没啥区别的，所以读这篇文章建议最好是已经会了 Github 那种开发流程。
 
 ## 测试机子硬件最低建议
 
@@ -125,10 +128,19 @@
 - 也是在项目设置里面：<http://192.168.1.111/组名称/项目名称/settings/repository#>
 - 设置 CI （持续集成） 的 key 也是在这个地址上设置。
 
-## 使用 Gitlab 的一个开发流程
+## 使用 Gitlab 的一个开发流程 - Git flow
 
-- 这篇文章很好，不多说了：<https://zhangmengpl.gitbooks.io/gitlab-guide/content/whatisgitflow.html>
-
+- Git flow：我是翻译成：Git 开发流程建议（不是规范，适合大点的团队），也有一个插件叫做这个，本质是用插件来帮你引导做规范的流程管理。
+- 这几篇文章很好，不多说了：
+	- 比较起源的一个说明（英文）：<http://nvie.com/posts/a-successful-git-branching-model/>
+		- Git-flow 插件也是他开发的，插件地址：<https://github.com/nvie/gitflow>
+		- Git-flow 插件的一些相关资料：
+			- <https://www.git-tower.com/learn/git/ebook/cn/command-line/advanced-topics/git-flow>
+			- <https://danielkummer.github.io/git-flow-cheatsheet/index.zh_CN.html>
+	- <http://www.ruanyifeng.com/blog/2015/12/git-workflow.html>
+	- <https://zhangmengpl.gitbooks.io/gitlab-guide/content/whatisgitflow.html>
+	- <http://blog.jobbole.com/76867/>
+	- <http://www.cnblogs.com/cnblogsfans/p/5075073.html>
 
 
 
