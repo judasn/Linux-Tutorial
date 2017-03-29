@@ -74,6 +74,11 @@
 
 - 命令：`service sshd restart`
 
+## 常用 SSH 连接终端
+
+- Windows -- Xshell：<http://www.youmeek.com/ssh-terminal-emulator-recommend-xshell-and-xftp/>
+- Mac -- ZOC：<http://xclient.info/s/zoc-terminal.html>
+
 ## SSH 资料
 
 - <http://www.jikexueyuan.com/course/861_1.html?ss=1> 
