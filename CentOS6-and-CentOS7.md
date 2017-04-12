@@ -49,7 +49,7 @@
 ## ifconfig 没有了
 
 - 查看网络配置：`ip a`
-- 装回 ifconfig：`yum insall -y net-tools`
+- 装回 ifconfig：`yum install -y net-tools`
 
 ## 设置时区
 
