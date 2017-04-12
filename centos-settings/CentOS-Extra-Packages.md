@@ -58,7 +58,7 @@
  - 官网中文材料：<https://fedoraproject.org/wiki/EPEL/zh-cn>
  - 安装命令：`sudo yum install -y epel-release`
  - CentOS 6 导入 KEY：`rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6`
- - CentOS 7 导入 KEY：`rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6`
+ - CentOS 7 导入 KEY：`rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7`
  - 设置 EPEL 源的级别：`vim  /etc/yum.repos.d/epel.repo`，追加：priority=11
 - 卸载 EPEL 源
  - 如果你暂时不想使用 EPEL 源的话，把 epel.repo 里的 enabled=1 改成 enabled=0 即可，如果你完全不需要了，那就直接卸载掉 `sudo rpm -e epel-release`
