@@ -28,6 +28,9 @@
         - 修改配置文件：`vim /etc/sysconfig/network`，把里面的 HOSTNAME 改为你自己设置的一个名字，比如我这边改为：youmeek
         - 修改配置文件：`vim /etc/hosts`，把第一行的 127.0.0.1 这一行删掉，然后再最后一行增加这句：`127.0.0.1 localhost youmeek`，这里最后的 youmeek 就是主机名
         - 然后重启计算机：`reboot`
+- 如果启动报：`java.net.BindException: 地址已在使用 / java.net.BindException: Address already in use`
+    - 解决办法：这表示端口被占用，修改 Tomcat 的 server.xml 配置文件，把端口改了即可。
+
 
 ## Tomcat 8 配置
 
