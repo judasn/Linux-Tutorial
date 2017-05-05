@@ -137,6 +137,134 @@ elasticsearch hard memlock unlimited
     - Bigdesk：`/usr/program/elk/elasticsearch-2.4.1/bin/plugin install hlstudio/bigdesk`
 		- 安装完的访问地址：`http://192.168.1.127:9200/_plugin/bigdesk`
 	- 卸载：`/usr/share/elasticsearch/bin/elasticsearch-plugin remove 插件名称`
+- IK 分词插件的安装
+	- IK 分词官网：<https://github.com/medcl/elasticsearch-analysis-ik>
+	- 官网首页已经有一个表格说明 ES 版本和 IK 插件的版本对应，我们可以看到：ES 2.4.1 对应 IK 分词 1.10.1，下载地址：<https://github.com/medcl/elasticsearch-analysis-ik/releases/tag/v1.10.1>
+	- 进入 ES 插件目录：`cd /usr/program/elk/elasticsearch-2.4.1/plugins`
+	- 创建 ik 目录：`mkdir ik`
+	- 把下载的 elasticsearch-analysis-ik-1.10.1.zip 上传到刚新建的 ik 目录下
+	- 解压：`unzip elasticsearch-analysis-ik-1.10.1.zip`
+	- 删除压缩包：`rm -rf elasticsearch-analysis-ik-1.10.1.zip`
+	- 编辑 ES 配置文件：`vim /usr/program/elk/elasticsearch-2.4.1/config/elasticsearch.yml`
+		- 在文件底部添加如下内容：
+
+``` ini
+index.analysis.analyzer.default.tokenizer : "ik_max_word"
+index.analysis.analyzer.default.type: "ik"
+```
+
+	- 重启 ES ： /usr/program/elk/elasticsearch-2.4.1/bin/elasticsearch
+	- 验证 ik 插件：浏览器访问：`http://192.168.1.127:9200/_analyze?analyzer=ik&pretty=true&text=这是一个针对程序员优化的导航GitNavi.com`，能得到如下结果就表示成功：
+
+``` json
+[
+  {
+    "token": "这是",
+    "start_offset": 0,
+    "end_offset": 2,
+    "type": "CN_WORD",
+    "position": 0
+  },
+  {
+    "token": "一个",
+    "start_offset": 2,
+    "end_offset": 4,
+    "type": "CN_WORD",
+    "position": 1
+  },
+  {
+    "token": "一",
+    "start_offset": 2,
+    "end_offset": 3,
+    "type": "TYPE_CNUM",
+    "position": 2
+  },
+  {
+    "token": "个",
+    "start_offset": 3,
+    "end_offset": 4,
+    "type": "COUNT",
+    "position": 3
+  },
+  {
+    "token": "针对",
+    "start_offset": 4,
+    "end_offset": 6,
+    "type": "CN_WORD",
+    "position": 4
+  },
+  {
+    "token": "程序员",
+    "start_offset": 6,
+    "end_offset": 9,
+    "type": "CN_WORD",
+    "position": 5
+  },
+  {
+    "token": "程序",
+    "start_offset": 6,
+    "end_offset": 8,
+    "type": "CN_WORD",
+    "position": 6
+  },
+  {
+    "token": "序",
+    "start_offset": 7,
+    "end_offset": 8,
+    "type": "CN_WORD",
+    "position": 7
+  },
+  {
+    "token": "员",
+    "start_offset": 8,
+    "end_offset": 9,
+    "type": "CN_CHAR",
+    "position": 8
+  },
+  {
+    "token": "优化",
+    "start_offset": 9,
+    "end_offset": 11,
+    "type": "CN_WORD",
+    "position": 9
+  },
+  {
+    "token": "导航",
+    "start_offset": 12,
+    "end_offset": 14,
+    "type": "CN_WORD",
+    "position": 10
+  },
+  {
+    "token": "航",
+    "start_offset": 13,
+    "end_offset": 14,
+    "type": "CN_WORD",
+    "position": 11
+  },
+  {
+    "token": "gitnavi.com",
+    "start_offset": 14,
+    "end_offset": 25,
+    "type": "LETTER",
+    "position": 12
+  },
+  {
+    "token": "gitnavi",
+    "start_offset": 14,
+    "end_offset": 21,
+    "type": "ENGLISH",
+    "position": 13
+  },
+  {
+    "token": "com",
+    "start_offset": 22,
+    "end_offset": 25,
+    "type": "ENGLISH",
+    "position": 14
+  }
+]
+```
 
 ### 构建 elasticsearch 集群
 
