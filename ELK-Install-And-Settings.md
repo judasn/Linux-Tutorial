@@ -154,7 +154,7 @@ index.analysis.analyzer.default.type: "ik"
 ```
 
 	- 重启 ES ： /usr/program/elk/elasticsearch-2.4.1/bin/elasticsearch
-	- 验证 ik 插件：浏览器访问：http://192.168.1.127:9200/_analyze?analyzer=ik&pretty=true&text=这是一个针对程序员优化的导航GitNavi.com，能得到如下结果就表示成功：
+	- 验证 ik 插件，浏览器访问：<http://192.168.1.127:9200/_analyze?analyzer=ik&pretty=true&text=这是一个针对程序员优化的导航GitNavi.com>，能得到如下结果就表示成功：
 
 ``` json
 [
