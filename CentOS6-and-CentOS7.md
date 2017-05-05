@@ -34,6 +34,17 @@
 - `systemctl is-enabled httpd` #查看httpd服务是否开机启动
 - 对于启动脚本的存放位置，也不再是 `/etc/init.d/`（这个目录也是存在的），而是 `/usr/lib/systemd/system/`
 
+### 开放端口
+
+- 添加端口：`firewall-cmd --zone=public --add-port=8883/tcp --permanent`
+- 重启防火墙：`firewall-cmd --reload`
+	- 命令解释：
+	- `--zone` #作用域
+	- `--add-port=80/tcp` #添加端口，格式为：端口/通讯协议
+	- `--permanent` #永久生效，没有此参数重启后失效
+- 列出所有端口列表：`firewall-cmd --list-all`
+
+
 ## 关闭 firewall 使用 iptables
 
 - 关闭 firewall
