@@ -71,6 +71,7 @@
 - [Dubbo 安装和配置](Dubbo-Install-And-Settings.md)
 - [GitLab 安装和配置](Gitlab-Install-And-Settings.md)
 - [Docker 安装和使用](Docker-Install-And-Usage.md)
+- [LDAP 安装和使用](LDAP-Install-And-Settings.md)
 
 
 ## 下一步(Next)
