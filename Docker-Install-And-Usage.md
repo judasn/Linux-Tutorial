@@ -267,9 +267,6 @@ java -jar /root/spring-boot-my-demo.jar
 	    - `-p`：表示宿主机与容器的端口映射，此时将容器内部的 8080 端口映射为宿主机的 58080 端口，这样就向外界暴露了 58080 端口，可通过 Docker 网桥来访问容器内部的 8080 端口了。  
 	    - `--name`：表示容器名称，用一个有意义的名称命名即可
 - 进入容器后退出，输入：`exit` 回车
- 
- 
- 
 - `docker start`，重新启动已经停止的容器
     - `docker start 容器ID/容器名称`
 - `docker stop`
@@ -283,12 +280,16 @@ java -jar /root/spring-boot-my-demo.jar
     - `docker exec -i -t 容器ID/容器名称 /bin/bash`，进入正在运行的 docker 容器，并启动终端交互
     - `docker exec -d 容器ID/容器名称 touch /opt/test.txt`，已守护式的方式进入 docker 容器，并创建一个文件
 - `docker stop 容器ID/容器名称`：停止容器
- 
- 
- 
-容器rootfs命令
- 
 - `docker commit`
+	把容器打成镜像sudo docker commit a6c28e3f1ec4 ryzebo/docker-nodejs-test:0.1
+	    a6c28e3f1ec4 是容器的id
+	    ryzebo 是你注册的https://store.docker.com/的名字，如果你没有的话，那需要先注册
+	    docker-nodejs-test 是你为该镜像起的名字
+	    :0.1 是镜像的版本号，默认是latest版本
+	    
+    在提交镜像时指定更多的数据（包括标签）来详细描述所做的修改
+    sudo docker commit -m="A new custom image" --author="James Turnbull" 4aab3ce3cb76 jamtur01/apache2:webserver
+	    
 - `docker cp`：从容器里向外拷贝文件或目录
 	- `docker cp Name:/container_path to_path`
 	- `docker cp ID:/container_path to_path`
@@ -337,11 +338,7 @@ docker run -i -t -p 3000:3000 ubuntu:16.04 /bin/bash
 那就是把修改后的系统再打为iso就可以了。即，把容器再打为镜像即可。
 退出容器
 查看容器 docker ps -a
-把容器打成镜像sudo docker commit a6c28e3f1ec4 ryzebo/docker-nodejs-test:0.1
-    a6c28e3f1ec4 是容器的id
-    ryzebo 是你注册的https://store.docker.com/的名字，如果你没有的话，那需要先注册
-    docker-nodejs-test 是你为该镜像起的名字
-    :0.1 是镜像的版本号，默认是latest版本
+
  
 查看镜像：docker images
  
@@ -367,12 +364,9 @@ sudo docker run -i -t ubuntu /bin/bash
 apt-get -yqq update
 apt-get -y install apache2
 退出当前容器
-提交定制容器
-sudo docker commit 4aab3ce3cb86 jamtur01/appache2
 检查新创建的镜像
 sudo docker images jamtur01/apache2
-在提交镜像时指定更多的数据（包括标签）来详细描述所做的修改
-sudo docker commit -m="A new custom image" --author="James Turnbull" 4aab3ce3cb76 jamtur01/apache2:webserver
+
 使用docker inspect查看新创建的镜像详细信息
 sudo docker inspect jamtur01/apache2:webserver
 从提交的镜像运行一个新容器
