@@ -15,6 +15,8 @@
 - 镜像：可以认为是类似 Windows 下的：XXXX.iso
 - 容器：容器为镜像的实例，可以认为是 Virtualbox 运行 XXXX.iso 后的效果
 - 官网的镜像仓库地址：<https://store.docker.com/>
+- 对开发来讲总结一个最简单的说法：在 Maven 未产生的年代，jar 包要随着开发项目走到哪里跟到哪里。有了 Maven 写好 pom.xml 即可。此时的 Docker 就好比如 Maven，帮你省去了开发过程中的部署环境差异，你再也不能随便说：你的系统可以运行，我的系统就不行。现在别人连系统都帮你做好了。
+- 玩法理念：单进程，一个容器最好最专注去做一个事情。虽然它可以既装 MySQL，又装 Nginx 等等，但是让一个容器只做好一件事是最合适的。
 - 其他通俗解释：
  
 > Docker的思想来自于集装箱，集装箱解决了什么问题？在一艘大船上，可以把货物规整的摆放起来。并且各种各样的货物被集装箱标准化了，集装箱和集装箱之间不会互相影响。那么我就不需要专门运送水果的船和专门运送化学品的船了。只要这些货物在集装箱里封装的好好的，那我就可以用一艘大船把他们都运走。
@@ -226,30 +228,30 @@ java -jar /root/spring-boot-my-demo.jar
 - `docker build`：使用 Dockerfile 创建镜像（推荐）
 	- `docker build --rm -t runoob/ubuntu:v1 .`，参数 `-t`，表示：-tag，打标签
 - `docker history`：显示生成一个镜像的历史命令
-- `docker save`：将一个镜像保存为一个 tar 包，带 layers 和 tag 信息
-    - `docker save 容器ID/容器名称 -o /opt/test.tar`
-- `docker load`：从一个 tar 包创建一个镜像
-    加载一个tar包格式的镜像; -i, --input="" 从tar存档文件读取
+- `docker save`：将一个镜像保存为一个 tar 包，带 layers 和 tag 信息（导出一个镜像）
+    - `docker save 镜像ID -o /opt/test.tar`
+- `docker load`：从一个 tar 包创建一个镜像（导入一个镜像）
     - `docker load -i /opt/test.tar`
 
 
-> 容器操作
+> 容器管理操作
  
 - `docker ps`：列出当前所有 **正在运行** 的容器
+    - `docker ps -a`：列出所有的容器（包含历史，即运行过的容器）
     - `docker ps -l`：列出最近一次启动的container
-    - `docker ps -a`：列出所有的container（包含历史，即运行过的container）
     - `docker ps -q`：列出最近一次运行的container ID
     - `docker ps -n x`：显示最后 x 个容器，不管是正在运行或是已经停止的
-- `docker inspect 容器ID/容器名称`：查看容器的全面信息，用 JSON 格式输出
-- `docker top 容器ID/容器名称`：显示容器的进程信息
-- `docker attach 容器ID/容器名称`：连接到正在运行中的容器, 要attach上去的容器必须正在运行
+- `docker inspect 容器ID`：查看容器的全面信息，用 JSON 格式输出
+	- 获取容器中的 IP：`docker inspect -f '{{.NetworkSettings.IPAddress}}' 容器ID`
+	- 给容器重新设置 IP 和 子网掩码，需要在宿主上：`ifconfig 容器ID 192.168.200.1 netmask 255.255.255.0`
+- `docker top 容器ID`：显示容器的进程信息
 - `docker events`：得到 docker 服务器的实时的事件
-- `docker logs -f 容器ID/容器名称`：查看容器日志
-    - `docker logs 容器ID/容器名称`，获取守护式容器的日志
-    - `docker logs -f 容器ID/容器名称`，不断监控容器日志，类似 tail -f
-    - `docker logs -ft 容器ID/容器名称`，在 -f 的基础上又增加 -t 表示为每条日志加上时间戳，方便调试
-    - `docker logs --tail 10 容器ID/容器名称`，获取日志最后 10 行
-    - `docker logs --tail 0 -f 容器ID/容器名称`，跟踪某个容器的最新日志而不必读取日志文件
+- `docker logs -f 容器ID`：查看容器日志
+    - `docker logs 容器ID`，获取守护式容器的日志
+    - `docker logs -f 容器ID`，不断监控容器日志，类似 tail -f
+    - `docker logs -ft 容器ID`，在 -f 的基础上又增加 -t 表示为每条日志加上时间戳，方便调试
+    - `docker logs --tail 10 容器ID`，获取日志最后 10 行
+    - `docker logs --tail 0 -f 容器ID`，跟踪某个容器的最新日志而不必读取日志文件
 - `docker wait` ：阻塞到一个容器，直到容器停止运行
 - `docker export` ：将容器整个文件系统导出为一个tar包，不带layers、tag等信息
 - `docker port` ：显示容器的端口映射
@@ -257,7 +259,13 @@ java -jar /root/spring-boot-my-demo.jar
 > 容器生命周期管理
  
 - `docker run`
-    - `docker run -i -t centos /bin/bash`，在 centos 容器下运行 shell bash。其中参数：-i -t 表示保证容器中的 STDIN 开启，并分配一个伪 tty 终端进行交互。此外常用的参数还有：--name 是给容器起了一个名字；-d 容器运行在后台。-p 8080:80 表示端口映射，将宿主机的8080端口转发到容器内的80端口。容器的名称规则：大小写字母、数字、下划线、圆点、中横线，用正则表达式来表达就是：[a-zA-Z0-9_*-]
+    - `docker run --name myDockerNameIsGitNavi -i -t centos /bin/bash`，在 centos 容器下运行 shell bash。
+        - `-i -t` 分别表示保证容器中的 STDIN 开启，并分配一个伪 tty 终端进行交互，这两个是合着用。
+        - `--name` 是给容器起了一个名字（如果没有主动给名字，docker 会自动给你生成一个）容器的名称规则：大小写字母、数字、下划线、圆点、中横线，用正则表达式来表达就是：[a-zA-Z0-9_*-]
+        - `-d` 容器运行在后台。
+        - `-p 8080:80` 表示端口映射，将宿主机的8080端口转发到容器内的80端口。
+    - `docker run --rm --name myDockerNameIsGitNavi -i -t centos /bin/bash`，在 centos 容器下运行 shell bash。
+		- `--rm`，表示退出即删除容器，一般用在做实验测试的时候
     - `docker run --restart=always -i -t centos /bin/bash`，--restart=always 表示停止后会自动重启
     - `docker run --restart=on-failure:5 -i -t centos /bin/bash`，--restart=on-failure:5 表示停止后会自动重启，最多重启 5 次
     - `docker run -i -t -v /opt/setups/:/opt/software/ 容器ID /bin/bash`，启动容器，并进入 shell，同时挂载宿主机和容器的目录
@@ -268,11 +276,15 @@ java -jar /root/spring-boot-my-demo.jar
 	    - `--name`：表示容器名称，用一个有意义的名称命名即可
 - 进入容器后退出，输入：`exit` 回车
 - `docker start`，重新启动已经停止的容器
-    - `docker start 容器ID/容器名称`
+    - `docker start 容器ID`
+- `docker attach`：连接上正在运行中的容器, 被 attach 上去的容器必须正在运行的才可以
+	- `docker attach 容器ID`：重新进入容器终端中
 - `docker stop`
 - `docker restart`
 - `docker kill 容器ID/容器名称`，
 - `docker rm`，删除容器
+    - `docker rm 容器ID`，删除指定容器（该容器必须是停止的）
+    - `docker rm -f 容器ID`，删除指定容器（该容器可以是正在运行的）
     - `docker rm $(docker ps -a -q)`，删除所有容器
 - `docker pause/unpause`
 - `docker create`
@@ -289,7 +301,6 @@ java -jar /root/spring-boot-my-demo.jar
 	    
     在提交镜像时指定更多的数据（包括标签）来详细描述所做的修改
     sudo docker commit -m="A new custom image" --author="James Turnbull" 4aab3ce3cb76 jamtur01/apache2:webserver
-	    
 - `docker cp`：从容器里向外拷贝文件或目录
 	- `docker cp Name:/container_path to_path`
 	- `docker cp ID:/container_path to_path`
@@ -645,12 +656,10 @@ Marathon
     - 守护式容器：sudo docker run -d 镜像名
  
 sudo docker ps 查看已经运行过容器的基本信息
-sudo docker inspect  容器ID：查看容器的详细信息
 sudo docker stop 容器ID，停止守护式容器
 sudo service docker restart，重启 docker 服务，当修改了 docker 相关的一些配置
 sudo docker rm 容器ID，删除容器
-获取容器中的 IP：sudo docker inspect -f '{{.NetworkSettings.IPAddress}}' 容器ID
-修改 docker0 这个虚拟网桥，也就是 docker 的网络服务相关信息，比如给它重新设置 IP 和 子网掩码，在宿主上：sudo ifconfig docker0 192.168.200.1 netmask 255.255.255.0
+
  
  
 创建镜像：创建dockerfile，然后进行 build，
