@@ -107,7 +107,7 @@
 	- `find / -name "*tower*" -exec rm {} \;`，找到文件并删除
 	- `du -hm --max-depth=2 | sort -nr | head -12`，找出系统中占用容量最大的前 12 个目录
 - `cat /etc/resolv.conf`，查看 DNS 设置
-- `netstat -tlunp`，查看当前运行的服务
+- `netstat -tlunp`，查看当前运行的服务，同时可以查看到：运行的程序已使用端口情况
 - `env`，查看所有系统变量
 - `export`，查看所有系统变量
 - `echo $JAVA_HOME`，查看指定系统变量的值，这里查看的是自己配置的 JAVA_HOME。
