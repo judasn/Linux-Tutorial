@@ -268,12 +268,13 @@ java -jar /root/spring-boot-my-demo.jar
 		- `--rm`，表示退出即删除容器，一般用在做实验测试的时候
     - `docker run --restart=always -i -t centos /bin/bash`，--restart=always 表示停止后会自动重启
     - `docker run --restart=on-failure:5 -i -t centos /bin/bash`，--restart=on-failure:5 表示停止后会自动重启，最多重启 5 次
-    - `docker run -i -t -v /opt/setups/:/opt/software/ 容器ID /bin/bash`，启动容器，并进入 shell，同时挂载宿主机和容器的目录
+    - `docker run -i -t -v /opt/setups/:/opt/software/ 镜像ID /bin/bash`，启动容器，并进入 shell，同时挂载宿主机和容器的目录
         - `-v：表示需要将本地哪个目录挂载到容器中，格式：-v <宿主机目录>:<容器目录>  `
-    - `docker run -d -p 58080:8080 --name javaweb lin_javaweb:0.1 /root/run.sh`，运行容器中 Spring Boot 应用 
+    - `docker run -v /java_logs/:/java_logs/ -d -p 58080:8080 --name myDockerNameIsGitNavi myCustomImageName:0.1 /root/run.sh`，运行容器中 Spring Boot 应用 
 	    - `-d`：表示以“守护模式”执行/root/run.sh脚本，此时 Tomcat 控制台不会出现在输出终端上。  
 	    - `-p`：表示宿主机与容器的端口映射，此时将容器内部的 8080 端口映射为宿主机的 58080 端口，这样就向外界暴露了 58080 端口，可通过 Docker 网桥来访问容器内部的 8080 端口了。  
 	    - `--name`：表示容器名称，用一个有意义的名称命名即可
+    - `docker run -d -p 58080:8080 --name myDockerNameIsGitNavi myCustomImageName:0.1 /root/run.sh`，运行容器中 Spring Boot 应用 
 - 进入容器后退出，输入：`exit` 回车
 - `docker start`，重新启动已经停止的容器
     - `docker start 容器ID`
