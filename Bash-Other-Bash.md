@@ -12,6 +12,12 @@
 		- `rpm -qa | grep jdk`，查看 jdk 是否被安装
 	- 卸载
 		- `rpm -e jdk`，卸载 jdk（一般卸载的时候都要先用 rpm -qa 看下整个软件的全名）
+- YUM 软件管理：
+	- `yum install -y httpd`，安装 apache
+	- `yum remove -y httpd`，卸载 apache
+	- `yum info -y httpd`，查看 apache 版本信息
+	- `yum list --showduplicates httpd`，查看可以安装的版本
+	- 更多命令可以看：<http://man.linuxde.net/yum>
 - 查看某个配置文件，排除掉里面以 # 开头的注释内容：
     - `grep '^[^#]' /etc/openvpn/server.conf`
 - 查看某个配置文件，排除掉里面以 # 开头和 ; 开头的注释内容：
