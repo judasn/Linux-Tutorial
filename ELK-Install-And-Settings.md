@@ -385,6 +385,7 @@ http.port: 9200
 discovery.zen.ping.unicast.hosts: ["192.168.1.127"]  #如果有多个机子集群，这里就写上这些机子的 IP，格式：["192.168.1.127","192.168.1.126"]
 ```
 
+- 重点说明：Elasticsearch 的集群环境，主要就是上面这段配置文件内容的差别。如果有其他机子：node.name、discovery.zen.ping.unicast.hosts 需要改下。集群中所有机子的配置文件中 discovery.zen.ping.unicast.hosts 都要有所有机子的 IP 地址。
 - 修改这个配置文件，不然无法锁内存：`vim /etc/security/limits.conf`
 - 在文件最尾部增加下面内容：
 
