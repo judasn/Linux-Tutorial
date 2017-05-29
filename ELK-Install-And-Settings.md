@@ -378,7 +378,7 @@ path.logs: /opt/elasticsearch/log
 bootstrap.memory_lock: true
 network.host: 0.0.0.0 # 也可以是本机 IP
 http.port: 9200
-discovery.zen.ping.unicast.hosts: ["192.168.1.127"]  #这个为两台机子的 IP 地址
+discovery.zen.ping.unicast.hosts: ["192.168.1.127"]  #如果有多个机子集群，这里就写上这些机子的 IP，格式：["192.168.1.127","192.168.1.126"]
 ```
 
 - 修改这个配置文件，不然无法锁内存：`vim /etc/security/limits.conf`
@@ -406,9 +406,9 @@ vm.max_map_count=262144
 
 ``` json
 {
-  "name" : "xrfsiZM",
-  "cluster_name" : "elasticsearch",
-  "cluster_uuid" : "8AtVCJYWTweSK7PZubAaYQ",
+  "name" : "youmeek-node-1",
+  "cluster_name" : "youmeek-cluster",
+  "cluster_uuid" : "c8RxQdOHQJq-Tg8rrPi_UA",
   "version" : {
     "number" : "5.2.0",
     "build_hash" : "24e05b9",
