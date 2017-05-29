@@ -77,8 +77,8 @@ discovery.zen.ping.unicast.hosts: ["192.168.1.127", "192.168.1.126"]  #这个为
 # allow user 'elasticsearch' mlockall
 elasticsearch soft memlock unlimited
 elasticsearch hard memlock unlimited
-* soft nofile 65536
-* hard nofile 65536
+* soft nofile 262144
+* hard nofile 262144
 ```
 
 - 关闭 firewall
@@ -342,85 +342,83 @@ kibana.index: ".kibana"                            #在elastic中添加.kibana�
 - kibana 的高级用法请看我单独的一篇文章：[kibana 相关知识](Kibana-Base.md)
 
 
-//==================================================================================================================================================================
 
-## 5.2 安装（未完成）
+## Elasticsearch 5.2.0 安装
 
-### RPM 安装
+### 环境
 
-- 官网总的安装文档：<https://www.elastic.co/guide/en/elastic-stack/current/installing-elastic-stack.html>
+- 机子 IP：192.168.1.127
+- CentOS 7.3
+- JDK 版本：1.8（最低要求），主推：JDK 1.8.0_121
+- Elasticsearch 版本：5.2.0
+- 关闭 firewall
+	- `systemctl stop firewalld.service` #停止firewall
+	- `systemctl disable firewalld.service` #禁止firewall开机启动
 
-### 安装 Elasticsearch
 
-- 确保安装有 JDK
-- 官网文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.2/install-elasticsearch.html>
-- 创建 repo 文件：`vim /etc/yum.repos.d/elasticsearch.repo`，文件内容如下：
+### zip 解压安装
 
-``` ini
-[elasticsearch-5.x]
-name=Elasticsearch repository for 5.x packages
-baseurl=https://artifacts.elastic.co/packages/5.x/yum
-gpgcheck=1
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-autorefresh=1
-type=rpm-md
+- 官网总的安装文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.x/zip-targz.html>
+- 我的解压目录：`/usr/program`，解压包名：`elasticsearch-5.2.0.zip`
+- 解压：`cd /usr/program ; unzip elasticsearch-5.2.0.zip`
+- 删除掉压缩包：`rm -rf elasticsearch-5.2.0.zip`
+- 添加组和用户
+	- 该版本不能使用 root 用户进行使用
+	- `useradd elasticsearch -p 123456`，添加一个名为 elasticsearch 的用户，还有一个同名的组
+- 添加数据目录：`mkdir -p /opt/elasticsearch/data /opt/elasticsearch/log`
+- 赋权限：
+	- `chown -R elasticsearch:elasticsearch /usr/program/elasticsearch-5.2.0 /opt/elasticsearch`
+- 编辑配置文件：`vim /usr/program/elasticsearch-5.2.0/config/elasticsearch.yml`，打开下面注释，并修改
+
+``` nginx
+cluster.name: youmeek-cluster
+node.name: youmeek-node-1
+path.data: /opt/elasticsearch/data
+path.logs: /opt/elasticsearch/log
+bootstrap.memory_lock: true
+network.host: 0.0.0.0 # 也可以是本机 IP
+http.port: 9200
+discovery.zen.ping.unicast.hosts: ["192.168.1.127"]  #这个为两台机子的 IP 地址
 ```
 
-- 引入 key：`rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch`
-- 开始安装：`yum install -y elasticsearch`
-- 如果网络慢下载不了，那可以手动安装：
-	- 下载：`wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.2.rpm`
-	- 安装：`rpm --install elasticsearch-5.2.2.rpm`
-- 添加自启动：`systemctl enable elasticsearch.service`
-- 因为我的 JDK 是解压版本，不是 yum 安装的，所以这里要配置 JDK 路径：`vim /etc/sysconfig/elasticsearch`
-	- 找到 JAVA_HOME，打开注释，写上你的 JDK 路径即可
-- 修改配置：
-	- 创建数据目录：`mkdir -p /opt/elasticsearch/data`
-	- 给 ELK 系统用户授权：`chown -R elasticsearch:elasticsearch /opt/elasticsearch/data`
-	- 修改配置：`vim /etc/elasticsearch/elasticsearch.yml`，打开下面这些内容的注释，并修改：
-	
-	``` nginx
-	cluster.name: gitnavi-cluster
-	node.name: gitnavi-node-1
-	path.data: /opt/elasticsearch/data
-	path.logs: /var/log/elasticsearch
-	bootstrap.memory_lock: true
-	network.host: 本机 IP 地址
-	http.port: 9200
-	discovery.zen.ping.multicast.enabled: false
-    discovery.zen.ping.unicast.hosts: ["192.168.1.127", "192.168.1.126"]  #这个为两台机子的 IP 地址，ES 从2.0版本开始，默认的自动发现方式改为了单播(unicast)方式
-	```
+- 修改这个配置文件，不然无法锁内存：`vim /etc/security/limits.conf`
+- 在文件最尾部增加下面内容：
 
-	- 修改这个配置文件，不然无法锁内存：`vim /etc/security/limits.conf`
-	- 增加下面内容：
-	
-	``` nginx
-	# allow user 'elasticsearch' mlockall
-	elasticsearch soft memlock unlimited
-	elasticsearch hard memlock unlimited
-	* soft nofile 65536
-	* hard nofile 65536
-	```
+``` nginx
+# allow user 'elasticsearch' mlockall
+elasticsearch soft memlock unlimited
+elasticsearch hard memlock unlimited
+* soft nofile 262144
+* hard nofile 262144
+```
 
 - 修改：`vim /etc/sysctl.conf`，添加下面配置
 
 ``` ini
-vm.max_map_count=655360
+vm.max_map_count=262144
 ```
 
-- 启动（比较慢，耐心点）：`systemctl start elasticsearch.service`
-- 查看启动日志：`tail -500f /var/log/elasticsearch/节点名.log`
-- 停止：`systemctl stop elasticsearch.service`
-- rpm 安装后一些路径说明：
-	- home：`/usr/share/elasticsearch`
-	- bin：`/usr/share/elasticsearch/bin`
-	- 配置文件：`/etc/elasticsearch/elasticsearch.yml`
-	- 变量配置文件：`/etc/sysconfig/elasticsearch`
-	- log：`/var/log/elasticsearch/集群名称.log`
-	- plugins：`/usr/share/elasticsearch/plugins`
-	- data：`/var/lib/elasticsearch`，只是我在上面改到 /opt 目录下了
-	- script：`/etc/elasticsearch/scripts`
+- 重启机子：`reboot`。
+- 切换用户：`su elasticsearch`
+- 控制台运行（启动比较慢）：`cd /usr/program/elasticsearch-5.2.0 ; ./bin/elasticsearch`
+- 后台运行：`cd /usr/program/elasticsearch-5.2.0 ; ./bin/elasticsearch -d -p 自定义pid值`
+- 在本机终端输入该命令：`curl -XGET 'http://192.168.1.127:9200'`，（也可以用浏览器访问：<http://192.168.1.127:9200/>）如果能得到如下结果，则表示启动成功：
+
+``` json
+{
+  "name" : "xrfsiZM",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "8AtVCJYWTweSK7PZubAaYQ",
+  "version" : {
+    "number" : "5.2.0",
+    "build_hash" : "24e05b9",
+    "build_date" : "2017-01-24T19:52:35.800Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.4.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
 
 ### 安装 X-Pack 或是其他插件
 
