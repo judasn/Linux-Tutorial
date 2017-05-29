@@ -345,6 +345,10 @@ kibana.index: ".kibana"                            #在elastic中添加.kibana�
 
 ## Elasticsearch 5.2.0 安装
 
+- 官网下载地址：<https://www.elastic.co/cn/downloads/elasticsearch>
+- Elasticsearch 5.2.0 版本下载地址（32M）：<https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.zip>
+
+
 ### 环境
 
 - 机子 IP：192.168.1.127
@@ -420,7 +424,36 @@ vm.max_map_count=262144
 }
 ```
 
-### 安装 X-Pack 或是其他插件
+## 安装 Kibana 5.2.0
+
+- 官网下载地址：<https://www.elastic.co/cn/downloads/kibana>
+- Kibana 5.2.0 版本下载地址（36M）：<https://artifacts.elastic.co/downloads/kibana/kibana-5.2.0-linux-x86_64.tar.gz>
+- Kibana 5.2.0 官网文档：<https://www.elastic.co/guide/en/kibana/5.2/index.html>
+- Kibana 5.2.0 官网安装文档：<https://www.elastic.co/guide/en/kibana/5.2/targz.html>
+
+### tar.gz 解压安装
+
+- 安装目录：/usr/program
+- 解压：`cd /usr/program ; tar zxvf kibana-5.2.0-linux-x86_64.tar.gz`
+- 删除压缩包：`rm -rf kibana-5.2.0-linux-x86_64.tar.gz`
+- 修改解压后的目录名称：`mv kibana-5.2.0-linux-x86_64 kibana-5.2.0`
+- 修改配置：`vim /usr/program/kibana-5.2.0/config/kibana.yml`，默认配置都是注释的，我们这里打开这些注释：
+
+``` nginx
+server.port: 5601
+server.host: "0.0.0.0" # 请将这里改为 0.0.0.0 或是当前本机 IP，不然可能会访问不了
+erver.name: "youmeek-kibana"
+elasticsearch.url: "http://192.168.1.127:9200"
+elasticsearch.username: "elasticsearch"
+elasticsearch.password: "elasticsearch"
+```
+
+- 运行：`cd /usr/program/kibana-5.2.0 ; ./bin/kibana`
+- 浏览器访问：<http://192.168.1.127:5601>，可以看到 Kibana `Configure an index pattern` 界面
+- 访问 Dev Tools 工具，后面写 DSL 语句会常使用该功能：<http://192.168.1.127:5601/app/kibana#/dev_tools/console?_g=()>
+
+
+## 安装 X-Pack 或是其他插件
 
 - X-Pack 是官网提供的管理增强工具，但是全部功能收费，有一个月使用，有部分功能免费。其他免费的插件。
 	- licence 的用法可以看这篇文章：
