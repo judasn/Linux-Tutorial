@@ -446,7 +446,7 @@ server.host: "0.0.0.0" # 请将这里改为 0.0.0.0 或是当前本机 IP，不�
 erver.name: "youmeek-kibana"
 elasticsearch.url: "http://192.168.1.127:9200"
 elasticsearch.username: "elasticsearch"
-elasticsearch.password: "elasticsearch"
+elasticsearch.password: "123456"
 ```
 
 - 运行：`cd /usr/program/kibana-5.2.0 ; ./bin/kibana`
