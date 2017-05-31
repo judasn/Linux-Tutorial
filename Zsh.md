@@ -47,6 +47,11 @@
 - 现在你关掉终端或是重新连上 shell，现在开头是一个箭头了，如下图：
     - ![oh-my-zsh 安装](images/Zsh-b-1.jpg)
 
+## Home / End 失灵问题
+
+- 虽然可以通过配置解决，但是建议还是直接记快捷键吧：
+- Home = Ctrl + a
+- End = Ctrl + e
 
 
 ## Zsh 配置
