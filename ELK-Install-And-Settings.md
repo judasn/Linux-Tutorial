@@ -266,14 +266,8 @@ index.analysis.analyzer.default.type: "ik"
 ]
 ```
 
-- Elasticsearch 5.x 版本之后，就不需要再修改这个配置文件了 `/usr/program/elk/elasticsearch-2.4.1/config/elasticsearch.yml`，直接解压 zip 后，直接可以启动，然后再开一个终端，输入下面命令：
+- Elasticsearch 5.x 版本之后，就不需要再修改这个配置文件了 `/usr/program/elk/elasticsearch-2.4.1/config/elasticsearch.yml`，直接解压 zip 后，直接可以启动使用。可以访问这个进行测试：<http://192.168.1.127:9200/_analyze?analyzer=ik_max_word&pretty=true&text=这是一个针对程序员优化的导航GitNavi.com>
 
-``` shell
-curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{
-  "index.analysis.analyzer.default.tokenizer" : "ik_max_word",
-  "index.analysis.analyzer.default.type" : "ik"
-}'
-```
 
 ### 构建 elasticsearch 集群
 
