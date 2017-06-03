@@ -71,6 +71,8 @@
 - [Dubbo 安装和配置](Dubbo-Install-And-Settings.md)
 - [GitLab 安装和配置](Gitlab-Install-And-Settings.md)
 - [Docker 安装和使用](Docker-Install-And-Usage.md)
+- [LDAP 安装和使用](LDAP-Install-And-Settings.md)
+- [Alfresco 安装和使用](Alfresco-Install-And-Usage.md)
 
 
 ## 下一步(Next)
@@ -116,6 +118,7 @@
 |作者(按参与时间排序)|地址|
 |:---------|:---------|
 |Judas.n|<http://code.YouMeek.com>|
+|nl101531|<https://github.com/nl101531>|
 
 ## AD
 

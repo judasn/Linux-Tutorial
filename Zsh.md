@@ -47,6 +47,11 @@
 - 现在你关掉终端或是重新连上 shell，现在开头是一个箭头了，如下图：
     - ![oh-my-zsh 安装](images/Zsh-b-1.jpg)
 
+## Home / End 失灵问题
+
+- 虽然可以通过配置解决，但是建议还是直接记快捷键吧：
+- Home = Ctrl + a
+- End = Ctrl + e
 
 
 ## Zsh 配置
@@ -75,9 +80,9 @@
         - 进入解压后目录并安装：`cd autojump_v21.1.2/ ; ./install.sh`
         - 再执行下这个：`source /etc/profile.d/autojump.sh`
         - 编辑配置文件，添加上 autojump 的名字：`vim /root/.zshrc`
-    - `zsh-syntax-highlighting`
-        - 这个插件会记录你常去的那些目录，然后做一下权重记录，你可以用这个命令看到你的习惯：`j --stat`，如果这个里面有你的记录，那你就只要敲最后一个文件夹名字即可进入，比如我个人习惯的 program：`j program`，就可以直接到：`/usr/program`
-        - 插件官网：<https://github.com/zsh-users/zsh-syntax-highlighting>
+    - `zsh-syntax-highlighting`  
+        -   这个插件会对终端命令高亮显示,比如正确的拼写会是绿色标识,否则是红色,另外对于一些shell输出语句也会有高亮显示,算是不错的辅助插件  
+        -   插件官网：<https://github.com/zsh-users/zsh-syntax-highlighting>  
         - 安装，复制该命令：'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting'
 		- 编辑：`vim ~/.zshrc`，找到这一行，后括号里面的后面添加：`plugins=( 前面的一些插件名称 zsh-syntax-highlighting)`
 		- 刷新下配置：`source ~/.zshrc`
