@@ -137,7 +137,7 @@ elasticsearch hard memlock unlimited
     - Bigdesk：`/usr/program/elk/elasticsearch-2.4.1/bin/plugin install hlstudio/bigdesk`
 		- 安装完的访问地址：`http://192.168.1.127:9200/_plugin/bigdesk`
 	- 卸载：`/usr/share/elasticsearch/bin/elasticsearch-plugin remove 插件名称`
-- IK 分词插件的安装（**重点：所有节点都需要安装此插件*）
+- IK 分词插件的安装（**重点：所有节点都需要安装此插件**）
 	- IK 分词官网：<https://github.com/medcl/elasticsearch-analysis-ik>
 	- 官网首页已经有一个表格说明 ES 版本和 IK 插件的版本对应，我们可以看到：ES 2.4.1 对应 IK 分词 1.10.1，下载地址：<https://github.com/medcl/elasticsearch-analysis-ik/releases/tag/v1.10.1>
 	- 进入 ES 插件目录：`cd /usr/program/elk/elasticsearch-2.4.1/plugins`
@@ -264,6 +264,15 @@ index.analysis.analyzer.default.type: "ik"
     "position": 14
   }
 ]
+```
+
+- Elasticsearch 5.x 版本之后，就不需要再修改这个配置文件了 `/usr/program/elk/elasticsearch-2.4.1/config/elasticsearch.yml`，直接解压 zip 后，直接可以启动，然后再开一个终端，输入下面命令：
+
+``` shell
+curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{
+  "index.analysis.analyzer.default.tokenizer" : "ik_max_word",
+  "index.analysis.analyzer.default.type" : "ik"
+}'
 ```
 
 ### 构建 elasticsearch 集群
