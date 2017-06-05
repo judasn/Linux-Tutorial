@@ -217,6 +217,7 @@
 </distributionManagement>
 ```
 
+- 然后在项目上执行：`mvn deploy`
 
 
 ## 持续集成自动构建后发布到 Nexus 上
