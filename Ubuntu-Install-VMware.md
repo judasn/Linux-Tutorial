@@ -8,6 +8,7 @@
 - 下载：VMware-Workstation-Full-10.0.4-2249910.x86_64.bundle
 	- 下载地址（rzb0）：<http://pan.baidu.com/s/1dFuLD2D> 
 - 安装组件：
+
 ``` nginx
 命令：sudo apt-get update
 命令：sudo apt-get install build-essential linux-headers-`uname -r`
