@@ -106,6 +106,28 @@
 ## 一些人性化功能
 
 - 呃，这个其实可以不用讲的，你自己用的时候你自己会发现的，各种便捷，特别是用 Tab 多的人一定会有各种惊喜的。
+- 使用 ctrl-r 来搜索命令历史记录。按完此快捷键后，可以输入关键命令词语，如果历史记录有含有此词语会显示出来。
+- 命令别名：
+	- 在命令行中输入 alias 可以查看已经有的命令别名
+	- 自己新增一些别名，编辑文件：`vim ~/.zshrc`，在文件加入下面格式的命令，比如以下是网友提供的一些思路：
+
+``` shell
+alias cls='clear'
+alias ll='ls -l'
+alias la='ls -a'
+alias grep="grep --color=auto"
+alias -s html='vim'   # 在命令行直接输入后缀为 html 的文件名，会在 Vim 中打开
+alias -s rb='vim'     # 在命令行直接输入 ruby 文件，会在 Vim 中打开
+alias -s py='vim'      # 在命令行直接输入 python 文件，会用 vim 中打开，以下类似
+alias -s js='vim'
+alias -s c='vim'
+alias -s java='vim'
+alias -s txt='vim'
+alias -s gz='tar -xzvf' # 在命令行直接输入后缀为 gz 的文件名，会自动解压打开
+alias -s tgz='tar -xzvf'
+alias -s zip='unzip'
+alias -s bz2='tar -xjvf'
+```
 
 
 ## 差异
@@ -128,3 +150,4 @@
 - <http://blog.jobbole.com/86820/>
 - <http://uecss.com/zsh-brew-autojump-plugins-shell-for-mac.html>
 - <http://www.cnblogs.com/westfly/p/3283525.html>
+- <http://wdxtub.com/2016/02/18/oh-my-zsh/>
