@@ -267,6 +267,20 @@ index.analysis.analyzer.default.type: "ik"
 ```
 
 - Elasticsearch 5.x 版本之后，就不需要再修改这个配置文件了 `/usr/program/elk/elasticsearch-2.4.1/config/elasticsearch.yml`，直接解压 zip 后，直接可以启动使用。可以访问这个进行测试：<http://192.168.1.127:9200/_analyze?analyzer=ik_max_word&pretty=true&text=这是一个针对程序员优化的导航GitNavi.com>
+- 其他一些配置文件：
+	- main.dic，内置中文词库文件是，差不多有 27W 条记录。
+	- stopword.dic，英文停用词，一般不会被分词，不会存放在倒排索引中。
+	- quantifier.dic，用来存放一些量词。
+	- suffix.dic，用来存放后缀词。
+	- surname.dic，姓氏。
+- 自定义分词词库：
+	- 修改配置文件：IKAnalyzer.cfg.xml
+	- 在 ext_dict 标签中指定我们自己新增的 dic 文件（给的 demo 路径是 custom 目录下）。
+	- 修改完重启下 Elasticsearch 集群
+- 自定义停用词库：
+	- 修改配置文件：IKAnalyzer.cfg.xml
+	- 在 ext_stopwords 标签中指定我们自己新增的 dic 文件（给的 demo 路径是 custom 目录下）。
+	- 修改完重启下 Elasticsearch 集群
 
 
 ### 构建 elasticsearch 集群
