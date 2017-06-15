@@ -1,5 +1,8 @@
 # ELK（Elasticsearch、Logstash、Kibana）安装和配置
 
+## 版本说明
+
+- 本文包含了：Elasticsearch 2.4.X 和 Elasticsearch 5.2.X，请有针对性地选择。
 
 ## 本机环境
 
@@ -10,7 +13,7 @@
 - 依赖环境：JDK 1.8，所在目录：`/usr/program/jdk1.8.0_121`
 
 
-## 说明
+## 教程说明
 
 
 - 官网：<https://www.elastic.co/>
