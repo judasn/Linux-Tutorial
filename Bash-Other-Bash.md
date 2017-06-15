@@ -17,6 +17,7 @@
 	- `yum remove -y httpd`，卸载 apache
 	- `yum info -y httpd`，查看 apache 版本信息
 	- `yum list --showduplicates httpd`，查看可以安装的版本
+	- `yum install httpd-查询到的版本号`，安装指定版本
 	- 更多命令可以看：<http://man.linuxde.net/yum>
 - 查看某个配置文件，排除掉里面以 # 开头的注释内容：
     - `grep '^[^#]' /etc/openvpn/server.conf`
