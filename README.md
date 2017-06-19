@@ -24,6 +24,7 @@
 - [Vim 安装、配置、快捷键列表](Vim-Install-And-Settings.md)
 - [Bash 命令](Bash.md)
 - [Bash 其他常用命令](Bash-Other-Bash.md)
+- [Sed 命令](Sed.md)
 - [Linux 下常用压缩文件的解压、压缩](File-Extract-Compress.md)
 - [Yum 下载安装包及对应依赖包](Off-line-Yum-Install.md)
 - [Zsh 入门](Zsh.md)
