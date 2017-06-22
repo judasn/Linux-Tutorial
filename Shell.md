@@ -21,6 +21,18 @@
 - 如果脚本是用于 Crontab 定时任务，则定义在 /etc/profile 中的环境变量是无法使用的，需要重新定义。
 
 
+## 变量
+
+- 查看系统的环境变量列表：`env` 或 `set`
+- 用户环境变量设置位置：`vim ~/.bash_profile`
+- 全局环境变量：`vim /etc/profile`
+- 环境变量要设置为全大写
+- 环境变量需要 export 导出，完整设置，比如下面设置 JDK：
+
+```
+JAVA_HOME=/usr/program/jdk1.8.0_121
+export JAVA_HOME
+```
 
 
 
