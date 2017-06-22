@@ -25,7 +25,7 @@
 
 - 查看系统的环境变量列表：`env` 或 `set`
 - 用户环境变量设置位置：`vim ~/.bash_profile`
-- 全局环境变量：`vim /etc/profile`
+- 全局环境变量：`vim /etc/profile`，或者在目录：/etc/profile.d/ 下自己写一个 sh 文件，然后设置一下变量
 - 环境变量要设置为全大写
 - 环境变量需要 export 导出，完整设置，比如下面设置 JDK：
 
