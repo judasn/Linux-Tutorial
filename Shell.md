@@ -16,7 +16,7 @@
 	- 其中 /bin/sh 是 bash 的软链接，所以以上两种写法都可以。（证明：`ls -l /bin/sh`）
 - 换行符（line separator）：IntelliJ IDEA 下编写脚本的时候一定要注意后下角的 LF 还是 CRLF，LF 才是 Linux 的要求。
 - 执行脚本命令：`bash /opt/test.sh`（推荐），还有：`. /opt/test.sh`，`source /opt/test.sh`
-	- 用 source 或是 点开头 的优点是：后面执行的脚本可以读取 source 或 点 执行脚本中的变量内容
+	- 用 source 或是 点开头 的优点是：后面执行的脚本可以读取 source 或 点 执行脚本中的变量内容，但是这个读取也只是基于一个 shell 状态下，如果是另外开的 shell 是没有用的。
 - 注释：用 # 号开头
 - 如果脚本是用于 Crontab 定时任务，则定义在 /etc/profile 中的环境变量是无法使用的，需要重新定义。
 
@@ -34,8 +34,9 @@ JAVA_HOME=/usr/program/jdk1.8.0_121
 export JAVA_HOME
 ```
 
-
-
+- 变量的等于号，左右两边不要有空格
+- 普通字符串变量：`gitnavi_url="gitnavi.com"`
+- 数值型变量、路径型变量：`gitnavi_age=3`
 
 
 
