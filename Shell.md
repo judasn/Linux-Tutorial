@@ -3,17 +3,21 @@
 ## 环境
 
 - CentOS 7.3
-- bash + zsh
+- bash
 - IntelliJ IDEA 2017.1 + Vim
 - Xshell 5
 
 ## 基础
 
+- shell 本质是一个程序，我们这里讲的是 shell 脚本的编写/编程。
 - 查看 bash 版本号：`bash --version`，CentOS 7.3 是 4.2.46
-- 查看 zsh 版本号：`zsh --version`
 - 文件后缀：`sh`
-- 开头语言标识。文件开头是：`#!/bin/sh` 或 `#!/bin/bash`（优先）（其实也可以不加，因为 Linux 默认就是 bash，只是为了合理，一般都要加），主要是告诉哪个解析器来执行脚本。如果该语句写在非第一行，那就是当做注释使用。
+- 开头语言标识。文件开头是：`#!/bin/sh` 或 `#!/bin/bash`（优先使用这个）（其实也可以不加，因为 Linux 默认就是 bash，只是为了合理，一般都要加），主要是告诉哪个解析器来执行脚本。如果该语句写在非第一行，那就是当做注释使用。
 	- 其中 /bin/sh 是 bash 的软链接，所以以上两种写法都可以。（证明：`ls -l /bin/sh`）
+	- 但是业界上，sh 和 bash 其实是有历史区别的。
+	- sh 即 Bourne shell，POSIX（Portable Operating System Interface）标准的 shell 解释器，它的二进制文件路径通常是 /bin/sh，由 Bell Labs 开发。
+	- bash 是 Bourne shell 的替代品，属 GNU Project，二进制文件路径通常是 /bin/bash。
+	- Mac OS 上 /bin/sh 和 /bin/bash 是两个不同的文件
 - 换行符（line separator）：IntelliJ IDEA 下编写脚本的时候一定要注意后下角的 LF 还是 CRLF，LF 才是 Linux 的要求。
 - 执行脚本命令：`bash /opt/test.sh`（推荐），还有：`. /opt/test.sh`，`source /opt/test.sh`
 	- 用 source 或是 点开头 的优点是：后面执行的脚本可以读取 source 或 点 执行脚本中的变量内容，但是这个读取也只是基于一个 shell 状态下，如果是另外开的 shell 是没有用的。
@@ -35,11 +39,51 @@ export JAVA_HOME
 ```
 
 - 变量的等于号，左右两边不要有空格
-- 普通字符串变量：`gitnavi_url="gitnavi.com"`
+- 普通字符串变量：`gitnavi_url="gitnavi.com"`，虽然也可以用单引号或是不使用任何符号，但是不推荐。
+	- 使用双引号可以在变量中使用其他变量，双引号内容中有双引号，再加个转移斜杠即可，如下：
+	- `str="Hello, \"${gitnavi_url}\"! \n"`
 - 数值型变量、路径型变量：`gitnavi_age=3`
+- 删除变量：`unset gitnavi_url`
+- 使用变量：
+	- `echo $gitnavi_url`，不推荐这种
+	- `echo ${gitnavi_url}`，推荐这种
+- 拼接字符串：
+
+``` shell
+gitnavi_url="gitnavi.com"
+gitnavi_say="hello, ${gitnavi_url} !"
+
+echo ${gitnavi_say}
+```
+
+- 获取字符串长度，多加一个 # 号：
+
+``` shell
+gitnavi_url="gitnavi.com"
+echo ${#gitnavi_url}
+```
+
+- 截取字符串（下标是从 0 开始）：
+
+``` shell
+gitnavi_url="gitnavi.com"
+echo ${gitnavi_url:1:4}
+```
+
+- 查找子字符串出现的最开始下标位置（下标开始是 0，所以下面结果是：2）：
+
+``` shell
+gitnavi_url="gitnavi.com"
+echo `expr index "${gitnavi_url}" navi`
+```
 
 
 
 ## 资料
 
-- <>
+- <https://github.com/qinjx/30min_guides/blob/master/shell.md>
+- <http://www.runoob.com/linux/linux-shell.html>
+- <http://c.biancheng.net/cpp/shell/>
+- <https://www.zybuluo.com/yangfch3/note/619239>
+- <https://tinylab.gitbooks.io/shellbook/content/>
+- <http://www.jianshu.com/p/e1c8e5bfa45e>
