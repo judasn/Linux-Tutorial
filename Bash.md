@@ -112,6 +112,7 @@
 - `export`，查看所有系统变量
 - `echo $JAVA_HOME`，查看指定系统变量的值，这里查看的是自己配置的 JAVA_HOME。
 - `unset $JAVA_HOME`，删除指定的环境变量
+- `ln -s /opt/data /opt/logs/data`，表示给 /opt/logs 目录下创建一个名为 data 的软链接，该软链接指向到 /opt/data
 
 
 ## 用户、权限-相关命令
