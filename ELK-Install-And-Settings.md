@@ -4,27 +4,175 @@
 
 - 本文包含了：Elasticsearch 2.4.X 和 Elasticsearch 5.2.X，请有针对性地选择。
 
-## 本机环境
-
-- 两台机子CPU 1 核，内存 4G
-	- 192.168.1.126
-	- 192.168.1.127
-- 系统：CentOS 7.3 64 位
-- 依赖环境：JDK 1.8，所在目录：`/usr/program/jdk1.8.0_121`
-
-
 ## 教程说明
 
 
 - 官网：<https://www.elastic.co/>
 - 官网总文档：<https://www.elastic.co/guide/index.html>
 - 官网最终指南：<https://www.elastic.co/guide/en/elasticsearch/guide/current/administration.html#administration>
-- 此时（201703）最新版本：**5.2**，但是我在使用过程中有很多坑，暂时又退回到 **2.X**
 - 官网对各个系统的支持列表：<https://www.elastic.co/support/matrix>
 - 5.2 版本有一个设置的新特性必须了解，测试建议我们用 CentOS 7：<https://www.elastic.co/guide/en/elasticsearch/reference/5.x/breaking-changes-5.2.html#_system_call_bootstrap_check>
 - Elasticsearch 开源分布式搜索引擎，它的特点有：分布式，零配置，自动发现，索引自动分片，索引副本机制，restful 风格接口，多数据源，自动搜索负载等。
 - Logstash 日志进行收集、分析，并将其存储供以后使用（如，搜索）
 - kibana 为 Logstash 和 ElasticSearch 提供的日志分析友好的 Web 界面，可以帮助您汇总、分析和搜索重要数据日志。
+
+
+## 5.2.0
+
+### Elasticsearch 5.2.0 安装
+
+- 官网下载地址：<https://www.elastic.co/cn/downloads/elasticsearch>
+- Elasticsearch 5.2.0 版本下载地址（32M）：<https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.zip>
+
+
+### 环境
+
+- 机子 IP：192.168.1.127
+- CentOS 7.3
+- JDK 版本：1.8（最低要求），主推：JDK 1.8.0_121 以上
+- Elasticsearch 版本：5.2.0
+- 关闭 firewall
+	- `systemctl stop firewalld.service` #停止firewall
+	- `systemctl disable firewalld.service` #禁止firewall开机启动
+
+
+### zip 解压安装
+
+- 官网总的安装文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.x/zip-targz.html>
+- 我的解压目录：`/usr/program`，解压包名：`elasticsearch-5.2.0.zip`
+- 解压：`cd /usr/program ; unzip elasticsearch-5.2.0.zip`
+- 删除掉压缩包：`rm -rf elasticsearch-5.2.0.zip`
+- 添加组和用户
+	- 该版本不能使用 root 用户进行使用
+	- `useradd elasticsearch -p 123456`，添加一个名为 elasticsearch 的用户，还有一个同名的组
+- 添加数据目录：`mkdir -p /opt/elasticsearch/data /opt/elasticsearch/log`
+- 赋权限：
+	- `chown -R elasticsearch:elasticsearch /usr/program/elasticsearch-5.2.0 /opt/elasticsearch`
+- 编辑配置文件：`vim /usr/program/elasticsearch-5.2.0/config/elasticsearch.yml`，打开下面注释，并修改
+
+``` nginx
+cluster.name: youmeek-cluster
+node.name: youmeek-node-1
+path.data: /opt/elasticsearch/data
+path.logs: /opt/elasticsearch/log
+bootstrap.memory_lock: true
+network.host: 0.0.0.0 # 也可以是本机 IP
+http.port: 9200
+discovery.zen.ping.unicast.hosts: ["192.168.1.127"]  #如果有多个机子集群，这里就写上这些机子的 IP，格式：["192.168.1.127","192.168.1.126"]
+```
+
+- 重点说明：Elasticsearch 的集群环境，主要就是上面这段配置文件内容的差别。如果有其他机子：node.name、discovery.zen.ping.unicast.hosts 需要改下。集群中所有机子的配置文件中 discovery.zen.ping.unicast.hosts 都要有所有机子的 IP 地址。
+- 修改这个配置文件，不然无法锁内存：`vim /etc/security/limits.conf`
+- 在文件最尾部增加下面内容：
+
+``` nginx
+# allow user 'elasticsearch' mlockall
+elasticsearch soft memlock unlimited
+elasticsearch hard memlock unlimited
+* soft nofile 262144
+* hard nofile 262144
+```
+
+- 修改：`vim /etc/sysctl.conf`，添加下面配置
+
+``` ini
+vm.max_map_count=262144
+```
+
+- 重启机子：`reboot`。
+- 切换用户：`su elasticsearch`
+- 控制台运行（启动比较慢）：`cd /usr/program/elasticsearch-5.2.0 ; ./bin/elasticsearch`
+- 后台运行：`cd /usr/program/elasticsearch-5.2.0 ; ./bin/elasticsearch -d -p 自定义pid值`
+- 在本机终端输入该命令：`curl -XGET 'http://192.168.1.127:9200'`，（也可以用浏览器访问：<http://192.168.1.127:9200/>）如果能得到如下结果，则表示启动成功：
+
+``` json
+{
+  "name" : "youmeek-node-1",
+  "cluster_name" : "youmeek-cluster",
+  "cluster_uuid" : "c8RxQdOHQJq-Tg8rrPi_UA",
+  "version" : {
+    "number" : "5.2.0",
+    "build_hash" : "24e05b9",
+    "build_date" : "2017-01-24T19:52:35.800Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.4.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
+## 安装 Kibana 5.2.0
+
+- 官网下载地址：<https://www.elastic.co/cn/downloads/kibana>
+- Kibana 5.2.0 版本下载地址（36M）：<https://artifacts.elastic.co/downloads/kibana/kibana-5.2.0-linux-x86_64.tar.gz>
+- Kibana 5.2.0 官网文档：<https://www.elastic.co/guide/en/kibana/5.2/index.html>
+- Kibana 5.2.0 官网安装文档：<https://www.elastic.co/guide/en/kibana/5.2/targz.html>
+
+### tar.gz 解压安装
+
+- 安装目录：/usr/program
+- 解压：`cd /usr/program ; tar zxvf kibana-5.2.0-linux-x86_64.tar.gz`
+- 删除压缩包：`rm -rf kibana-5.2.0-linux-x86_64.tar.gz`
+- 修改解压后的目录名称：`mv kibana-5.2.0-linux-x86_64 kibana-5.2.0`
+- 修改配置：`vim /usr/program/kibana-5.2.0/config/kibana.yml`，默认配置都是注释的，我们这里打开这些注释：
+
+``` nginx
+server.port: 5601
+server.host: "0.0.0.0" # 请将这里改为 0.0.0.0 或是当前本机 IP，不然可能会访问不了
+erver.name: "youmeek-kibana"
+elasticsearch.url: "http://192.168.1.127:9200"
+elasticsearch.username: "elasticsearch"
+elasticsearch.password: "123456"
+```
+
+- 运行：`cd /usr/program/kibana-5.2.0 ; ./bin/kibana`
+- 浏览器访问：<http://192.168.1.127:5601>，可以看到 Kibana `Configure an index pattern` 界面
+- 访问 Dev Tools 工具，后面写 DSL 语句会常使用该功能：<http://192.168.1.127:5601/app/kibana#/dev_tools/console?_g=()>
+
+
+## Beats
+
+### Beats 资料
+
+- Beats 官网：<https://www.elastic.co/cn/products/beats>
+- Beats 简单介绍：日志数据搜集器。一般安装在需要收集日志的服务器上，然后把收集的数据发送到 Elasticsearch 或是先发送到 logstash 清洗整理（解析过滤）后再发送到 Elasticsearch。
+	- logstash 也有收集日志的功能，只是它相对 Beats 更加消耗 CPU 和内存，所以一般使用 Beats 收集日志。
+- 目前常见的 Beats 类型：
+	- Filebeat（搜集文件数据）；
+	- Packetbeat（搜集网络流量数据）；
+	- Metricbeat（搜集系统、进程和文件系统级别的 CPU 和内存使用情况等数据）；
+	- Winlogbeat（搜集 Windows 事件日志数据）。
+	- Heartbeat（主动探测服务是否可用）。
+
+## 安装 X-Pack 或是其他插件
+
+- X-Pack 是官网提供的管理增强工具，但是全部功能收费，有一个月使用，有部分功能免费。其他免费的插件。
+	- licence 的用法可以看这篇文章：
+		- <http://blog.csdn.net/abcd_d_/article/details/53178798>
+		- <http://blog.csdn.net/AbnerSunYH/article/details/53436212>
+		- 破解：<http://www.lofter.com/lpost/33be15_d4fd028>
+	- 免费插件：
+	- head - 节点数据查看管理：<https://github.com/mobz/elasticsearch-head>
+	- kopf - 集群管理：<https://github.com/lmenezes/elasticsearch-kopf>
+- 官网说明：<https://www.elastic.co/guide/en/x-pack/5.2/installing-xpack.html>
+- 安装（过程比较慢）：`/usr/share/elasticsearch/bin/elasticsearch-plugin install x-pack`
+- 如果线上安装速度太慢，那就离线安装：
+	- 下载，我放在 /opt 目录下（119M）：`wget https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-5.2.2.zip`
+	- 安装：`/usr/share/elasticsearch/bin/elasticsearch-plugin install file:///opt/x-pack-5.2.2.zip`
+- 卸载：`/usr/share/elasticsearch/bin/elasticsearch-plugin remove x-pack`
+- 安装后重启服务，重启后访问你会发现需要用户和密码，我们可以关掉这个，在 elasticsearch.yml 中添加：`xpack.security.enabled: false`
+- 其他 5.2 资料：
+	- <https://blog.yourtion.com/install-x-pack-for-elasticsearch-and-kibana.html>
+	- <https://www.ko178.cn/?p=353>
+	- <https://my.oschina.net/HeAlvin/blog/828639>
+	- <http://www.jianshu.com/p/004765d2238b>
+	- <http://www.cnblogs.com/delgyd/p/elk.html>
+	- <http://www.itdadao.com/articles/c15a1135185p0.html>
+	- <http://www.busyboy.cn/?p=920>
+	- <http://nosmoking.blog.51cto.com/3263888/1897989>
+	- <http://www.freebuf.com/sectool/139687.html>
+
+---------------------------------------------------------------------------
 
 
 ## 2.4.X 
@@ -360,146 +508,6 @@ kibana.index: ".kibana"                            #在elastic中添加.kibana�
 	- 此时你可以直接点击 `create` 统计 `logstash-*` 格式的索引结果，看到相关内容
 	- 如果你知道你的索引名称的规则，比如我现在要统计 Tomcat 的相关索引，我的索引名称是：`tomcat-log-*`，则我输入这个，点击：create 即可。
 - kibana 的高级用法请看我单独的一篇文章：[kibana 相关知识](Kibana-Base.md)
-
-
-
-## Elasticsearch 5.2.0 安装
-
-- 官网下载地址：<https://www.elastic.co/cn/downloads/elasticsearch>
-- Elasticsearch 5.2.0 版本下载地址（32M）：<https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.0.zip>
-
-
-### 环境
-
-- 机子 IP：192.168.1.127
-- CentOS 7.3
-- JDK 版本：1.8（最低要求），主推：JDK 1.8.0_121
-- Elasticsearch 版本：5.2.0
-- 关闭 firewall
-	- `systemctl stop firewalld.service` #停止firewall
-	- `systemctl disable firewalld.service` #禁止firewall开机启动
-
-
-### zip 解压安装
-
-- 官网总的安装文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.x/zip-targz.html>
-- 我的解压目录：`/usr/program`，解压包名：`elasticsearch-5.2.0.zip`
-- 解压：`cd /usr/program ; unzip elasticsearch-5.2.0.zip`
-- 删除掉压缩包：`rm -rf elasticsearch-5.2.0.zip`
-- 添加组和用户
-	- 该版本不能使用 root 用户进行使用
-	- `useradd elasticsearch -p 123456`，添加一个名为 elasticsearch 的用户，还有一个同名的组
-- 添加数据目录：`mkdir -p /opt/elasticsearch/data /opt/elasticsearch/log`
-- 赋权限：
-	- `chown -R elasticsearch:elasticsearch /usr/program/elasticsearch-5.2.0 /opt/elasticsearch`
-- 编辑配置文件：`vim /usr/program/elasticsearch-5.2.0/config/elasticsearch.yml`，打开下面注释，并修改
-
-``` nginx
-cluster.name: youmeek-cluster
-node.name: youmeek-node-1
-path.data: /opt/elasticsearch/data
-path.logs: /opt/elasticsearch/log
-bootstrap.memory_lock: true
-network.host: 0.0.0.0 # 也可以是本机 IP
-http.port: 9200
-discovery.zen.ping.unicast.hosts: ["192.168.1.127"]  #如果有多个机子集群，这里就写上这些机子的 IP，格式：["192.168.1.127","192.168.1.126"]
-```
-
-- 重点说明：Elasticsearch 的集群环境，主要就是上面这段配置文件内容的差别。如果有其他机子：node.name、discovery.zen.ping.unicast.hosts 需要改下。集群中所有机子的配置文件中 discovery.zen.ping.unicast.hosts 都要有所有机子的 IP 地址。
-- 修改这个配置文件，不然无法锁内存：`vim /etc/security/limits.conf`
-- 在文件最尾部增加下面内容：
-
-``` nginx
-# allow user 'elasticsearch' mlockall
-elasticsearch soft memlock unlimited
-elasticsearch hard memlock unlimited
-* soft nofile 262144
-* hard nofile 262144
-```
-
-- 修改：`vim /etc/sysctl.conf`，添加下面配置
-
-``` ini
-vm.max_map_count=262144
-```
-
-- 重启机子：`reboot`。
-- 切换用户：`su elasticsearch`
-- 控制台运行（启动比较慢）：`cd /usr/program/elasticsearch-5.2.0 ; ./bin/elasticsearch`
-- 后台运行：`cd /usr/program/elasticsearch-5.2.0 ; ./bin/elasticsearch -d -p 自定义pid值`
-- 在本机终端输入该命令：`curl -XGET 'http://192.168.1.127:9200'`，（也可以用浏览器访问：<http://192.168.1.127:9200/>）如果能得到如下结果，则表示启动成功：
-
-``` json
-{
-  "name" : "youmeek-node-1",
-  "cluster_name" : "youmeek-cluster",
-  "cluster_uuid" : "c8RxQdOHQJq-Tg8rrPi_UA",
-  "version" : {
-    "number" : "5.2.0",
-    "build_hash" : "24e05b9",
-    "build_date" : "2017-01-24T19:52:35.800Z",
-    "build_snapshot" : false,
-    "lucene_version" : "6.4.0"
-  },
-  "tagline" : "You Know, for Search"
-}
-```
-
-## 安装 Kibana 5.2.0
-
-- 官网下载地址：<https://www.elastic.co/cn/downloads/kibana>
-- Kibana 5.2.0 版本下载地址（36M）：<https://artifacts.elastic.co/downloads/kibana/kibana-5.2.0-linux-x86_64.tar.gz>
-- Kibana 5.2.0 官网文档：<https://www.elastic.co/guide/en/kibana/5.2/index.html>
-- Kibana 5.2.0 官网安装文档：<https://www.elastic.co/guide/en/kibana/5.2/targz.html>
-
-### tar.gz 解压安装
-
-- 安装目录：/usr/program
-- 解压：`cd /usr/program ; tar zxvf kibana-5.2.0-linux-x86_64.tar.gz`
-- 删除压缩包：`rm -rf kibana-5.2.0-linux-x86_64.tar.gz`
-- 修改解压后的目录名称：`mv kibana-5.2.0-linux-x86_64 kibana-5.2.0`
-- 修改配置：`vim /usr/program/kibana-5.2.0/config/kibana.yml`，默认配置都是注释的，我们这里打开这些注释：
-
-``` nginx
-server.port: 5601
-server.host: "0.0.0.0" # 请将这里改为 0.0.0.0 或是当前本机 IP，不然可能会访问不了
-erver.name: "youmeek-kibana"
-elasticsearch.url: "http://192.168.1.127:9200"
-elasticsearch.username: "elasticsearch"
-elasticsearch.password: "123456"
-```
-
-- 运行：`cd /usr/program/kibana-5.2.0 ; ./bin/kibana`
-- 浏览器访问：<http://192.168.1.127:5601>，可以看到 Kibana `Configure an index pattern` 界面
-- 访问 Dev Tools 工具，后面写 DSL 语句会常使用该功能：<http://192.168.1.127:5601/app/kibana#/dev_tools/console?_g=()>
-
-
-## 安装 X-Pack 或是其他插件
-
-- X-Pack 是官网提供的管理增强工具，但是全部功能收费，有一个月使用，有部分功能免费。其他免费的插件。
-	- licence 的用法可以看这篇文章：
-		- <http://blog.csdn.net/abcd_d_/article/details/53178798>
-		- <http://blog.csdn.net/AbnerSunYH/article/details/53436212>
-		- 破解：<http://www.lofter.com/lpost/33be15_d4fd028>
-	- 免费插件：
-	- head - 节点数据查看管理：<https://github.com/mobz/elasticsearch-head>
-	- kopf - 集群管理：<https://github.com/lmenezes/elasticsearch-kopf>
-- 官网说明：<https://www.elastic.co/guide/en/x-pack/5.2/installing-xpack.html>
-- 安装（过程比较慢）：`/usr/share/elasticsearch/bin/elasticsearch-plugin install x-pack`
-- 如果线上安装速度太慢，那就离线安装：
-	- 下载，我放在 /opt 目录下（119M）：`wget https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-5.2.2.zip`
-	- 安装：`/usr/share/elasticsearch/bin/elasticsearch-plugin install file:///opt/x-pack-5.2.2.zip`
-- 卸载：`/usr/share/elasticsearch/bin/elasticsearch-plugin remove x-pack`
-- 安装后重启服务，重启后访问你会发现需要用户和密码，我们可以关掉这个，在 elasticsearch.yml 中添加：`xpack.security.enabled: false`
-- 其他 5.2 资料：
-	- <https://blog.yourtion.com/install-x-pack-for-elasticsearch-and-kibana.html>
-	- <https://www.ko178.cn/?p=353>
-	- <https://my.oschina.net/HeAlvin/blog/828639>
-	- <http://www.jianshu.com/p/004765d2238b>
-	- <http://www.cnblogs.com/delgyd/p/elk.html>
-	- <http://www.itdadao.com/articles/c15a1135185p0.html>
-	- <http://www.busyboy.cn/?p=920>
-	- <http://nosmoking.blog.51cto.com/3263888/1897989>
 
 
 ## 资料
