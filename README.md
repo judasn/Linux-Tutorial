@@ -108,7 +108,6 @@
     - 百度云盘：<http://pan.baidu.com/s/1bogmTLd>
     - 360 网盘（2fb5）：<https://yunpan.cn/cYez7W9xnHs3c>
     
-    hello this is me
 
 ## Github 常用按钮说明
 
