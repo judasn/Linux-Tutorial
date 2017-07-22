@@ -55,7 +55,7 @@
     - 安装依赖包：`yum install -y gcc gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel`
     - 预设几个文件夹，方便等下安装的时候有些文件可以进行存放：
         - `mkdir -p /usr/local/nginx /var/log/nginx /var/temp/nginx /var/lock/nginx`
-    - 下载源码包：``wget http://nginx.org/download/nginx-1.8.1.tar.gz`
+    - 下载源码包：`wget http://nginx.org/download/nginx-1.8.1.tar.gz`
     - 解压：`tar zxvf nginx-1.8.1.tar.gz`
     - 进入解压后目录：`cd nginx-1.8.1/`
     - 编译配置：
