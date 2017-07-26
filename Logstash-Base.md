@@ -7,6 +7,50 @@
 - 如果是通过网络来收集，并不需要所有机子都装，但是如果是要通过读取文件来收集，那文件所在的那个机子就的安装
 - 配置文件的写法格式：<https://www.elastic.co/guide/en/logstash/5.2/configuration-file-structure.html>
 
+### logstash 5.5.0 安装
+
+- 假设你已经看了 Elasticsearch 专题文，并且设置了仓库地址：[Elasticsearch 相关知识](Elasticsearch-Base.md)
+- 安装：`yum install -y logstash`
+
+### logstash 2.4.1 安装
+
+- logstash 基于 ruby，也需要 JDK 环境
+- 如果是通过网络来收集，并不需要所有机子都装，但是如果是要通过读取文件来收集，那文件所在的那个机子就的安装 logstash
+- 安装：
+	- 切换到存放目录：`cd /usr/program/elk`
+	- 解压：`tar zxvf logstash-2.4.1.tar.gz`
+- 切换到 root 用户下，启动 logstash
+- 带控制台的启动（比较慢）进行最简单的 hello world 测试：`/usr/program/elk/logstash-2.4.1/bin/logstash -e 'input { stdin { } } output { stdout { codec => rubydebug} }'`
+	-  启动后显示如下内容：
+	
+``` nginx
+Settings: Default pipeline workers: 1
+Pipeline main started
+```
+	
+- 然后此时的光标是为可输入状态，我们输入：hello world 回车，然后应该会得到这样的结果：
+
+``` json
+{
+       "message" => "hello world",
+      "@version" => "1",
+    "@timestamp" => "2017-03-14T06:56:44.690Z",
+          "host" => "youmeeklocalhost"
+}
+```
+
+- 现在进一步加深，把控制台输入的内容放在 elasticsearch 索引中
+- 记得先切换到 elasticsearch 用户下，然后先启动 elasticsearch。先确保 elasticsearch 集群是启动的。
+- 带控制台的启动（比较慢）：`/usr/program/elk/logstash-2.4.1/bin/logstash -e 'input { stdin { } } output { elasticsearch { hosts => ["192.168.1.127:9200"] } }'`
+	-  启动后显示如下内容：
+	
+``` nginx
+Settings: Default pipeline workers: 1
+Pipeline main started
+```
+	
+- 然后此时的光标是为可输入状态，我们输入任意内容回车，然后访问 elasticsearch 的 head 插件控制台：`http://192.168.1.127:9200/_plugin/head/`
+- 然后你可以看到有一个类似这样的名称格式的索引：`logstash-2017.03.14`，这一步必须有，等下 kibana 会用到这个索引
 
 ## 配置文件中的 Filter 讲解
 
