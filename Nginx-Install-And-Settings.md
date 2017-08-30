@@ -489,6 +489,62 @@ http {
 ```
 
 
+## Nginx 配置文件常用配置积累
+
+### location 配置
+
+
+``` nginx
+= 开头表示精确匹配
+^~ 开头表示uri以某个常规字符串开头，不是正则匹配
+~ 开头表示区分大小写的正则匹配;
+~* 开头表示不区分大小写的正则匹配
+/ 通用匹配, 如果没有其它匹配,任何请求都会匹配到
+
+location / {
+
+}
+
+location /user {
+
+}
+
+location = /user {
+
+}
+
+location /user/ {
+
+}
+
+location ^~ /user/ {
+
+}
+
+location /user/youmeek {
+
+}
+
+location ~ /user/youmeek {
+
+}
+
+location ~ ^(/cas/|/casclient1/|/casclient2/|/casclient3/) {
+
+}
+
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|ico|woff|woff2|ttf|eot|txt)$ {
+
+}
+
+location ~ .*$ {
+
+}
+```
+
+
+
+
 
 ### HTTP 服务，绑定多个域名
 
