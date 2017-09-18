@@ -1,5 +1,5 @@
 # VPN（Virtual Private Network）介绍
-vpn
+vpn soloboy
 ## VPN 介绍
 
 VPN 分类有很多，这里主要讲 PPTPD 和 L2TPD、OpenVPN
