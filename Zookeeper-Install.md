@@ -1,6 +1,6 @@
 # Zookeeper 安装
 byzxl
-soloboy22222222222
+soloboy
 
 ## 需要环境
 
