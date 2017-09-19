@@ -78,7 +78,14 @@ TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb 
 - 如果安全度要更高，可以考虑禁用口令登录，采用私钥/公钥方式：`vim /etc/ssh/sshd_config`
     - 设置属性：PasswordAuthentication 为 no
 - 如果还要限制指定 IP 登录，可以考虑编辑：hosts.allow 和 hosts.deny 两个文件
-
+- 重要系统软件更新（更新之前最好先做好系统镜像或是快照，以防万一）：
+	- yum update kernel
+	- yum update kernel-devel
+	- yum update kernel-firmware
+	- yum update kernel-headers
+	- yum update openssh
+	- yum update openssh-clients
+	- yum update openssh-server
 
 
 ## 资料
