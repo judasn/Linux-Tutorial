@@ -3,6 +3,7 @@
 ## supervisord
 
 - 注意：Supervisor 能管理非 daemon 的进程，也就是说 Supervisor 不能管理守护进程。否则提示 Exited too quickly (process log may have details) 异常。
+- Supervisor 不支持 python 3，安装 python 2 方法：<http://www.cnblogs.com/alex-xia/p/6062741.html>
 - 官网：<http://supervisord.org/installing.html>
 - 安装过程：
 	- 解释：easy_install 是 setuptools 包里带的一个命令，使用 easy_install 实际上是在调用 setuptools 来完成安装模块的工作,所以安装 setuptools 即可。
