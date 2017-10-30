@@ -91,7 +91,7 @@
 		- 把密码改为：123456，进入 MySQL 命令后执行：`UPDATE user SET Password=PASSWORD('123456') where USER='root';FLUSH PRIVILEGES;`
 		- 然后重启 MySQL 服务：`service mysql restart`
 
-## 连接报错：Caused by: java.sql.SQLException: null,  message from server: "Host '192.168.1.133' is not allowed to connect to this MySQL server"
+## 连接报错："Host '192.168.1.133' is not allowed to connect to this MySQL server"
 
 - 不允许除了 localhost 之外去连接，解决办法，进入 MySQL 命令行，输入下面内容：
 - `GRANT ALL PRIVILEGES ON *.* TO '数据库用户名'@'%' IDENTIFIED BY '数据库用户名的密码' WITH GRANT OPTION;`
