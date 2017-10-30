@@ -10,6 +10,10 @@
 	- 安装：
 		- `yum -y install python-setuptools`
 		- `easy_install supervisor`
+	- 如果上面无法安装可以这样：
+		- `yum -y install epel-release`
+		- `yum -y install python-pip`
+		- `pip install supervisor`
 	- 生成配置文件：
 		- `echo_supervisord_conf > /etc/supervisord.conf`
 	- 创建专门的程序配置文件目录、日志目录：
