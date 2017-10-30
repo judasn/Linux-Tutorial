@@ -7,19 +7,36 @@
 - 官网：<http://supervisord.org/installing.html>
 - 安装过程：
 	- 解释：easy_install 是 setuptools 包里带的一个命令，使用 easy_install 实际上是在调用 setuptools 来完成安装模块的工作,所以安装 setuptools 即可。
-	- 安装：
-		- `yum -y install python-setuptools`
-		- `easy_install supervisor`
-	- 如果上面无法安装可以这样：
-		- `yum -y install epel-release`
-		- `yum -y install python-pip`
-		- `pip install supervisor`
-	- 生成配置文件：
-		- `echo_supervisord_conf > /etc/supervisord.conf`
-	- 创建专门的程序配置文件目录、日志目录：
-		- `mkdir -p /var/log/supervisor`
-		- `mkdir -p /etc/supervisor/conf.d/`
-		- `echo -e "[include]\nfiles = /etc/supervisor/conf.d/*.conf">>/etc/supervisord.conf` 
+
+- 安装方案：
+
+```
+#第一种
+yum install python-setuptools
+easy_install pip
+pip install supervisor
+
+#第二种
+yum install python-setuptools
+easy_install supervisor
+
+#第三种
+wget https://pypi.python.org/packages/source/s/supervisor/supervisor-3.1.3.tar.gz
+tar zxvf supervisor-3.1.3.tar.gz
+cd supervisor
+python setup.py install
+
+#第四种
+yum install -y epel-release
+yum install -y supervisor
+```
+
+- 生成配置文件：
+	- `echo_supervisord_conf > /etc/supervisord.conf`
+- 创建专门的程序配置文件目录、日志目录：
+	- `mkdir -p /var/log/supervisor`
+	- `mkdir -p /etc/supervisor/conf.d/`
+	- `echo -e "[include]\nfiles = /etc/supervisor/conf.d/*.conf">>/etc/supervisord.conf` 
 - 安装完成的内容介绍：supervisor 安装完成后会生成三个执行程序：
 	- supervisortd：supervisor 的守护进程服务（用于接收进程管理命令）
 	- supervisorctl：客户端（用于和守护进程通信，发送管理进程的指令）
