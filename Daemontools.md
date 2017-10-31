@@ -11,25 +11,43 @@
 - 安装方案：
 
 ```
-#第一种
+#第一种（推荐）
+yum install python-setuptools
+easy_install supervisor
+
+#第二种
 yum install python-setuptools
 easy_install pip
 pip install supervisor
 
-#第二种
-yum install python-setuptools
-easy_install supervisor
-
 #第三种
-wget https://pypi.python.org/packages/source/s/supervisor/supervisor-3.1.3.tar.gz
-tar zxvf supervisor-3.1.3.tar.gz
-cd supervisor
-python setup.py install
-
-#第四种
 yum install -y epel-release
 yum install -y supervisor
 ```
+
+- 如果以上还不能安装，或是安装过程出现各种问题，或是安装完成后使用出现问题，应该就是环境有问题。至少我在京东云上发现会有这个问题。环境是 centos 6.8，python 2.6.6
+- 如果你遇到这种问题需要源码安装。
+- 源码和各个依赖的源码下载地址（密码：j797）：<http://pan.baidu.com/s/1hsGhNkK>
+
+```
+tar zxvf setuptools-36.6.0.tar.gz
+cd setuptools-36.6.0
+python bootstrap.py install
+python setup.py install
+
+tar zxvf meld3.tar.gz
+cd meld3
+python setup.py install
+
+tar zxvf elementtree-1.2.6-20050316.tar.gz
+cd elementtree-1.2.6-20050316
+python setup.py install
+
+tar zxvf supervisor-3.3.3.tar.gz
+cd supervisor-3.3.3
+python setup.py  install
+```
+
 
 - 生成配置文件：
 	- `echo_supervisord_conf > /etc/supervisord.conf`
