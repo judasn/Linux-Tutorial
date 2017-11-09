@@ -167,7 +167,7 @@ aof-rewrite-incremental-fsync yes
 	- 原因：Redis 默认只允许本机访问，可是有时候我们也需要 Redis 被远程访问。         
 	- 解决办法：
         - 修改 Redis 配置文件：`vim /etc/redis.conf`
-        - 找到 bind 那行配置，默认是：`# bind 127.0.0.1`
+        - 找到 bind 那行配置，默认是（需要注意的是配置文件中除了注释还有一个默认开启的地方，所以不要漏掉）：`# bind 127.0.0.1`
         - 去掉 # 注释并改为：`bind 0.0.0.0`
 
 ## Redis 常用命令
