@@ -13,32 +13,8 @@
 - RabbitMQ 文档：
     - 优先：<http://www.rabbitmq.com/getstarted.html>
     - 次要：<http://www.rabbitmq.com/documentation.html>
-
-
-## 先安装 Erlang
-
-- 有 EPEL 源的情况（需要安装的内容较多，宽带要能跟上）：`sudo yum install erlang`
-- RabbitMQ 官网提供 Erlang 安装包：
-    - 下载地址：<http://www.rabbitmq.com/releases/erlang/>
-    - 下载好之后，安装下面两个文件：
-        - `sudo yum localinstall -y esl-erlang_18.1-1~centos~6_amd64.rpm`
-        - `sudo yum localinstall -y esl-erlang-compat-18.1-1.noarch.rpm`
-
-
-## 安装 RabbitMQ
-
-- 此时（2016-04），最新版：**3.6.1**
-- 安装：`rpm --import https://www.rabbitmq.com/rabbitmq-signing-key-public.asc`
-- 安装：`sudo yum install -y rabbitmq-server-3.6.1-1.noarch.rpm`
-- 启动服务：
-    - 先看下自己的主机名：`hostname`，我的主机名是：**judasnHost2**
-    - 先修改一下 host 文件：`vim /etc/hosts`，添加一行：`127.0.0.1 judasnHost2`（必须这样做）
-    - 启动：`service rabbitmq-server start`，启动一般都比较慢，所以别急
-    - 停止：`service rabbitmq-server stop`
-    - 重启：`service rabbitmq-server restart`
-	- 设置开机启动：`chkconfig rabbitmq-server on`
  
-## 如果上面的不行，可以基于 epel 源进行安装
+## 基于 epel 源进行安装（优先）
 
 - 来源：<http://blog.csdn.net/wh211212/article/details/53893085>
 
@@ -51,6 +27,32 @@ yum install erlang -y
 # 安装rabbitmq
 yum install rabbitmq-server -y
 ```
+
+## 本地安装
+
+#### 本地安装 Erlang
+
+- 有 EPEL 源的情况（需要安装的内容较多，宽带要能跟上）：`sudo yum install erlang`
+- RabbitMQ 官网提供 Erlang 安装包：
+    - 下载地址：<http://www.rabbitmq.com/releases/erlang/>
+    - 下载好之后，安装下面两个文件：
+        - `sudo yum localinstall -y esl-erlang_18.1-1~centos~6_amd64.rpm`
+        - `sudo yum localinstall -y esl-erlang-compat-18.1-1.noarch.rpm`
+
+
+#### rpm 安装 RabbitMQ
+
+- 此时（2016-04），最新版：**3.6.1**
+- 安装：`rpm --import https://www.rabbitmq.com/rabbitmq-signing-key-public.asc`
+- 安装：`sudo yum install -y rabbitmq-server-3.6.1-1.noarch.rpm`
+- 启动服务：
+    - 先看下自己的主机名：`hostname`，我的主机名是：**judasnHost2**
+    - 先修改一下 host 文件：`vim /etc/hosts`，添加一行：`127.0.0.1 judasnHost2`（必须这样做）
+    - 启动：`service rabbitmq-server start`，启动一般都比较慢，所以别急
+    - 停止：`service rabbitmq-server stop`
+    - 重启：`service rabbitmq-server restart`
+	- 设置开机启动：`chkconfig rabbitmq-server on`
+
 
 ## 配置
 
