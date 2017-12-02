@@ -5,7 +5,7 @@
 
 - MongoDB 元素概念
 	- databases: 数据库;
-	- collections:表；（colloections组成了databases）
+	- collections:表；（collections组成了databases）
 	- documents:行；（documents组成了collections）
 - MongoDB 没有新建数据库的命令，只要进行 insert 或其它操作，MongoDB 就会自动帮你建立数据库和 collection。当查询一个不存在的 collection 时也不会出错，MongoDB 会认为那是一个空的 collection。
 - 一个对象被插入到数据库中时，如果它没有 ID，会自动生成一个 "_id" 字段，为 12 字节(24位)16进制数。
