@@ -3,7 +3,7 @@
 
 ## 基础概念
 
-MongoDB 元素概念
+- MongoDB 元素概念
 	- databases: 数据库;
 	- collections:表；（colloections组成了databases）
 	- documents:行；（documents组成了collections）
