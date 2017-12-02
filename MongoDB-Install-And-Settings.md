@@ -27,8 +27,10 @@
     - 官网文档：<https://docs.mongodb.com/manual/reference/method/>
     - 此时（20170228） 最新稳定版本为：**3.4.2**
     - 官网下载：<https://www.mongodb.com/download-center?jmp=nav#community>
-    - 官网安装方法介绍：<https://docs.mongodb.com/master/tutorial/install-mongodb-on-red-hat/>
-    - 官网文档使用的 Package 的安装方式。还有一种安装方式是下载 tar 包的方法，如果需要 tar 包方式可以看这篇文章：<https://itjh.net/2016/07/11/centos-install-mongodb/>
+    - 官网安装方法介绍：<https://docs.mongodb.com/master/tutorial/install-mongodb-on-red-hat>
+    - 官网文档使用的 Package 的安装方式。还有一种安装方式是下载 tar 包的方法，如果需要 tar 包方式可以看这篇文章：
+    	- <https://itjh.net/2016/07/11/centos-install-mongodb>
+
 - 3.4.2 yum 安装：
 	- 新建文件：`vim /etc/yum.repos.d/mongodb-org-3.4.repo`，文件内容如下：
 	
