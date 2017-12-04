@@ -157,14 +157,17 @@ child process started successfully, parent exiting
 use youmeek
 ```
 
-- 创建用户，并授权：
+- 创建用户，并授权，需要注意的是：dbAdmin 的权限是没有包含 readWrite，所以很多时候要根据需求添加多个权限：
 
 ```
 db.createUser(
     {
         user: "youmeek",
         pwd: "youmeek123456",
-        roles: [ { role: "dbAdmin", db: "youmeek" } ]
+        roles: [ 
+            { role: "dbAdmin", db: "youmeek" },
+            { role: "readWrite", db: "youmeek" }
+        ]
     }
 )
 ```
@@ -218,7 +221,7 @@ db.createUser(
 - 修改密码：`db.changeUserPassword(用户名, 密码)`
 - 删除用户：` db.removeUser(用户名)`
 - 内置角色：
-	- Read：允许用户读取指定数据库
+	- read：允许用户读取指定数据库
 	- readWrite：允许用户读写指定数据库
 	- dbAdmin：允许用户在指定数据库中执行管理函数，如索引创建、删除，查看统计或访问system.profile
 	- userAdmin：允许用户向system.users集合写入，可以找指定数据库里创建、删除和管理用户
