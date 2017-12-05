@@ -215,6 +215,7 @@ java -jar /root/spring-boot-my-demo.jar
     - `docker rmi 容器ID`：删除具体某一个镜像
     - `docker rmi 仓库:Tag`：删除具体某一个镜像
     - `docker rmi $(docker images -q)`，删除所有镜像
+    - `docker rmi -f $(docker images -q)`，强制删除所有镜像
 - `docker tag`：为镜像打上标签
 	- `docker tag -f ubuntu:14.04 ubuntu:latest`，-f 意思是强制覆盖
 	- 同一个IMAGE ID可能会有多个TAG（可能还在不同的仓库），首先你要根据这些 image names 来删除标签，当删除最后一个tag的时候就会自动删除镜像；
