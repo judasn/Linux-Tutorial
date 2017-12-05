@@ -55,8 +55,8 @@
  
 - 主要有两个版本：
  
-> Docker Enterprise Edition (Docker EE) is designed for enterprise development and IT teams who build, ship, and run business critical applications in production at scale. Docker EE is integrated, certified, and supported to provide enterprises with the most secure container platform in the industry to modernize all applications. For more information about Docker EE, including purchasing options, see Docker Enterprise Edition.
-Docker Community Edition (Docker CE) is ideal for developers and small teams looking to get started with Docker and experimenting with container-based apps. Docker CE is available on many platforms, from desktop to cloud to server. Docker CE is available for macOS and Windows and provides a native experience to help you focus on learning Docker. You can build and share containers and automate the development pipeline all from a single environment.
+> **Docker Enterprise Edition (Docker EE)** is designed for enterprise development and IT teams who build, ship, and run business critical applications in production at scale. Docker EE is integrated, certified, and supported to provide enterprises with the most secure container platform in the industry to modernize all applications. For more information about Docker EE, including purchasing options, see Docker Enterprise Edition.
+**Docker Community Edition (Docker CE)** is ideal for developers and small teams looking to get started with Docker and experimenting with container-based apps. Docker CE is available on many platforms, from desktop to cloud to server. Docker CE is available for macOS and Windows and provides a native experience to help you focus on learning Docker. You can build and share containers and automate the development pipeline all from a single environment.
 Docker CE has both stable and edge channels.
     Stable builds are released once per quarter and are supported for 4 months.
     Edge builds are released once per month, and are supported for that month only. If you subscribe to the Edge channel on Linux distributions, you should also subscribe to the Stable channel.
@@ -67,15 +67,9 @@ Docker CE has both stable and edge channels.
  
 - 我这里选择 Docker CE 版本：
 - 安装过程：
-    - `sudo yum install -y yum-utils`
- 
-    ``` bash
-   ：添加 repo（可能网络会很慢，有时候会报：Timeout，所以要多试几次）
-    sudo yum-config-manager \
-        --add-repo \
-        https://download.docker.com/linux/centos/docker-ce.repo
-    ```
- 
+    - `sudo yum install -y yum-utils device-mapper-persistent-data lvm2`
+    - 添加 repo（可能网络会很慢，有时候会报：Timeout，所以要多试几次）
+    - `sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
     - `sudo yum makecache fast`
     - `sudo yum install -y docker-ce`，大小：19M，速度很慢。
 - 启动 Docker：`systemctl start docker.service`
