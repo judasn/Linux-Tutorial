@@ -74,6 +74,7 @@
 - [Docker 安装和使用](Docker-Install-And-Usage.md)
 - [LDAP 安装和使用](LDAP-Install-And-Settings.md)
 - [Alfresco 安装和使用](Alfresco-Install-And-Usage.md)
+- [Apache Thrift 安装和使用](Thrift-Install-And-Usage.md)
 
 
 ## 下一步(Next)
@@ -84,7 +85,6 @@
 - ActiveMQ 服务安装和配置
 - Zabbix 安装和配置
 - Nagios 安装和配置
-- Docker 安装和配置
 - sed 学习
 - 常用脚本
 
