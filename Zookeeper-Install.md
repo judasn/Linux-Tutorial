@@ -8,7 +8,7 @@
 ## 下载安装
 
 - 官网：<https://zookeeper.apache.org/>
-- 此时（201702）最新稳定版本：Release 3.4.9`
+- 此时（201702）最新稳定版本：Release `3.4.9`
 - 官网下载：<http://www.apache.org/dyn/closer.cgi/zookeeper/>
 - 我这里以：`zookeeper-3.4.8.tar.gz` 为例
 - 安装过程：
