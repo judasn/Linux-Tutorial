@@ -340,6 +340,14 @@ esac
 - 第一个从库配置的信息是连上主库，后面的第二个从库配置的连接信息是连上第一个从库， 假如还有第三个从库的话，我们可以把第三个从库的配置信息连上第二个从库上，以此类推。
 
 
+## Redis 3 主 3 从 配置
+
+- 用一台机子模拟：4CPU-4GMemory
+
+
+
+
+
 ## Windows 版本的 Redis
 
 - Windows 是别人改造的版本，需要到这里下载：<https://github.com/MSOpenTech/redis/releases>
