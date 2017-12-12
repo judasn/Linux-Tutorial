@@ -75,6 +75,7 @@
 - [LDAP 安装和使用](LDAP-Install-And-Settings.md)
 - [Alfresco 安装和使用](Alfresco-Install-And-Usage.md)
 - [Apache Thrift 安装和使用](Thrift-Install-And-Usage.md)
+- [Node.js 安装和使用](Node-Install-And-Usage.md)
 
 
 ## 下一步(Next)
