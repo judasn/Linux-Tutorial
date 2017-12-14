@@ -17,7 +17,7 @@ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
 如果你是要安装 node 9 系列，下载这个 yum 源
 curl --silent --location https://rpm.nodesource.com/setup_9.x | sudo bash -
 
-然后通过 yum 开始安装
+然后通过 yum 开始安装（软件大小：51M 左右）
 sudo yum -y install nodejs
 ```
 
