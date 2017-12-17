@@ -66,9 +66,8 @@ Docker CE has both stable and edge channels.
 - 官网 CentOS 安装手册：<https://docs.docker.com/engine/installation/linux/centos/>
 - 目前也支持 Windows，特别是 Windows 10，直接官网一个安装包即可搞定。
 - Windows 10 的 Docker 安装说明：<https://store.docker.com/editions/community/docker-ce-desktop-windows>
-
 - 我这里选择 Docker CE 版本：
-- 安装过程：
+- CentOS 安装过程：
     - `sudo yum install -y yum-utils device-mapper-persistent-data lvm2`
     - 添加 repo（可能网络会很慢，有时候会报：Timeout，所以要多试几次）
     - `sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
