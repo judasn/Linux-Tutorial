@@ -65,7 +65,7 @@ Docker CE has both stable and edge channels.
 - 官网总的安装手册：<https://docs.docker.com/engine/installation/#docker-editions>
 - 官网 CentOS 安装手册：<https://docs.docker.com/engine/installation/linux/centos/>
 - 目前也支持 Windows，特别是 Windows 10，直接官网一个安装包即可搞定。
-    - Windows 10 的 Docker 安装说明：<https://store.docker.com/editions/community/docker-ce-desktop-windows>
+- Windows 10 的 Docker 安装说明：<https://store.docker.com/editions/community/docker-ce-desktop-windows>
 
 - 我这里选择 Docker CE 版本：
 - 安装过程：
