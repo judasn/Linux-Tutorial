@@ -31,7 +31,11 @@
 	- 官网文档使用的 Package 的安装方式。还有一种安装方式是下载 tar 包的方法，如果需要 tar 包方式可以看这篇文章：
 		- <https://itjh.net/2016/07/11/centos-install-mongodb>
 
-### 3.4.2 yum 安装：
+### yum 卸载
+
+- `yum remove "mongodb-org-*"`
+
+### 3.4.2 yum 安装
 
 - 新建文件：`vim /etc/yum.repos.d/mongodb-org-3.4.repo`，文件内容如下：
 
