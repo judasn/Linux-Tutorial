@@ -11,6 +11,17 @@
 - 一个对象被插入到数据库中时，如果它没有 ID，会自动生成一个 "_id" 字段，为 12 字节(24位)16进制数。
 - 当然如果插入文档不带 _id，则系统会帮你自动创建一个，如果自己指定了就用自己指定的。
 
+## 如果你用 Spring Data MongoDB 依赖请注意
+
+- 请先看官网最新支持到哪个版本的依赖：<https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#new-features>
+	- 查看锚点为：`What’s new in Spring Data MongoDB` 的内容，比如：What’s new in Spring Data MongoDB 1.10，出现这样一句话：`Compatible with MongoDB Server 3.4 and the MongoDB Java Driver 3.4`
+- 目前 201712 支持 MongoDB 3.4
+
+## 如果你用 Robomongo 客户端请注意
+
+- 请查看介绍中支持哪个版本：<https://robomongo.org/download>
+- 目前 201712 支持 MongoDB 3.4
+
 
 
 ## 安装环境

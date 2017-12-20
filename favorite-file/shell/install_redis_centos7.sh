@@ -51,11 +51,9 @@ sed -i 's/daemonize no/daemonize yes/g' /etc/redis.conf
 
 echo "/usr/local/bin/redis-server /etc/redis.conf" >> /etc/rc.local
 
-iptables -I INPUT -p tcp -m tcp --dport 6379 -j ACCEPT
-
-service iptables save
-
-service iptables restart
+echo "防火墙放行 6379 端口"
+firewall-cmd --zone=public --add-port=6379/tcp --permanent
+firewall-cmd --reload
 
 rm -rf /usr/program/redis-4.0.6
 
