@@ -23,6 +23,32 @@
 - 目前 201712 支持 MongoDB 3.4
 
 
+## Docker 下安装 MongoDB
+
+- 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/mongo/db`
+- 安装镜像：`docker pull mongo:3.4`
+- 查看下载下来的镜像：`docker images`
+- 首次运行镜像：`docker run -p 27017:27017 -v /data/mongo/db:/data/db -d mongo:3.4`
+- 查看容器运行情况：`docker ps`
+- 进入容器中 mongo shell 交互界面：`docker exec -it 09747cd7d0bd mongo casdb`
+- 创建一个用户：
+
+```
+db.createUser(
+    {
+        user: "casuser",
+        pwd: "casuser123456",
+        roles: [ 
+            { role: "dbAdmin", db: "casdb" },
+            { role: "readWrite", db: "casdb" }
+        ]
+    }
+)
+```
+
+- 然后停掉容器：`docker stop 09747cd7d0bd`
+- 重新运行镜像，这次增加需要授权才能访问的配置：`docker run -d -p 27017:27017 -v /data/mongo/db:/data/db --restart always --name cas-mongo mongo:3.4 --auth`
+
 
 ## 安装环境
 

@@ -1,6 +1,88 @@
 ## Redis 安装和配置
 
 
+## 如果你用 Spring Data MongoDB 依赖请注意
+
+- 请先看官网最新支持到哪个版本的依赖：<https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#new-features>
+	- 查看锚点为：`New in Spring Data Redis` 的内容
+- 目前 201712 支持 Redis 3.2
+
+## 如果你用 RedisDesktopManager 客户端请注意
+
+- 请查看介绍中支持哪个版本：<https://github.com/uglide/RedisDesktopManager>
+- 目前 201712 支持 2.8 以上
+
+## Docker 下安装 Redis
+
+- 创建一个宿主机目录用来存放 redis 配置文件：`mkdir -p /opt/conf/redis`
+- 创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/redis/db`
+- 安装镜像：`docker pull redis:3.2`
+- 查看下载下来的镜像：`docker images`
+- 自己编写一个配置文件 `vim /opt/conf/redis/redis.conf`，内容如下：
+
+- Redis 默认的配置文件内容：
+
+``` ini
+bind 0.0.0.0
+requirepass casredis123456
+protected-mode yes
+port 6379
+tcp-backlog 511
+timeout 0
+tcp-keepalive 300
+daemonize no
+supervised no
+pidfile /data/redis_6379.pid
+loglevel notice
+logfile ""
+databases 16
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir /data
+slave-serve-stale-data yes
+slave-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+slave-priority 100
+appendonly no
+appendfilename "appendonly.aof"
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+lua-time-limit 5000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events ""
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+aof-rewrite-incremental-fsync yes
+```
+
+- 启动镜像：`docker run -d -ti -p 6379:6379 -v /opt/conf/redis/redis.conf:/etc/redis/redis.conf -v /data/redis/db:/data --restart always --name cas-redis redis:3.2 redis-server /etc/redis/redis.conf`
+- 查看镜像运行情况：`docker ps`
+- 进入镜像中 redis shell 交互界面：`docker exec -it 0cdc76fef7b4 redis-cli -h 127.0.0.1 -p 6379 -a casredis123456`
+
+
 
 ## Redis 安装
 

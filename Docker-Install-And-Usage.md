@@ -279,7 +279,7 @@ java -jar /root/spring-boot-my-demo.jar
 - `docker stop`
 - `docker restart`
 - `docker kill 容器ID/容器名称`，
-- `docker rm`，删除容器
+- `docker rm`，删除容器，一般报类似错误就需要这样做：`docker: Error response from daemon: Conflict. The container name XXXXX`
     - `docker rm 容器ID`，删除指定容器（该容器必须是停止的）
     - `docker rm -f 容器ID`，删除指定容器（该容器可以是正在运行的）
     - `docker rm $(docker ps -a -q)`，删除所有容器
