@@ -242,7 +242,9 @@ auth=true
 - 卸载命令：`yum erase $(rpm -qa | grep mongodb-org)`
 	- 删除数据库：`rm -r /var/lib/mongo`
     - 删除 log：`rm -r /var/log/mongodb`
-
+- 数据的导出、导入
+	- 导出：`mongoexport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 -o /opt/mongodb.json --type json`
+	- 导入：`mongoimport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 --file /opt/mongodb.json --type json`
 
 ## 添加授权用户
 
