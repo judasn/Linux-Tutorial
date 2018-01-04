@@ -42,6 +42,15 @@
 > - Cache Manager 进程的主要任务：
     - 1.缓存的失效及过期检验；
 
+## Nginx 的 Docker 部署
+
+- 预设好目录，在宿主机上创建下面目录：`mkdir -p /data/nginx/html /data/nginx/conf.d /data/nginx/logs /data/nginx/conf`
+- 先准备好你的 nginx.conf 文件，存放在宿主机的：/data/nginx/conf 目录下，等下需要映射。
+- 下载镜像：`docker pull nginx:1.12.2`
+- 运行容器：`docker run --name cas-nginx -p 80:80 -v /data/nginx/html:/usr/share/nginx/html:ro -v /data/nginx/conf.d:/etc/nginx/conf.d -v /data/nginx/logs:/var/log/nginx -v /data/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx:1.12.2`
+- 重新加载配置：`docker exec -it cas-nginx nginx -s reload`
+- 停止服务：`docker exec -it cas-nginx nginx -s stop` 或者：`docker stop cas-nginx`
+- 重新启动服务：`docker restart cas-nginx`
 
 
 ## Nginx 源码编译安装

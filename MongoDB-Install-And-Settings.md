@@ -48,6 +48,7 @@ db.createUser(
 
 - 然后停掉容器：`docker stop 09747cd7d0bd`
 - 重新运行镜像，这次增加需要授权才能访问的配置：`docker run -d -p 27017:27017 -v /data/mongo/db:/data/db --restart always --name cas-mongo mongo:3.4 --auth`
+- 重新启动服务：`docker restart cas-mongo`
 
 
 ## 安装环境

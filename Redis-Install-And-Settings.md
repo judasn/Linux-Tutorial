@@ -81,7 +81,7 @@ aof-rewrite-incremental-fsync yes
 - 启动镜像：`docker run -d -ti -p 6379:6379 -v /opt/conf/redis/redis.conf:/etc/redis/redis.conf -v /data/redis/db:/data --restart always --name cas-redis redis:3.2 redis-server /etc/redis/redis.conf`
 - 查看镜像运行情况：`docker ps`
 - 进入镜像中 redis shell 交互界面：`docker exec -it 0cdc76fef7b4 redis-cli -h 127.0.0.1 -p 6379 -a casredis123456`
-
+- 重新启动服务：`docker restart cas-redis`
 
 
 ## Redis 安装
