@@ -274,7 +274,6 @@ fi
 FROM tomcat:8.0.46-jre8
 MAINTAINER GitNavi <gitnavi@qq.com>
 
-ADD catalina.sh /usr/local/tomcat/bin/
 ADD server.xml /usr/local/tomcat/conf/
 ADD cas.war /usr/local/tomcat/webapps/
 CMD ["catalina.sh", "run"]

@@ -120,7 +120,7 @@ Docker CE has both stable and edge channels.
 - 灵雀云：<https://hub.alauda.cn/>
 - 推荐优先阿里云，然后是 USTC
 - 我下面的讲解也是基于阿里云加速
-- 阿里云的服务需要注册账号，**首次使用需要设置 docker 登录密码，这个以后用私人仓库会用到。**
+- 阿里云的服务需要注册账号，**首次使用需要设置 docker 登录密码（阿里云叫做：**修改Registry登录密码**），这个以后用私人仓库会用到。**
     - 注册后请访问：<https://cr.console.aliyun.com/#/accelerator>，你会看到专属的加速地址，比如我是：`https://ldhc17y9.mirror.aliyuncs.com`，所以下面文章你看到该地址都表示是这个专属地址，请记得自己更换自己的。
     - 以及教你如何使用 Docker 加速器。如果你已经安装了最新版的 Docker 你就不需要用它的脚本进行安装了。
 - 最新版本的 Docker 是新增配置文件：`vim /etc/docker/daemon.json`，增加如下内容：
@@ -138,6 +138,14 @@ Docker CE has both stable and edge channels.
     - 创建镜像仓库：<https://cr.console.aliyun.com/#/imageList>
         - 创建好仓库后，点击：`管理` 进入查看仓库的更多详细信息，这里面有很多有用的信息，包括一个详细的操作指南，**这份指南等下会用到。**
         - 比如我自己创建的仓库，地址是阿里云给我们的：`registry.cn-shenzhen.aliyuncs.com/youmeek/open-hub`
+        - 那我登录这个镜像地址的方式：
+
+```
+docker login registry.cn-shenzhen.aliyuncs.com
+会让我输入
+Username：阿里云邮箱
+password：上文提到的--Registry登录密码
+```
 
 # Docker 命令，最终部署 Spring Boot 项目
 
