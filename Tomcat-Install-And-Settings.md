@@ -265,6 +265,32 @@ fi
 	- `service iptables save`
 	- `service iptables restart`
 
+## Dockerfile 构建 Tomcat 镜像并部署 war 包
+
+- 因为我自己改了 Tomcat 的几个配置文件，所以要把那几个文件和 Dockerfile 放一起进行构建。
+- 在宿主机上创建 dockerfile 存放目录和 logs 目录：`mkdir -p /opt/cas-dockerfile/ /data/logs/tomcat/`
+
+```
+FROM tomcat:8.0.46-jre8
+MAINTAINER GitNavi <gitnavi@qq.com>
+
+ADD catalina.sh /usr/local/tomcat/bin/
+ADD server.xml /usr/local/tomcat/conf/
+ADD cas.war /usr/local/tomcat/webapps/
+CMD ["catalina.sh", "run"]
+
+EXPOSE 8080
+```
+
+- 开始构建：
+	- `cd /opt/cas-dockerfile`
+	- `docker build . --tag="sso/cas-tomcat8:v1.0.1"`
+	- `docker run -d -p 8111:8080 -v /usr/local/tomcat/logs/:/data/logs/tomcat/ --name="cas-tomcat-1.0.1" --net=host sso/cas-tomcat8:v1.0.1`
+	- 查看启动后容器列表：`docker ps`
+	- jar 应用的日志是输出在容器的 /opt 目录下，因为我们上面用了挂载，所在在我们宿主机的 /usr/local/logs 目录下可以看到输出的日志
+- CentOS 7 防火墙开放端口：
+	- `firewall-cmd --zone=public --add-port=8111/tcp --permanent`
+	- `firewall-cmd --reload`
 
 ## 其他
 
