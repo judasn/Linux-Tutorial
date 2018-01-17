@@ -430,7 +430,7 @@ EXPOSE 9096
 - 开始构建：
 	- `cd /opt/zch`
 	- `docker build . --tag="skb/user:v1.0.1"`
-	- `docker run -d -p 9096:9096 -v /usr/local/logs/:/opt/ --name="skbUser1.0.0" --net=host skb/user:v1.0.1`
+	- `docker run -d -p 9096:9096 -v /usr/local/logs/:/opt/ --name="skbUser1.0.0" skb/user:v1.0.1`
 	- 查看启动后容器列表：`docker ps`
 	- jar 应用的日志是输出在容器的 /opt 目录下，因为我们上面用了挂载，所在在我们宿主机的 /usr/local/logs 目录下可以看到输出的日志
 - 防火墙开放端口：
