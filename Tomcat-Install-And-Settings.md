@@ -281,11 +281,13 @@ CMD ["catalina.sh", "run"]
 EXPOSE 8080
 ```
 
+- 须知：容器中的 Tomcat 日志我是输出在容器的目录下：`/data/logs/`，所以我挂载中会有这个挂载选项
 - 开始构建：
 	- `cd /opt/cas-dockerfile`
 	- `docker build . --tag="sso/cas-tomcat8:v1.0.1"`
-	- `docker run -d -p 8111:8080 -v /usr/local/tomcat/logs/:/data/logs/tomcat/ --name="cas-tomcat-1.0.1" --net=host sso/cas-tomcat8:v1.0.1`
+	- `docker run -d -p 8111:8080 -v /data/logs/tomcat/:/data/logs/ --name="cas-tomcat-1.0.1" --net=host sso/cas-tomcat8:v1.0.1`
 	- 查看启动后容器列表：`docker ps`
+	- 进入 tomcat 容器终端查看一些情况：`docker exec -it 57a682478233 /bin/bash`
 	- jar 应用的日志是输出在容器的 /opt 目录下，因为我们上面用了挂载，所在在我们宿主机的 /usr/local/logs 目录下可以看到输出的日志
 - CentOS 7 防火墙开放端口：
 	- `firewall-cmd --zone=public --add-port=8111/tcp --permanent`
