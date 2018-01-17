@@ -39,8 +39,8 @@
 
 ## 常用文件进行--压缩--命令整理
 
-- Linux 压缩文件夹为后缀 `.war` 格式的文件
-- 命令：`jar -cvfM0 cas.war /opt/cas/`
+- Linux 压缩文件夹为后缀 `.war` 格式的文件（最好不要对根目录进行压缩，不然会多出一级目录）
+- 命令：`jar -cvfM0 cas.war /opt/cas/META-INF /opt/cas/WEB-INF`
 
 - Linux 压缩文件为后缀 `.tar` 格式的文件
 - 命令：`tar -zcvf test11.tar test11`
