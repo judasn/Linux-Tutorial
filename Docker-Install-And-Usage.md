@@ -582,3 +582,186 @@ EXPOSE 9096
 - 防火墙开放端口：
 	- `firewall-cmd --zone=public --add-port=9096/tcp --permanent`
 	- `firewall-cmd --reload`
+
+## Docker Compose
+
+- Docker Compose 主要用于定义和运行多个 Docker 容器的工具，这样可以快速运行一套分布式系统
+	- 容器之间是有依赖关系，比如我一个 Java web 系统依赖 DB 容器、Redis 容器，必须这些依赖容器先运行起来。
+- 一个文件：docker-compose.yml
+- 一个命令：docker-compose up
+
+
+## Docker Swarm
+
+- Docker Swarm 是一个 Docker 集群管理工具
+
+## Kubernetes
+
+- 目前流行的容器编排系统
+- 简称：K8S
+- 官网：<https://kubernetes.io/>
+- 主要解决几个问题：
+	- `调度`
+	- `生命周期及健康状况`
+	- `服务发现`
+	- `监控`
+	- `认证`
+	- `容器聚合`
+- 主要角色：Master、Node
+
+#### 主要概念
+
+- `Pods`
+
+```
+创建，调度以及管理的最小单元
+共存的一组容器的集合
+容器共享PID，网络，IPC以及UTS命名空间
+容器共享存储卷
+短暂存在
+```
+
+- `Volumes`
+
+```
+数据持久化
+Pod中容器共享数据
+生命周期
+支持多种类型的数据卷 – emptyDir, hostpath, gcePersistentDisk, awsElasticBlockStore, nfs, iscsi, glusterfs, secrets
+```
+
+- `Labels`
+
+```
+用以标示对象（如Pod）的key/value对
+组织并选择对象子集
+```
+
+- `Replication Controllers`
+
+```
+确保在任一时刻运行指定数目的Pod
+容器重新调度
+规模调整
+在线升级
+多发布版本跟踪
+```
+
+- `Services`
+
+```
+抽象一系列Pod并定义其访问规则
+固定IP地址和DNS域名
+通过环境变量和DNS发现服务
+负载均衡
+外部服务 – ClusterIP, NodePort, LoadBalancer
+```
+
+
+#### 主要组成模块
+
+- `etcd`
+
+```
+高可用的Key/Value存储
+只有apiserver有读写权限
+使用etcd集群确保数据可靠性
+```
+
+- `apiserver`
+
+```
+Kubernetes系统入口， REST
+认证
+授权
+访问控制
+服务帐号
+资源限制
+```
+
+- `kube-scheduler`
+
+```
+资源需求
+服务需求
+硬件/软件/策略限制
+关联性和非关联性
+数据本地化
+```
+
+- `kube-controller-manager`
+
+```
+Replication controller
+Endpoint controller
+Namespace controller
+Serviceaccount controller
+```
+
+- `kubelet`
+
+```
+节点管理器
+确保调度到本节点的Pod的运行和健康
+```
+
+- `kube-proxy`
+
+```
+Pod网络代理
+TCP/UDP请求转发
+负载均衡（Round Robin）
+```
+
+- `服务发现`
+
+```
+环境变量
+DNS – kube2sky， etcd，skydns
+```
+
+- `网络`
+
+```
+容器间互相通信
+节点和容器间互相通信
+每个Pod使用一个全局唯一的IP
+```
+
+- `高可用`
+
+```
+kubelet保证每一个master节点的服务正常运行
+系统监控程序确保kubelet正常运行
+Etcd集群
+多个apiserver进行负载均衡
+Master选举确保kube-scheduler和kube-controller-manager高可用
+```
+
+## Harbor 镜像私有仓库
+
+- 官网：<http://vmware.github.io/harbor/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
