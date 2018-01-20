@@ -284,10 +284,6 @@ java -jar /root/spring-boot-my-demo.jar
     - `docker ps -q`：列出最近一次运行的container ID
     - `docker ps -a -l`：列出最后一次运行的容器
     - `docker ps -n x`：显示最后 x 个容器，不管是正在运行或是已经停止的
-- `docker inspect 容器ID`：查看容器的全面信息，用 JSON 格式输出
-	- `docker inspect -f {{.NetworkSettings.IPAddress}} 容器ID`，获取容器中的 IP
-	- `docker inspect -f {{.Volumes}} 容器ID`，获取容器中的 IP
-	- `docker inspect 容器ID | grep Mounts -A 10`，查看容器的挂载情况
 - `docker top 容器ID`：显示容器的进程信息
 - `docker events`：得到 docker 服务器的实时的事件
 - `docker logs -f 容器ID`：查看容器日志
@@ -299,7 +295,16 @@ java -jar /root/spring-boot-my-demo.jar
 - `docker wait`，阻塞到一个容器，直到容器停止运行
 - `docker export`，将容器整个文件系统导出为一个tar包，不带layers、tag等信息
 - `docker port`，显示容器的端口映射
+- `docker inspect 容器ID`：查看容器的全面信息，用 JSON 格式输出
+
+```
+获取容器中的 IP：docker inspect -f {{.NetworkSettings.IPAddress}} 容器ID
+获取容器中的 IP：docker inspect -f {{.Volumes}} 容器ID
+查看容器的挂载情况：docker inspect 容器ID | grep Mounts -A 10
+```
+
 - 下面为一个 docker inspect 后的结果示例：
+
 ```json
 [
     {
