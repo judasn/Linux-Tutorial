@@ -1,4 +1,4 @@
-# CentOS 安装 
+# CentOS 7 安装 
 
 
 ## 概括
