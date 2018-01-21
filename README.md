@@ -6,6 +6,7 @@
 - 带动更多的人进入 Linux 世界，特别是做 Java 开发的人
 - Github 项目地址，欢迎 `Fork`、`Star`：<https://github.com/judasn/Linux-Tutorial>
 - 文章中用到的一些安装包归纳整理：<http://pan.baidu.com/s/1skAwrFn>
+- Gitbook 在线阅读地址：<https://youmeek.gitbooks.io/linux-tutorial/content/>
 - **学得越多越是明白一个人的力量是不够的，我只是起了一个引子，希望你能一起参与，真心希望！！！（鞠躬）**
 
 ## 目录(Contents)
