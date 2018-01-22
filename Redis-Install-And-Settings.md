@@ -259,6 +259,7 @@ aof-rewrite-incremental-fsync yes
 - 官网命令列表：<http://redis.io/commands>
 - `SET key value`，设值。eg：`SET myblog www.youmeek.com`
 - `GET key`，取值
+- `SELECT 0`，切换数据库
 - `INCR key`，递增数字
 - `DECR key`，递减数字
 - `KEYS *`，查看当前数据库下所有的 key
