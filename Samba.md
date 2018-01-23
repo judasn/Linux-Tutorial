@@ -47,6 +47,7 @@
         ```
 
  - 一份成功的 samba 4 配置
+ ```
  [global]
         workgroup = WORKGROUP
         passdb backend = tdbsam
@@ -72,7 +73,7 @@
         force create mode = 0646
         directory mask = 0747
         force directory mode = 0747
-
+ ```
 - 启动服务：
  - `sudo service samba restart`
  - `systemctl start smb.service`    # 启动 samba
