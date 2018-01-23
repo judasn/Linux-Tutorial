@@ -34,7 +34,8 @@
         ```
         [myshare2]
           comment = share for users
-          path = /opt/mysamba2  #分享的目录，其中这个目录需要chmod 777 /opt/mysamba权限(不一定要 777 权限，只要登录 samba 的用户是这个目录的用户即可，那么在 Windows 中的文件创建和写入都等同于 linux 的等价账户)
+          path = /opt/mysamba2  #分享的目录，其中这个目录需要chmod 777 /opt/mysamba权限
+          # (不一定要 777 权限，只要登录 samba 的用户是这个目录的用户即可，那么在 Windows 中的文件创建和写入都等同于 linux 的等价账户)
           browseable = yes
           writable = yes
           public = no
