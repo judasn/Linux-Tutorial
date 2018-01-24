@@ -126,4 +126,4 @@
 
 ## AD
 
-- [我个人开发的个性化定制网址导航：GitNavi.com](http://www.gitnavi.com)
+- [推荐：程序员的个性化网址导航：GitNavi.com](http://www.gitnavi.com)
