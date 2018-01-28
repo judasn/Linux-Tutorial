@@ -96,11 +96,24 @@ Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 ```
 
 
+## 网络监控
+
+- 安装 iftop（需要有 EPEL 源）：`yum install -y iftop`
+	- 如果没有 EPEL 源：`yum install -y epel-release`
+- 常用命令：
+	- `iftop`：默认是监控第一块网卡的流量
+	- `iftop -i eth1`：监控eth1
+	- `iftop -n`：直接显示IP, 不进行DNS反解析
+	- `iftop -N`：直接显示连接埠编号, 不显示服务名称
+	- `iftop -F 192.168.1.0/24 or 192.168.1.0/255.255.255.0`：显示某个网段进出封包流量
+
 
 ## 参考资料
 
 - <http://man.linuxde.net/dd>
 - <https://linux.cn/article-6104-1.html>
+- <http://www.cnblogs.com/ggjucheng/archive/2013/01/13/2858923.html>
+- <http://coolnull.com/3649.html>
 
 
 
