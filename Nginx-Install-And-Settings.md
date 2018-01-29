@@ -69,21 +69,21 @@
     - 进入解压后目录：`cd nginx-1.8.1/`
     - 编译配置：
 
-    ``` ini
-    ./configure \
-    --prefix=/usr/local/nginx \
-    --pid-path=/var/local/nginx/nginx.pid \
-    --lock-path=/var/lock/nginx/nginx.lock \
-    --error-log-path=/var/log/nginx/error.log \
-    --http-log-path=/var/log/nginx/access.log \
-    --with-http_gzip_static_module \
-    --http-client-body-temp-path=/var/temp/nginx/client \
-    --http-proxy-temp-path=/var/temp/nginx/proxy \
-    --http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
-    --http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
-    --with-http_ssl_module \
-    --http-scgi-temp-path=/var/temp/nginx/scgi
-    ```
+``` ini
+./configure \
+--prefix=/usr/local/nginx \
+--pid-path=/var/local/nginx/nginx.pid \
+--lock-path=/var/lock/nginx/nginx.lock \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--with-http_gzip_static_module \
+--http-client-body-temp-path=/var/temp/nginx/client \
+--http-proxy-temp-path=/var/temp/nginx/proxy \
+--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
+--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
+--with-http_ssl_module \
+--http-scgi-temp-path=/var/temp/nginx/scgi
+```
 
     - 编译：`make`
     - 安装：`make install`
@@ -498,6 +498,57 @@ http {
 ```
 
 
+## Nginx 监控模块
+
+- 如果你需要监控 nginx 情况可以安装的加入这个模块 http_stub_status_module：
+
+``` ini
+./configure \
+--prefix=/usr/local/nginx \
+--pid-path=/var/local/nginx/nginx.pid \
+--lock-path=/var/lock/nginx/nginx.lock \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--with-http_gzip_static_module \
+--http-client-body-temp-path=/var/temp/nginx/client \
+--http-proxy-temp-path=/var/temp/nginx/proxy \
+--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
+--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
+--with-http_ssl_module \
+--http-scgi-temp-path=/var/temp/nginx/scgi \
+--with-http_stub_status_module
+```
+
+- 然后在 nginx.conf 文件的 location 区域增加：stub_status on;
+
+
+```ini
+location /nginx_status {
+    #allow 192.168.1.100;
+    #deny all;
+    stub_status on;
+    access_log   off;
+}
+```
+
+- 当你访问：http://127.0.0.1/nginx_status，会得到类似下面的结果
+- 其中配置的 `allow 192.168.1.100;` 表示只允许客户端 IP 为这个才能访问这个地址
+- `deny all;` 除了被允许的，其他所有人都不可以访问
+
+```
+Active connections: 1
+server accepts handled requests
+ 3 6 9   
+Reading: 0 Writing: 5 Waiting: 0   
+```
+
+- Active connections: 对后端发起的活动连接数（最常需要看的就是这个参数）
+- Server accepts handled requests: Nginx总共处理了 3 个连接,成功创建 6 次握手(证明中间没有失败的),总共处理了 9 个请求.
+- Reading: Nginx 读取到客户端的 Header 信息数.
+- Writing: Nginx 返回给客户端的 Header 信息数.
+- Waiting: 开启keep-alive的情况下,这个值等于 active – (reading + writing),意思就是 Nginx 已经处理完成,正在等候下一次请求指令的驻留连接.
+- 所以,在访问效率高,请求很快被处理完毕的情况下,Waiting数比较多是正常的.如果reading +writing数较多,则说明并发访问量非常大,正在处理过程中.
+
 ## Nginx 配置文件常用配置积累
 
 ### location 配置
@@ -687,3 +738,4 @@ limit_conn slimits 5;
 - <http://www.ydcss.com/archives/466>
 - <http://blog.sae.sina.com.cn/archives/2107>
 - <http://www.nginx.cn/273.html>
+- <http://printfabcd.iteye.com/blog/1200382>
