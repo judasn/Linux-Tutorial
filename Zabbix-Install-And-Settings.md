@@ -13,6 +13,8 @@
 - zabbix-server
 - 数据库（mysql/PostgreSQL）
 - web 界面管理
+- 主机（host），一般就是安装 zabbix-agent 服务服务器的称呼。一般配置 Zabbix 中 host name 就填写你的服务器的 `hostname` 命令展示出来的结果值
+- 主机组（host groups）
 
 ## Zabbix 安装
 
