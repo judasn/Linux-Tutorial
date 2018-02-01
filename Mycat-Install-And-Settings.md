@@ -37,13 +37,14 @@ export PATH=$PATH:$MYCAT_HOME/bin
 	
 ## Mycat 配置
 
-- 使用 Mycat 这几个配置文件必定会改动到。这一个文件所代表的含义几句话说不了，还请你自己看下官网的文档。
+- 使用 Mycat 这几个配置文件必定会改动到。这一个文件所代表的含义几句话说不了，还请你自己看下官网的文档，在目录：conf 下
 	- `rule.xml`，设置分片规则。
 	- `server.xml`，主要用于配置系统变量、用户管理、用户权限等。
 	- `schema.xml`，用于设置 Mycat 的逻辑库、表、数据节点、dataHost 等内容，分库分表、读写分离等等都是在这里进行配置的
+	- `log4j2.xml`，用于设置 Mycat 的日志输出规则，默认日志文件是输出 mycat 根目录下的 logs 目录下。
 		- 其中特别注意的是分片节点的配置，如下，其中 db1,db2,db3 是需要我们自己在 IP 为：192.168.1.111 这台机子上人工创建这三个空白数据库。
 ``` nginx
-	<dataNode name="dn1" dataHost="localhost1" database="db1" />
+    <dataNode name="dn1" dataHost="localhost1" database="db1" />
     <dataNode name="dn2" dataHost="localhost1" database="db2" />
     <dataNode name="dn3" dataHost="localhost1" database="db3" />
 ```
