@@ -1,5 +1,51 @@
 # Gitlab 安装和配置
 
+
+## Docker 安装方式
+
+
+- 创建宿主机挂载目录：`mkdir -p /data/gitlab/gitlab /data/gitlab/redis /data/gitlab/postgresql`
+- 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
+
+```yml
+gitlab:
+  image: sameersbn/gitlab
+  ports:
+    - "10022:22"
+    - "10080:80"
+  links:
+    - gitlab-redis:redisio
+    - gitlab-postgresql:postgresql
+  environment:
+    - GITLAB_PORT=80
+    - GITLAB_SSH_PORT=22
+    - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alpha-numeric-string
+    - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alpha-numeric-string
+    - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alpha-numeric-string
+  volumes:
+    - /data/gitlab/gitlab:/home/git/data
+  restart: always
+gitlab-redis:
+  image: sameersbn/redis
+  volumes:
+    - /data/gitlab/redis:/var/lib/redis
+  restart: always
+gitlab-postgresql:
+  image: sameersbn/postgresql:9.5-3
+  environment:
+    - DB_NAME=gitlabhq_production
+    - DB_USER=gitlab
+    - DB_PASS=123456
+    - DB_EXTENSION=pg_trgm
+  volumes:
+    - /data/gitlab/postgresql:/var/lib/postgresql
+  restart: always
+```
+
+- 启动：`docker-compose up -d`
+- 浏览器访问：<http://192.168.0.105:10080>
+
+
 ## 本文前提
 
 - 本文只讲解 Gitlab 的搭建配置相关，至于开发流程本质跟 Github 没啥区别的，所以读这篇文章建议最好是已经会了 Github 那种开发流程。
@@ -150,3 +196,4 @@
 - <https://zhangmengpl.gitbooks.io/gitlab-guide/content/whatisgitflow.html>
 - <https://blog.coderstory.cn/2017/02/01/gitlab/>
 - <https://xuanwo.org/2016/04/13/gitlab-install-intro/>
+- <https://softlns.github.io/2016/11/14/jenkins-gitlab-docker/>
