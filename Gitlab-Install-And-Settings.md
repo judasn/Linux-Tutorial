@@ -35,7 +35,7 @@ gitlab-postgresql:
   environment:
     - DB_NAME=gitlabhq_production
     - DB_USER=gitlab
-    - DB_PASS=123456
+    - DB_PASS=password
     - DB_EXTENSION=pg_trgm
   volumes:
     - /data/gitlab/postgresql:/var/lib/postgresql
