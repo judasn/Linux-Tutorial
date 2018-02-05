@@ -72,6 +72,10 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 	- Maven Integration plugin：用于构建 Maven 项目
 	- Gitlab Hook Plugin：用于触发 GitLab 的一些 WebHooks 来构建项目
 	- FireLine Plugin：代码规范检查，已经集成了阿里巴巴的代码规约（P3C）检查
+	- Gitlab Authentication 这个插件提供了使用GitLab进行用户认证和授权的方案
+	- Docker Commons Plugin
+	- Docker plugin
+	- Kubernetes
 
 ## Docker 的 Jenkins 与 Docker 结合使用
 

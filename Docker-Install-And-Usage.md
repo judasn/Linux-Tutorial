@@ -589,7 +589,17 @@ EXPOSE 9096
 	- 容器之间是有依赖关系，比如我一个 Java web 系统依赖 DB 容器、Redis 容器，必须这些依赖容器先运行起来。
 - 一个文件：docker-compose.yml
 - 一个命令：docker-compose up
+- 官网安装说明：<https://docs.docker.com/compose/install/#install-compose>
+- 安装方法：
 
+```
+sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+```
+
+- 检查是否安装成功：`docker-compose --version`，输出：`docker-compose version 1.18.0, build 8dd22a9`
 
 ## Docker Swarm
 
