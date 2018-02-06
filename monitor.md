@@ -50,6 +50,20 @@ Swap:             5           0           5
 ```
 
 - 在以上结果中，其中可以用的内存是看 `available` 列。
+- 对于 CentOS 6 的系统可以使用下面命令：
+
+```
+[root@bogon ~]# free -mlt
+             total       used       free     shared    buffers     cached
+Mem:         16080      15919        160          0        278      11934
+Low:         16080      15919        160
+High:            0          0          0
+-/+ buffers/cache:       3706      12373
+Swap:            0          0          0
+Total:       16080      15919        160
+```
+
+- 以上的结果重点关注是：`-/+ buffers/cache`，这一行代表实际使用情况。
 
 
 ## 硬盘查看

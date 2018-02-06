@@ -600,6 +600,11 @@ sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 - 检查是否安装成功：`docker-compose --version`，输出：`docker-compose version 1.18.0, build 8dd22a9`
+- 常用命令：
+	- 运行：`docker-compose up -d`
+	- 停止运行：`docker-compose down`
+	- 查看容器：`docker-compose ps`
+	- 删除停止的服务容器：`docker-compose rm`
 
 ## Docker Swarm
 
