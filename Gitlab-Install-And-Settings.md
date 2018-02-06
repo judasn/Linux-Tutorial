@@ -4,7 +4,7 @@
 ## Docker 安装方式
 
 
-- 创建宿主机挂载目录：`mkdir -p /data/gitlab/gitlab /data/gitlab/redis /data/gitlab/postgresql`
+- 创建宿主机挂载目录：`mkdir -p /data/docker/gitlab/gitlab /data/docker/gitlab/redis /data/docker/gitlab/postgresql`
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
 
 ```yml
@@ -23,12 +23,12 @@ gitlab:
     - GITLAB_SECRETS_SECRET_KEY_BASE=long-and-random-alpha-numeric-string
     - GITLAB_SECRETS_OTP_KEY_BASE=long-and-random-alpha-numeric-string
   volumes:
-    - /data/gitlab/gitlab:/home/git/data
+    - /data/docker/gitlab/gitlab:/home/git/data
   restart: always
 gitlab-redis:
   image: sameersbn/redis
   volumes:
-    - /data/gitlab/redis:/var/lib/redis
+    - /data/docker/gitlab/redis:/var/lib/redis
   restart: always
 gitlab-postgresql:
   image: sameersbn/postgresql:9.5-3
@@ -38,7 +38,7 @@ gitlab-postgresql:
     - DB_PASS=password
     - DB_EXTENSION=pg_trgm
   volumes:
-    - /data/gitlab/postgresql:/var/lib/postgresql
+    - /data/docker/gitlab/postgresql:/var/lib/postgresql
   restart: always
 ```
 
