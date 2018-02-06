@@ -56,7 +56,7 @@ gitlab-postgresql:
 ```
 
 - 启动：`docker-compose up -d`
-- 浏览器访问：<http://192.168.0.105:10080>
+- 浏览器访问：<http://192.168.0.105:10080/users/sign_in>
 
 
 
@@ -67,28 +67,24 @@ gitlab-postgresql:
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
 
 ```
-version: '3'
+version: '2'
 
 networks:
   prodnetwork:
     driver: bridge
 
-volumes:
-  nexus-data: /data/docker/ci/nexus
-  jenkins-data: /data/docker/ci/jenkins
-
 services:
   nexus:
-    build: ./docker-nexus3
+    image: sonatype/nexus3
     restart: always
     ports:
       - "18081:8081"
     networks:
       - prodnetwork
     volumes:
-      - nexus-data:/nexus-data
+      - /data/docker/ci/nexus:/nexus-data
   jenkins:
-    build: ./jenkins
+    image: jenkins
     restart: always
     ports:
       - "18080:8080"
@@ -97,7 +93,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
-      - jenkins-data:/var/lib/jenkins/
+      - /data/docker/ci/jenkins:/var/lib/jenkins/
     depends_on:
       - nexus
       - sonar
@@ -111,7 +107,7 @@ services:
     restart: always
     image: postgres:9.6
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - /data/docker/ci/postgresql:/var/lib/postgresql
     environment:
@@ -130,7 +126,7 @@ services:
     volumes:
       - /data/docker/ci/sonarqube:/opt/sonarqube
     environment:
-     - SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar
+     - SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5433/sonar
      - SONARQUBE_JDBC_USERNAME=sonar
      - SONARQUBE_JDBC_PASSWORD=sonar
 ```
