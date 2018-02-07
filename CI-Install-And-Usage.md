@@ -77,7 +77,7 @@ services:
     - GITLAB_HTTPS=false
     - SSL_SELF_SIGNED=false
 
-    - GITLAB_HOST=localhost
+    - GITLAB_HOST=119.23.252.150
     - GITLAB_PORT=10080
     - GITLAB_SSH_PORT=10022
     - GITLAB_RELATIVE_URL_ROOT=
@@ -180,7 +180,7 @@ services:
 
 - 启动：`docker-compose up -d`
 - 浏览器访问 Gitlab：<http://119.23.252.150:10080/users/sign_in>
-
+- Gitlab 的具体使用可以看另外文章：[Gitlab 的使用](Gitlab-Install-And-Settings.md)
 
 ## Nexus + Jenkins + SonarQube
 

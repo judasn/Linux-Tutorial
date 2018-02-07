@@ -1,10 +1,5 @@
 # Gitlab 安装和配置
 
-
-## Docker 安装方式
-
-- 命令：``
-
 ## Docker Compose 安装方式
 
 
@@ -99,7 +94,7 @@ gitlab-postgresql:
 	- 找到 13 行左右：`external_url 'http://gitlab.example.com'`，改为你的域名 / IP
 	- 重启服务：`sudo gitlab-ctl reconfigure`
 - 前面的初始化配置完成之后，访问当前机子 IP：`http://192.168.1.111:80`
-- 默认用户是 root，并且没有密码，所以第一次访问是让你设置你的 root 密码，我设置为：gitlab123456（至少 8 位数）
+- 默认用户是 `root`，并且没有密码，所以第一次访问是让你设置你的 root 密码，我设置为：gitlab123456（至少 8 位数）
 - 设置会初始化密码之后，你就需要登录了。输入设置的密码。
 - root 管理员登录之后常用的设置地址（请求地址都是 RESTful 风格很好懂，也应该不会再变了。）：
 	- 用户管理：<http://192.168.1.111/admin/users>
@@ -178,6 +173,35 @@ gitlab-postgresql:
 
 - 也是在项目设置里面：<http://192.168.1.111/组名称/项目名称/settings/repository#>
 - 设置 CI （持续集成） 的 key 也是在这个地址上设置。
+
+
+## Gitlab 的其他功能使用
+
+#### 创建用户
+
+- 地址：<http://119.23.252.150:10080/admin/users/>
+- 创建用户是没有填写密码的地方，默认是创建后会发送邮件给用户进行首次使用的密码设置。但是，有时候没必要这样，你可以创建好用户之后，编辑该用户就可以强制设置密码了（即使你设置了，第一次用户使用还是要让你修改密码...真是严苛）
+
+
+#### 创建群组
+
+- 地址：<http://119.23.252.150:10080/groups>
+- 群组主要有三种 Visibility Level：
+	- Private（私有，内部成员才能看到），The group and its projects can only be viewed by members.
+	- Internal（内部，只要能登录 Gitlab 就可以看到），The group and any internal projects can be viewed by any logged in user.
+	- Public（所有人都可以看到），The group and any public projects can be viewed without any authentication.
+
+#### 创建项目
+
+- 地址：<http://119.23.252.150:10080/>
+
+#### 增加 SSH keys
+
+- 地址：<http://119.23.252.150:10080/profile/keys>
+- 官网指导：<http://119.23.252.150:10080/help/ssh/README>
+- 新增 SSH keys：`ssh-keygen -t rsa -C "gitnavi@qq.com" -b 4096`
+- linux 读取 SSH keys 值：`cat ~/.ssh/id_rsa.pub`，复制到 gitlab 配置页面
+
 
 ## 使用 Gitlab 的一个开发流程 - Git flow
 
