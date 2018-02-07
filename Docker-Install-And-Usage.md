@@ -285,7 +285,7 @@ java -jar /root/spring-boot-my-demo.jar
     - `docker ps -n x`：显示最后 x 个容器，不管是正在运行或是已经停止的
 - `docker top 容器ID`：显示容器的进程信息
 - `docker events`：得到 docker 服务器的实时的事件
-- `docker logs -f 容器ID`：查看容器日志
+- `docker logs -f 容器ID`：查看容器日志（如果一些容器不断重启，或是自动停止，可以这样看下）
     - `docker logs 容器ID`，获取守护式容器的日志
     - `docker logs -f 容器ID`，不断监控容器日志，类似 tail -f
     - `docker logs -ft 容器ID`，在 -f 的基础上又增加 -t 表示为每条日志加上时间戳，方便调试
