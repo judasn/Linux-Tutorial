@@ -42,71 +42,57 @@ XML
 
 #### 简单 docker 方式
 
-
-docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube
-之后在浏览器里打开http://localhost:9000/即可打开界面试用了，管理员用户名、密码为admin
-
-
-docker run --name mysql-sonar -e MYSQL_ROOT_PASSWORD=mysql -e MYSQL_DATABASE=sonar -e MYSQL_USER=sonar -e MYSQL_PASSWORD=sonar -v /path/to/local/mysql/dir:/var/lib/mysql -p 33066:3306 -d mysql:latest
-
-docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 --link=mysql-sonar:mysql -e SONARQUBE_JDBC_USERNAME=sonar -e SONARQUBE_JDBC_PASSWORD=sonar -e SONARQUBE_JDBC_URL="jdbc:mysql://mysql:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false" sonarqube
+- 一个命令（没有挂载）：`docker run -d --name sonarqube -p 19000:9000 -p 19092:9092 -e "TZ=Asia/Shanghai" -e SONARQUBE_JDBC_USERNAME=sonar -e SONARQUBE_JDBC_PASSWORD=sonar -e SONARQUBE_JDBC_URL=jdbc:postgresql://112.74.49.55:5433/sonar sonarqube`
+- 一个命令（有挂载）：`docker run -d --name sonarqube -p 19000:9000 -p 19092:9092 -v /data/docker/ci/sonarqube/conf:/opt/sonarqube/conf -v /data/docker/ci/sonarqube/data:/opt/sonarqube/data -v /data/docker/ci/sonarqube/extension:/opt/sonarqube/extensions -v /data/docker/ci/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins -e "TZ=Asia/Shanghai" -e SONARQUBE_JDBC_USERNAME=sonar -e SONARQUBE_JDBC_PASSWORD=sonar -e SONARQUBE_JDBC_URL=jdbc:postgresql://120.79.2.92:5433/sonar sonarqube`
 
 
 
-docker run -d --name sonarqube \
--p 9000:9000 -p 9092:9092 \
--e SONARQUBE_JDBC_USERNAME=sonar \
--e SONARQUBE_JDBC_PASSWORD=sonar \
--e SONARQUBE_JDBC_URL=jdbc:postgresql://localhost/sonar \
-sonarqube:5.1
-
-
-docker run -d --name sonarqube \
-	-p 9000:9000 -p 9092:9092 \
-	-e SONARQUBE_JDBC_USERNAME=sonar \
-	-e SONARQUBE_JDBC_PASSWORD=sonar \
-	-e SONARQUBE_JDBC_URL=jdbc:postgresql://localhost/sonar \
-	sonarqube
-
-
-docker run -d --name sonarqube -e "TZ=America/Chicago" -p 9000:9000 -p 9092:9092 newtmitch/sonar-server
+- 在浏览器里打开：<http://112.74.49.55:19000/>
+- 管理员用户名、密码都是：`admin`
 
 #### docker-compose 方式
 
 - 官网文档：<https://github.com/SonarSource/docker-sonarqube/blob/master/recipes.md>
 
-
-
 ```
 postgresql:
   restart: always
-  image: sameersbn/postgresql:9.4-18
+  image: sameersbn/postgresql:9.6-2
+  ports:
+    - "5433:5432"
   environment:
     - DB_USER=sonar
-    - DB_PASS=[hidden]
+    - DB_PASS=sonar
     - DB_NAME=sonar
     - DB_EXTENSION=pg_trgm
   volumes:
-    - /srv/sonarqube/postgresql:/var/lib/postgresql
+    - /data/docker/ci/postgresql:/var/lib/postgresql
 sonarqube:
   restart: always
   image: sonarqube
+  ports:
+   - "19000:9000"
+   - "19092:9092"
   links:
     - postgresql:postgresql
-  ports:
-    - "10081:9000"
+  depends_on:
+    - postgresql
   environment:
-    - SONARQUBE_JDBC_URL=jdbc:postgresql://postgresql:5432/sonar
-    - SONARQUBE_JDBC_PASSWORD=[hidden]
+    - SONARQUBE_JDBC_URL=jdbc:postgresql://postgresql:5433/sonar
+    - SONARQUBE_JDBC_USERNAME=sonar
+    - SONARQUBE_JDBC_PASSWORD=sonar
   volumes:
-    - /srv/sonarqube/extensions:/opt/sonarqube/extensions
+    - /data/docker/ci/sonarqube/conf:/opt/sonarqube/conf
+    - /data/docker/ci/sonarqube/data:/opt/sonarqube/data
+    - /data/docker/ci/sonarqube/extension:/opt/sonarqube/extensions
+    - /data/docker/ci/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 ```
 
 
 - 一整套完整服务：
 
 ```
-version: '2'
+version: '3'
 
 networks:
   prodnetwork:

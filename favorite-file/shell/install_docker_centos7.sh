@@ -22,3 +22,14 @@ echo "安装结束"
 echo "运行 hello world 镜像"
 
 docker run hello-world
+
+
+echo "安装 docker compose"
+
+curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+
+chmod +x /usr/local/bin/docker-compose
+
+echo "输出 docker compose 版本号"
+
+docker-compose --version

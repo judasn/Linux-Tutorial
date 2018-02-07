@@ -3,13 +3,18 @@
 
 ## Docker 安装方式
 
+- 命令：``
+
+## Docker Compose 安装方式
+
 
 - 创建宿主机挂载目录：`mkdir -p /data/docker/gitlab/gitlab /data/docker/gitlab/redis /data/docker/gitlab/postgresql`
+- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chown -R 777 /data/docker/gitlab/gitlab /data/docker/gitlab/redis /data/docker/gitlab/postgresql`
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
 
 ```yml
 gitlab:
-  image: sameersbn/gitlab
+  image: sameersbn/gitlab:10.4.2-1
   ports:
     - "10022:22"
     - "10080:80"
@@ -31,7 +36,7 @@ gitlab-redis:
     - /data/docker/gitlab/redis:/var/lib/redis
   restart: always
 gitlab-postgresql:
-  image: sameersbn/postgresql:9.5-3
+  image: sameersbn/postgresql:9.6-2
   environment:
     - DB_NAME=gitlabhq_production
     - DB_USER=gitlab
