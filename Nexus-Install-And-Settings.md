@@ -138,7 +138,7 @@
             <url>http://192.168.1.73:8081/repository/maven-snapshots/</url>
         </mirror>
         <mirror>
-            <id>aliyun-maven</id>
+            <id>maven-aliyun</id>
             <name>aliyun maven</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
             <mirrorOf>central</mirrorOf>
@@ -275,6 +275,39 @@
         - 重启服务：`/usr/program/nexus2.11.4/bin/nexus start`
 
 
+## Nexus3 功能
+
+#### 搜索
+
+- 搜索依赖（支持匹配符）：<http://192.168.1.73:8081/#browse/search>
+
+#### 创建角色
+
+- 地址：<http://192.168.1.73:8081/#admin/security/roles>
+
+#### 创建用户
+
+- 地址：<http://192.168.1.73:8081/#admin/security/users>
+
+#### 设置仓库
+
+- 仓库常见类型：
+	- proxy，“代理”类型，代理请求官方仓库，并缓存在本地，图中maven-central即是
+	- hosted，“私有”仓库，公司组织内部自由仓库，比如存储自己的jar包等，maven-releases、maven-snapshots即是
+	- group，“组”，逻辑上的，可以把几个仓库划归到某个组，对外统一的地址访问，maven-public即是，它包含了另外3个
+- 仓库地址：<http://192.168.1.73:8081/#admin/repository/repositories>
+- 设置 maven-central 的 proxy 为官网默认地址：<https://repo1.maven.org/maven2/>
+	- proxy 的意义：当客户端访问中央库的时候，如果 Nexus 没有该依赖，则先通过 Proxy 地址下载到 Nexus 仓库，然后客户端再从 Nexus 服务器下载到本地。
+- 一般建议新增一个 maven-aliyun 的 proxy 类型仓库，proxy 地址是：<http://maven.aliyun.com/nexus/content/groups/public/>
+	- 然后在 maven-public 设置 Member repositories 的时候确保 maven-aliyun 排序大于 maven-central 即可。
+- 设置 maven-public，集成其他仓库：<http://192.168.1.73:8081/#admin/repository/repositories:maven-public>
+	- 一般 Member repositories 的排序建议是：maven-releases、maven-snapshots、maven-aliyun、maven-central
+- 如果需要设置 npm 的仓库可以看这篇文章：[Nexus OSS3创建npm 私服](https://wendyeq.me/2016/11/24/npm-registry-in-nexus-oss-3/)
+
+#### 设置 task
+
+- 地址：<http://192.168.1.73:8081/#admin/system/tasks>
+
 ## 资料
 
 - <http://www.cnblogs.com/leefreeman/p/4211530.html>
@@ -287,3 +320,5 @@
 - <http://www.mamicode.com/info-detail-1016489.html>
 - <http://blog.csdn.net/shawyeok/article/details/23564681>
 - <http://zyjustin9.iteye.com/blog/2017321>
+- <https://www.xncoding.com/2017/09/02/tool/nexus.html>
+- <https://www.addops.cn/post/a-bite-of-nexus.html>
