@@ -77,7 +77,7 @@ services:
     - GITLAB_HTTPS=false
     - SSL_SELF_SIGNED=false
 
-    - GITLAB_HOST=119.23.252.150
+    - GITLAB_HOST=192.168.0.105
     - GITLAB_PORT=10080
     - GITLAB_SSH_PORT=10022
     - GITLAB_RELATIVE_URL_ROOT=
@@ -178,8 +178,8 @@ services:
 ```
 
 
-- 启动：`docker-compose up -d`
-- 浏览器访问 Gitlab：<http://119.23.252.150:10080/users/sign_in>
+- 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右吧。
+- 浏览器访问 Gitlab：<http://192.168.0.105:10080/users/sign_in>
 - Gitlab 的具体使用可以看另外文章：[Gitlab 的使用](Gitlab-Install-And-Settings.md)
 
 ## Nexus + Jenkins + SonarQube
@@ -226,7 +226,7 @@ services:
       - /data/docker/ci/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
     environment:
       #- SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5433/sonar
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://119.23.252.150:5433/sonar
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://192.168.0.105:5433/sonar
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
   nexus:
@@ -258,9 +258,9 @@ services:
       - SONAR_DB_PORT=5432
 ```
 
-- 浏览器访问 SonarQube：<http://119.23.252.150:19000>
-- 浏览器访问 Nexus：<http://119.23.252.150:18081>
-- 浏览器访问 Jenkins：<http://119.23.252.150:18080>
+- 浏览器访问 SonarQube：<http://192.168.0.105:19000>
+- 浏览器访问 Nexus：<http://192.168.0.105:18081>
+- 浏览器访问 Jenkins：<http://192.168.0.105:18080>
 
 
 

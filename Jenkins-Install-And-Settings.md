@@ -16,7 +16,7 @@
 - 官网下载中有介绍其版本标识：<https://jenkins.io/download/>
 	- 我们就选用：Long-term Support (LTS)
 - 官网关于 Docker 部署也有专门文档：<https://github.com/jenkinsci/docker/blob/master/README.md>
-- 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/jenkins/jenkins_home`
+- 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/jenkins/jenkins_home && chmod 777 -R /data/jenkins/jenkins_home`
 - 安装镜像（813MB，有点大）：`docker pull jenkins/jenkins:lts`
 - 查看下载下来的镜像：`docker images`
 - 首次运行镜像：`docker run --name jenkins-master -p 8123:8080 -p 50000:50000 -v /etc/localtime:/etc/localtime -v /data/jenkins/jenkins_home:/var/jenkins_home -e JAVA_OPTS="-Duser.timezone=Asia/Shanghai" -d --restart always jenkins/jenkins:lts`
@@ -35,7 +35,8 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 
 ## 首次使用 Jenkins / Jenkins 插件推荐
 
-- 首次进入 Jenkins 的 Web UI 界面是一个解锁页面，需要让你输入：Administrator password，这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，对我来讲就是：`cat /data/jenkins/jenkins_home/secrets/initialAdminPassword`
+- 首次进入 Jenkins 的 Web UI 界面是一个解锁页面，需要让你输入：Administrator password
+	- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it eec22d513b5b /bin/bash`，然后：`cat /data/jenkins/jenkins_home/secrets/initialAdminPassword`
 - 然后再接下来就是插件的安装，我不推荐直接用它推荐给我们的插件直接安装，而是选择：`Select plugins to install`，我们自己选择插件安装。
 - 我的这里的代码仓库是：Gitlab
 - 推荐插件

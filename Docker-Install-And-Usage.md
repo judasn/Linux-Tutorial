@@ -264,6 +264,7 @@ java -jar /root/spring-boot-my-demo.jar
     - `docker rm 容器ID`，删除指定容器（该容器必须是停止的）
     - `docker rm -f 容器ID`，删除指定容器（该容器如果正在运行可以这样删除）
     - `docker rm $(docker ps -a -q)`，删除所有容器
+    - `docker rm -f $(docker ps -a -q)`，强制删除所有容器
 	- `docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm`删除老的(一周前创建)容器
 - `docker commit`，把容器打成镜像
 	- `docker commit 容器ID gitnavi/docker-nodejs-test:0.1`
