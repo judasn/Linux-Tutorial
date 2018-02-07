@@ -178,7 +178,7 @@ services:
 ```
 
 
-- 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右吧。
+- 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右。
 - 浏览器访问 Gitlab：<http://192.168.0.105:10080/users/sign_in>
 - Gitlab 的具体使用可以看另外文章：[Gitlab 的使用](Gitlab-Install-And-Settings.md)
 
@@ -187,6 +187,7 @@ services:
 - 预计会使用内存：4G 左右
 - 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
 - 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
+- 下面有一个细节要特别注意：yml 里面不能有中文。还有就是 sonar 的挂载目录不能直接挂在 /opt/sonarqube 上，不然会启动不了。
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
 
 ```yaml
@@ -259,6 +260,7 @@ services:
       - SONAR_DB_PORT=5432
 ```
 
+- 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右。
 - 浏览器访问 SonarQube：<http://192.168.0.105:19000>
 - 浏览器访问 Nexus：<http://192.168.0.105:18081>
 - 浏览器访问 Jenkins：<http://192.168.0.105:18080>
