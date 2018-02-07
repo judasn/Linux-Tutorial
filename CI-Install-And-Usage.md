@@ -7,11 +7,11 @@
 - CentOS 7.3
 - 两台机子（一台机子也是可以，内存至少要 8G）
 	- 一台：Gitlab + Redis + Postgresql
-		- 硬件推荐：内存 4G，CPU 2 核以上
+		- 硬件推荐：内存 4G
 		- 端口安排
 			- Gitlab：10080
 	- 一台：Nexus + Jenkins + SonarQube + Postgresql
-		- 硬件推荐：内存 8G，CPU 2 核以上
+		- 硬件推荐：内存 8G
 		- 端口安排
 			- SonarQube：19000
 			- Nexus：18081
