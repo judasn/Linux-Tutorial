@@ -45,18 +45,17 @@ gitlab-postgresql:
 - 启动：`docker-compose up -d`
 - 浏览器访问：<http://192.168.0.105:10080>
 
+## Gitlab 高可用方案（High Availability）
 
-## 本文前提
+- 官网：<https://about.gitlab.com/high-availability/>
+- 本质就是把文件、缓存、数据库抽离出来，然后部署多个 Gitlab 用 nginx 前面做负载。
 
-- 本文只讲解 Gitlab 的搭建配置相关，至于开发流程本质跟 Github 没啥区别的，所以读这篇文章建议最好是已经会了 Github 那种开发流程。
 
-## 测试机子硬件最低建议
+## 原始安装方式
 
-- CPU：1 core
-- 内存：2G
-
-## 安装
-
+- 环境：
+	- CPU：1 core
+	- 内存：2G
 - 我习惯使用 root 用户
 - 有开源版本和收费版本，各版本比较：<https://about.gitlab.com/products/>
 - 官网：<https://about.gitlab.com/>
