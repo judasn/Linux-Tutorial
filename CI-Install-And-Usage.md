@@ -185,8 +185,8 @@ services:
 ## Nexus + Jenkins + SonarQube
 
 - 预计会使用内存：4G 左右
-- 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/sonarqube /data/docker/ci/postgresql`
-- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/sonarqube /data/docker/ci/postgresql`
+- 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
+- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
 
 ```yaml
@@ -249,6 +249,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
       - /data/docker/ci/jenkins:/var/lib/jenkins/
+      - /data/docker/ci/jenkins/home:/var/jenkins_home
     depends_on:
       - nexus
       - sonar
