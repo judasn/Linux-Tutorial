@@ -20,6 +20,7 @@
 ## Gitlab + Redis + Postgresql
 
 - 预计会使用内存：2G 左右
+- 这套方案来自（部分内容根据自己情况进行了修改）：<https://github.com/sameersbn/docker-gitlab>
 - 创建宿主机挂载目录：`mkdir -p /data/docker/gitlab/gitlab /data/docker/gitlab/redis /data/docker/gitlab/postgresql`
 - 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/gitlab/gitlab /data/docker/gitlab/redis /data/docker/gitlab/postgresql`
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
