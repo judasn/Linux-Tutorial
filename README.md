@@ -23,6 +23,7 @@
 - [Ubuntu 安装 VMware](Ubuntu-Install-VMware.md)
 - [VMware 克隆 CentOS 后网卡信息修改](CentOS-Virtual-Machine-Copy-Settings.md)
 - [Vim 安装、配置、快捷键列表](Vim-Install-And-Settings.md)
+- [SSH 免密登录](SSH-login-without-password.md)
 - [Bash 命令](Bash.md)
 - [Bash 其他常用命令](Bash-Other-Bash.md)
 - [Sed 命令](Sed.md)
@@ -78,6 +79,7 @@
 - [Alfresco 安装和使用](Alfresco-Install-And-Usage.md)
 - [Apache Thrift 安装和使用](Thrift-Install-And-Usage.md)
 - [Node.js 安装和使用](Node-Install-And-Usage.md)
+- [CI 整套服务安装和使用](CI-Install-And-Usage.md)
 
 
 ## 下一步(Next)
