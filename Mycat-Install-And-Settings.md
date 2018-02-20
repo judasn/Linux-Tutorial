@@ -6,6 +6,7 @@
 - 系统：CentOS 6.7 / CentOS 7.4
 - JDK：jdk-8u72-linux-x64.tar.gz
 - Mycat：Mycat-server-1.6-RELEASE-20161028204710-linux.tar.gz
+- 推荐测试机子配置：1 CPU + 2 GB RAM + Docker
 
 ## Mycat 安装
 
@@ -41,7 +42,8 @@ export PATH=$PATH:$MYCAT_HOME/bin
 #### server.xml 配置详解
 
 - `server.xml`，主要用于配置系统变量、用户管理、用户权限等。
-- 配置用户：
+- **默认配置中有一个 TESTDB 相关的数据库用户配置，都要自己手工去掉。建议可以把配置文件中 TESTDB 相关的单词都替换成你的数据库名称（你最好能读懂各个配置）。**
+- 配置用户，添加下面内容：
 
 ```xml
 <!-- 定义登录mycat对的用户权限 -->  
@@ -243,7 +245,6 @@ export PATH=$PATH:$MYCAT_HOME/bin
 <!DOCTYPE mycat:rule SYSTEM "rule.dtd">
 <mycat:rule xmlns:mycat="http://io.mycat/">
 
-    <!--======================================================-->
 
     <tableRule name="rule1">
         <rule>
@@ -315,6 +316,8 @@ export PATH=$PATH:$MYCAT_HOME/bin
             <algorithm>jump-consistent-hash</algorithm>
         </rule>
     </tableRule>
+    
+    <!--======================== start ==============================-->
 
     <tableRule name="sharding-by-shop-id">
         <rule>
@@ -323,13 +326,15 @@ export PATH=$PATH:$MYCAT_HOME/bin
         </rule>
     </tableRule>
 
-    <!--======================================================-->
 
     <function name="by-shop-id" class="io.mycat.route.function.PartitionByFileMap">
         <property name="mapFile">sharding-by-shop-id.txt</property>
         <property name="type">0</property>
         <property name="defaultNode">0</property>
     </function>
+    
+    <!--======================== end ==============================-->
+
     
     <function name="murmur" class="io.mycat.route.function.PartitionByMurmurHash">
         <property name="seed">0</property><!-- 默认是0 -->
@@ -380,8 +385,6 @@ export PATH=$PATH:$MYCAT_HOME/bin
         <property name="totalBuckets">3</property>
     </function>
 
-    <!--======================================================-->
-
 </mycat:rule>
 ```
 
@@ -403,6 +406,233 @@ export PATH=$PATH:$MYCAT_HOME/bin
 
 - `log4j2.xml`，用于设置 Mycat 的日志输出规则，默认日志文件是输出 mycat 根目录下的 logs 目录下。
 
+
+## 只分库的 demo 脚本
+
+- 在 MySQL 实例 1 中执行如下初始化脚本：
+
+```sql
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0001` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `adg_system_0001`;
+
+DROP TABLE IF EXISTS `adg_ads`;
+
+CREATE TABLE `adg_ads` (
+  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
+
+DROP TABLE IF EXISTS `adg_ads_set`;
+
+CREATE TABLE `adg_ads_set` (
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_set_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
+
+DROP TABLE IF EXISTS `adg_ads_campaign`;
+
+CREATE TABLE `adg_ads_campaign` (
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_campaign_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
+
+DROP TABLE IF EXISTS `adg_channel`;
+
+CREATE TABLE `adg_channel` (
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
+
+
+DROP TABLE IF EXISTS `adg_shop`;
+
+CREATE TABLE `adg_shop` (
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  PRIMARY KEY (`shop_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
+
+
+DROP TABLE IF EXISTS `adg_shop_channel`;
+
+CREATE TABLE `adg_shop_channel` (
+  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`shop_channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
+```
+
+- 在 MySQL 实例 2 中执行如下初始化脚本：
+
+```sql
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0002` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `adg_system_0002`;
+
+DROP TABLE IF EXISTS `adg_ads`;
+
+CREATE TABLE `adg_ads` (
+  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
+
+DROP TABLE IF EXISTS `adg_ads_set`;
+
+CREATE TABLE `adg_ads_set` (
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_set_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
+
+DROP TABLE IF EXISTS `adg_ads_campaign`;
+
+CREATE TABLE `adg_ads_campaign` (
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_campaign_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
+
+DROP TABLE IF EXISTS `adg_channel`;
+
+CREATE TABLE `adg_channel` (
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
+
+
+DROP TABLE IF EXISTS `adg_shop`;
+
+CREATE TABLE `adg_shop` (
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  PRIMARY KEY (`shop_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
+
+
+DROP TABLE IF EXISTS `adg_shop_channel`;
+
+CREATE TABLE `adg_shop_channel` (
+  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`shop_channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
+```
+
+- 在 MySQL 实例 3 中执行如下初始化脚本：
+
+```sql
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0003` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `adg_system_0003`;
+
+DROP TABLE IF EXISTS `adg_ads`;
+
+CREATE TABLE `adg_ads` (
+  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
+
+DROP TABLE IF EXISTS `adg_ads_set`;
+
+CREATE TABLE `adg_ads_set` (
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_set_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
+
+DROP TABLE IF EXISTS `adg_ads_campaign`;
+
+CREATE TABLE `adg_ads_campaign` (
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_campaign_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
+
+DROP TABLE IF EXISTS `adg_channel`;
+
+CREATE TABLE `adg_channel` (
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
+
+
+DROP TABLE IF EXISTS `adg_shop`;
+
+CREATE TABLE `adg_shop` (
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  PRIMARY KEY (`shop_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
+
+
+DROP TABLE IF EXISTS `adg_shop_channel`;
+
+CREATE TABLE `adg_shop_channel` (
+  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`shop_channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
+```
 
 ## 其他设置
 
@@ -431,6 +661,33 @@ export PATH=$PATH:$MYCAT_HOME/bin
 	- **建议** 的连接方式：
 		- Navicat for mysql 软件
 		- Linux 下的 MySQL 客户端命令行
+
+## 使用 Navicat 连接 MyCat 测试 SQL
+
+```sql
+INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (1,'NC站');
+INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (2,'BG站');
+
+INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (1,'Facebook');
+INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (2,'Google');
+INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (3,'Twitter');
+
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,1,'NC站','Facebook');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,1,2,'NC站','Google');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (3,2,1,'BG站','Facebook');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (4,2,2,'BG站','Google');
+
+INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告系列',1,1,'NC站','Facebook');
+INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告系列',2,2,'BG站','Google');
+
+INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告集',1,1,1,'NC站','Facebook');
+INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告集',2,2,2,'BG站','Google');
+
+INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,'第1个广告',1,1,'NC站','Facebook');
+INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,2,'第2个广告',2,2,'BG站','Google');
+```
+
+
 
 ## mycat 正常启动的 log 内容
 
@@ -522,104 +779,6 @@ export PATH=$PATH:$MYCAT_HOME/bin
 2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:319)) - init result :finished 10 success 10 target count:10
 2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_2 index:0 init success
 2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_2 cur index 0
-```
-
-## 只分库的 demo 脚本
-
-
-```sql
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0001` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
-USE `adg_system_0001`;
-
-DROP TABLE IF EXISTS `adg_ads`;
-
-CREATE TABLE `adg_ads` (
-  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
-
-DROP TABLE IF EXISTS `adg_ads_set`;
-
-CREATE TABLE `adg_ads_set` (
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_set_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
-
-DROP TABLE IF EXISTS `adg_ads_campaign`;
-
-CREATE TABLE `adg_ads_campaign` (
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_campaign_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
-
-DROP TABLE IF EXISTS `adg_channel`;
-
-CREATE TABLE `adg_channel` (
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
-
-
-DROP TABLE IF EXISTS `adg_shop`;
-
-CREATE TABLE `adg_shop` (
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  PRIMARY KEY (`shop_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
-
-
-DROP TABLE IF EXISTS `adg_shop_channel`;
-
-CREATE TABLE `adg_shop_channel` (
-  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`shop_channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
-
-
-INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,'第1个广告',1,1,'NC站','Facebook');
-INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,2,'第2个广告',2,2,'BG站','Google');
-
-insert  into `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) values (1,'第1个广告集',1,1,1,'NC站','Facebook');
-insert  into `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) values (2,'第2个广告集',2,2,2,'BG站','Google');
-
-insert  into `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) values (1,'第1个广告系列',1,1,'NC站','Facebook');
-insert  into `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) values (2,'第2个广告系列',2,2,'BG站','Google');
-
-INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (1,'Facebook');
-INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (2,'Google');
-INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (3,'Twitter');
-
-INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (1,'NC站');
-INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (2,'BG站');
-
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,1,'NC站','Facebook');
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,1,2,'NC站','Google');
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (3,2,1,'BG站','Facebook');
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (4,2,2,'BG站','Google');
 ```
 
 ## 资料
