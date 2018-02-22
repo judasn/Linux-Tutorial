@@ -1,6 +1,7 @@
 # Elasticsearch 知识
 
-## 环境
+
+## 系统环境
 
 - CentOS 7.3
 - root 用户
