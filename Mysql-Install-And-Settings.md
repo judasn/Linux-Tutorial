@@ -1,6 +1,12 @@
 # MySQL 安装和配置
 
 
+## Docker 安装 MySQL
+
+- 创建本地数据存储 + 配置文件目录：`mkdir -p /data/docker/mysql/datadir /data/docker/mysql/conf`
+- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql/datadir /data/docker/mysql/conf`
+- `docker run -p 3306:3306 --name mycat-mysql5.7-1 -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
+
 ## MySQL 安装
 
 - 假设当前用户为：root

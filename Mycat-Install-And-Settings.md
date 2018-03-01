@@ -8,6 +8,14 @@
 - Mycat：Mycat-server-1.6-RELEASE-20161028204710-linux.tar.gz
 - 推荐测试机子配置：1 CPU + 2 GB RAM + Docker
 
+## Docker 快速部署 MySQL
+
+```
+docker run --name mysql1 -p 3316:3306 -e MYSQL_ROOT_PASSWORD=root -d daocloud.io/library/mysql:5.7.13
+docker run --name mysql2 -p 3326:3306 -e MYSQL_ROOT_PASSWORD=root -d daocloud.io/library/mysql:5.7.13
+docker run --name mysql3 -p 3336:3306 -e MYSQL_ROOT_PASSWORD=root -d daocloud.io/library/mysql:5.7.13
+```
+
 ## Mycat 安装
 
 - 官网（页头有一个 PDF 要记得下载，这本资料写得很好）：<http://mycat.io/>
