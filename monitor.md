@@ -121,6 +121,46 @@ Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 	- `iftop -N`：直接显示连接埠编号, 不显示服务名称
 	- `iftop -F 192.168.1.0/24 or 192.168.1.0/255.255.255.0`：显示某个网段进出封包流量
 
+## 端口使用情况
+
+- 查看 3316 端口是否有被使用：`lsof -i:3316`，有被使用会输出类似如下信息，如果没被使用会没有任何信息返回。
+
+```
+COMMAND     PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
+java      12011 root   77u  IPv6 4506842      0t0  TCP JDu4e00u53f7:58560->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   78u  IPv6 4506843      0t0  TCP JDu4e00u53f7:58576->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   79u  IPv6 4506844      0t0  TCP JDu4e00u53f7:58578->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   80u  IPv6 4506845      0t0  TCP JDu4e00u53f7:58574->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   82u  IPv6 4506846      0t0  TCP JDu4e00u53f7:58562->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   83u  IPv6 4506847      0t0  TCP JDu4e00u53f7:58564->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   84u  IPv6 4506848      0t0  TCP JDu4e00u53f7:58566->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   85u  IPv6 4506849      0t0  TCP JDu4e00u53f7:58568->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   86u  IPv6 4506850      0t0  TCP JDu4e00u53f7:58570->116.196.110.69:aicc-cmi (ESTABLISHED)
+java      12011 root   87u  IPv6 4506851      0t0  TCP JDu4e00u53f7:58572->116.196.110.69:aicc-cmi (ESTABLISHED)
+docker-pr 13551 root    4u  IPv6 2116824      0t0  TCP *:aicc-cmi (LISTEN)
+```
+
+
+- 查看所有在用的端口：`netstat -ntlp`
+
+```
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1/systemd           
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      746/sshd            
+tcp        0      0 127.0.0.1:32000         0.0.0.0:*               LISTEN      12011/java          
+tcp6       0      0 :::9066                 :::*                    LISTEN      12011/java          
+tcp6       0      0 :::6379                 :::*                    LISTEN      28668/docker-proxy  
+tcp6       0      0 :::111                  :::*                    LISTEN      1/systemd           
+tcp6       0      0 :::3316                 :::*                    LISTEN      13551/docker-proxy  
+tcp6       0      0 :::22                   :::*                    LISTEN      746/sshd            
+tcp6       0      0 :::35224                :::*                    LISTEN      12011/java          
+tcp6       0      0 :::3326                 :::*                    LISTEN      14203/docker-proxy  
+tcp6       0      0 :::1984                 :::*                    LISTEN      12011/java          
+tcp6       0      0 :::8066                 :::*                    LISTEN      12011/java          
+tcp6       0      0 :::43107                :::*                    LISTEN      12011/java 
+```
+
 
 ## 参考资料
 
