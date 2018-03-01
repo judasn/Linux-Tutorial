@@ -3,9 +3,15 @@
 
 ## Docker 安装 MySQL
 
+- 关掉：SELinux
 - 创建本地数据存储 + 配置文件目录：`mkdir -p /data/docker/mysql/datadir /data/docker/mysql/conf`
 - 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql/datadir /data/docker/mysql/conf`
 - `docker run -p 3306:3306 --name mycat-mysql5.7-1 -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
+- 连上容器：`docker exec -it 09747cd7d0bd /bin/bash`
+- 关于容器的 MySQL 配置，官网是这样说的：<https://hub.docker.com/_/mysql/>
+
+>> The MySQL startup configuration is specified in the file /etc/mysql/my.cnf, and that file in turn includes any files found in the /etc/mysql/conf.d directory that end with .cnf.Settings in files in this directory will augment and/or override settings in /etc/mysql/my.cnf. If you want to use a customized MySQL configuration,you can create your alternative configuration file in a directory on the host machine and then mount that directory location as /etc/mysql/conf.d inside the mysql container.
+
 
 ## MySQL 安装
 
