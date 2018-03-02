@@ -1,0 +1,36 @@
+build/
+out/
+log/
+logs/
+public/
+target/
+node_modules/
+classes/
+.deploy*/
+.gradle
+*.log.*
+*.log
+.DS_Store
+Thumbs.db
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
