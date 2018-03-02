@@ -449,7 +449,7 @@ http {
 	- 教程：<https://www.wn789.com/4394.html> 
 	- SSL For Free：<https://www.sslforfree.com>
 	- 配置要点其实就是下面该图：
-- ![免费申请 SSL 证书渠道](images/Nginx-SSL-a-1.jpg)
+- ![免费申请 SSL 证书渠道](../images/Nginx-SSL-a-1.jpg)
 - 一般你会下载下面两个文件：`certificate.crt`，`private.key`
 - 如果你需要把 crt 和 key 的证书转换成 keystore（如果你有这个需求的话）
 - 从 key 和 crt 生成 pkcs12 格式的 keystore，生成过程会让人你输入密码，这个密码下面会用到，我这里假设输入 123456

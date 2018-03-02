@@ -4,7 +4,7 @@
 
 - 在我们需要多台 CentOS 虚拟机的时候，对已有虚拟机的系统进行克隆或是复制。但是这样做又有一个问题，克隆出来的虚拟机启动的时候你输入命令：`ifconfig`，eth0 网卡信息没了，只有一个 eth1。 对于处女座的人来讲这是不允许的。所以我们需要改动下。
 - 复制虚拟机后，首次打开该会提示如下内容，一般选择 copy 这个配置。
-	- ![vim](images/CentOS-Virtual-Machine-Copy-Settings-a-1.png)
+	- ![vim](../images/CentOS-Virtual-Machine-Copy-Settings-a-1.png)
 
 
 

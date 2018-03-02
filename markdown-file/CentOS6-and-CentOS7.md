@@ -2,7 +2,7 @@
 
 ## 总体差异
 
-- ![总体差异](images/CentOS6-and-CentOS7-a-1.png)
+- ![总体差异](../images/CentOS6-and-CentOS7-a-1.png)
 
 ## 想装回过去的一些工具
 

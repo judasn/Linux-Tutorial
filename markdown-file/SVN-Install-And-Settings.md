@@ -105,7 +105,7 @@
 
 - 设置配置文件
     - 编辑配置文件：`vim /opt/svn/repo/conf/svnserve.conf`
-    - ![设置配置文件](images/SVN-Install-And-Settings-a-1.jpg)
+    - ![设置配置文件](../images/SVN-Install-And-Settings-a-1.jpg)
     - 配置文件中下面几个参数（默认是注释的）：
         - `anon-access`： 对不在授权名单中的用户访问仓库的权限控制，有三个可选性：`write、read、none`
             - `none` 表示没有任何权限
@@ -123,13 +123,13 @@
 
 - 添加用户
     - 编辑配置文件：`vim /opt/svn/repo/conf/passwd`
-    - ![添加用户](images/SVN-Install-And-Settings-a-2.jpg)
+    - ![添加用户](../images/SVN-Install-And-Settings-a-2.jpg)
     - 添加用户很简答，如上图所示在配置文中添加一个格式为：`用户名 = 密码`  的即可
 
 
 - 设置用户权限
     - 编辑配置文件：`vim /opt/svn/repo/conf/authz`
-    - ![设置用户权限](images/SVN-Install-And-Settings-a-3.jpg)
+    - ![设置用户权限](../images/SVN-Install-And-Settings-a-3.jpg)
     - 配置文件中几个参数解释：
         - `r` 表示可写
         - `w` 表示可读
@@ -161,7 +161,7 @@
 ## SVN 设置提交之后可修改提交的 Message 信息
 
 - 默认的 SVN 是无法修改提交后的 Message 信息的，修改会报如下错误：
-- ![SVN 设置提交之后可修改提交的 Message 信息](images/SVN-Install-And-Settings-a-4.jpg)
+- ![SVN 设置提交之后可修改提交的 Message 信息](../images/SVN-Install-And-Settings-a-4.jpg)
 - 解决办法：
     - 下载我 hooks 文件：<http://pan.baidu.com/s/1c1jtlmw>
     - 把 pre-revprop-change 文件放在你的仓库下，比如我仓库地址是：`/opt/svn/repo/hooks`

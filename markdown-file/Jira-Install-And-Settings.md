@@ -33,10 +33,10 @@
     - 访问：`http://192.168.0.111:8080/`
     - 汉化：`cp JIRA-6.3.6-language-pack-zh_CN.jar /usr/program/jira6.3.6/atlassian-jira/WEB-INF/lib/`
     - 配置过程：
-        - ![Jira 安装和配置](images/Jira-Install-And-Settings-a-1.jpg)
-        - ![Jira 安装和配置](images/Jira-Install-And-Settings-a-2.jpg)
-        - ![Jira 安装和配置](images/Jira-Install-And-Settings-a-3.jpg)
-        - ![Jira 安装和配置](images/Jira-Install-And-Settings-a-4.jpg)
-        - ![Jira 安装和配置](images/Jira-Install-And-Settings-a-5.jpg)
-        - ![Jira 安装和配置](images/Jira-Install-And-Settings-a-6.jpg)
+        - ![Jira 安装和配置](../images/Jira-Install-And-Settings-a-1.jpg)
+        - ![Jira 安装和配置](../images/Jira-Install-And-Settings-a-2.jpg)
+        - ![Jira 安装和配置](../images/Jira-Install-And-Settings-a-3.jpg)
+        - ![Jira 安装和配置](../images/Jira-Install-And-Settings-a-4.jpg)
+        - ![Jira 安装和配置](../images/Jira-Install-And-Settings-a-5.jpg)
+        - ![Jira 安装和配置](../images/Jira-Install-And-Settings-a-6.jpg)
     - 重新激活页面地址：`http://192.168.0.111:8090/secure/admin/ViewLicense.jspa`

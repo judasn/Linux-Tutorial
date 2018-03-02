@@ -39,13 +39,13 @@
 - 先安装 git：`sudo yum install -y git`
 - 安装 oh-my-zsh（这个过程可能会有点慢，或者需要重试几次）：`wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh`
 - 整个过程效果如下图：
-    - ![oh-my-zsh 安装](images/Zsh-a-1.jpg)
+    - ![oh-my-zsh 安装](../images/Zsh-a-1.jpg)
 - 在以 root 用户为前提下，oh-my-zsh 的安装目录：**/root/.oh-my-zsh**
 - 在以 root 用户为前提下，Zsh 的配置文件位置：**/root/.zshrc**
 - 为 root 用户设置 zsh 为系统默认 shell：`chsh -s /bin/zsh root`
 - 如果你要重新恢复到 bash：`chsh -s /bin/bash root`
 - 现在你关掉终端或是重新连上 shell，现在开头是一个箭头了，如下图：
-    - ![oh-my-zsh 安装](images/Zsh-b-1.jpg)
+    - ![oh-my-zsh 安装](../images/Zsh-b-1.jpg)
 
 ## Home / End 失灵问题
 
@@ -62,7 +62,7 @@
 - oh-my-zsh 的插件列表介绍（太长了，用源码不精准地统计下有 149 个）：<https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins>
 - 我们看下安装 oh-my-zsh 的时候自带有多少个插件：`ls -l /root/.oh-my-zsh/plugins |grep "^d"|wc -l`，我这边得到的结果是：211
 - 编辑配置文件：`vim /root/.zshrc`，找到下图的地方，怎么安装，原作者注释写得很清楚了，别装太多了，默认 git 是安装的。
-    - ![oh-my-zsh 安装](images/Zsh-c-1.jpg)
+    - ![oh-my-zsh 安装](../images/Zsh-c-1.jpg)
 - 插件推荐：
     - `wd`
         - 简单地讲就是给指定目录映射一个全局的名字，以后方便直接跳转到这个目录，比如：
@@ -99,7 +99,7 @@
     - `avit`
     - `blinks`
 - 编辑配置文件：`vim /root/.zshrc`，找到下图的地方，怎么安装，原作者注释写得很清楚了，如果你没特别的喜欢那就选择随机吧。
-    - ![oh-my-zsh 安装](images/Zsh-d-1.jpg)
+    - ![oh-my-zsh 安装](../images/Zsh-d-1.jpg)
 - 配置好新主题需要重新连接 shell 才能看到效果
 
 

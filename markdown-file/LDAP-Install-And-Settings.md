@@ -110,7 +110,7 @@ ou: Group
 - 重启下服务：`systemctl restart slapd`
 - 本机测试，输入命令：`ldapsearch -LLL -W -x -D "cn=gitnavi,dc=youmeek,dc=com" -H ldap://localhost -b "dc=youmeek,dc=com"`，输入 domain 密码，可以查询到相应信息
 - 局域网客户端连接测试，下载 Ldap Admin（下载地址看文章下面），具体连接信息看下图：
-- ![Ldap Admin](images/Ldap-Install-And-Settings-a-1.png)
+- ![Ldap Admin](../images/Ldap-Install-And-Settings-a-1.png)
 
 
 ## LDAP 客户端

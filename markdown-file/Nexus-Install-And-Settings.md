@@ -58,9 +58,9 @@
 
 - 修改默认端口：`vim /usr/program/nexus2.11.4/conf/nexus.properties`，修改该值：application-port=8081
 - 下载远程中央库的索引到服务器
-    - ![Nexus 配置](images/Nexus-Install-And-Settings-a-1.jpg)
+    - ![Nexus 配置](../images/Nexus-Install-And-Settings-a-1.jpg)
     - 如上图标注 4 所示，把默认是 `False` 改为 `True`
-    - ![Nexus 配置](images/Nexus-Install-And-Settings-a-2.gif)
+    - ![Nexus 配置](../images/Nexus-Install-And-Settings-a-2.gif)
     - 如上图 gif 所示，创建任务开始进行索引下载。需要特别提醒的是，如果你的私服是虚拟机，那得保证你分配的硬盘足够大，别像我一样吝啬只给 10 G（现在还剩下 1.9 G），结果报：**设备上没有空间**
 - 项目上配置链接连接私服（下面内容涉及到 maven 的基础知识，请自行私下学习）：
     - 对项目独立设置：

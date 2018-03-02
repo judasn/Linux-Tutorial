@@ -390,7 +390,7 @@ esac
     - 官网：<http://redisdesktop.com/>
     - 官网下载：<http://redisdesktop.com/download>
     - 效果如下图：
-    - ![Redis Desktop Manager](images/Redis-GUI-a-1.jpg)
+    - ![Redis Desktop Manager](../images/Redis-GUI-a-1.jpg)
 
 
 

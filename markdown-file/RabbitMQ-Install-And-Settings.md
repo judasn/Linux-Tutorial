@@ -74,10 +74,10 @@ yum install rabbitmq-server -y
 	默认管理员账号：**guest**
 	默认管理员密码：**guest**
 - 添加新授权用户（如下图所示）：
-    - ![RabbitMQ-Add-User](images/RabbitMQ-Add-User-a-1.jpg)
+    - ![RabbitMQ-Add-User](../images/RabbitMQ-Add-User-a-1.jpg)
 - 添加 Host（如下图所示）：
-    - ![RabbitMQ-Add-User](images/RabbitMQ-Add-User-a-2.jpg)
+    - ![RabbitMQ-Add-User](../images/RabbitMQ-Add-User-a-2.jpg)
 - 给添加的 Host 设置权限（如下图所示）：
-    - ![RabbitMQ-Add-User](images/RabbitMQ-Add-User-a-3.gif)
+    - ![RabbitMQ-Add-User](../images/RabbitMQ-Add-User-a-3.gif)
 - 交换机绑定队列（如下图所示）：
-    - ![RabbitMQ-Bindings-Queue](images/RabbitMQ-Bindings-Queue-a-1.gif)
+    - ![RabbitMQ-Bindings-Queue](../images/RabbitMQ-Bindings-Queue-a-1.gif)
