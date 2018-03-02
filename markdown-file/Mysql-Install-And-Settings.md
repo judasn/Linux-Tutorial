@@ -4,9 +4,38 @@
 ## Docker 安装 MySQL
 
 - 关掉：SELinux
-- 创建本地数据存储 + 配置文件目录：`mkdir -p /data/docker/mysql/datadir /data/docker/mysql/conf`
-- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql/datadir /data/docker/mysql/conf`
-- `docker run -p 3306:3306 --name mycat-mysql5.7-1 -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
+- 创建本地数据存储 + 配置文件目录：`mkdir -p /data/docker/mysql/datadir /data/docker/mysql/conf /data/docker/mysql/log`
+- 在宿主机上创建一个配置文件：`vim /data/docker/mysql/conf/mycat-mysql-1.cnf`，内容如下：
+
+```
+# 该编码设置是我自己配置的
+[mysql]
+default-character-set = utf8mb4
+
+# 下面内容是 docker mysql 默认的 start
+[mysqld]
+pid-file = /var/run/mysqld/mysqld.pid
+socket = /var/run/mysqld/mysqld.sock
+datadir = /var/lib/mysql
+#log-error = /var/log/mysql/error.log
+# By default we only accept connections from localhost
+#bind-address = 127.0.0.1
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+# 上面内容是 docker mysql 默认的 end
+
+# 下面开始的内容就是我自己配置的
+log-error=/var/log/mysql/error.log
+default-storage-engine = InnoDB
+collation-server = utf8mb4_general_ci
+init_connect = 'SET NAMES utf8mb4'
+character-set-server = utf8mb4
+lower_case_table_names = 1
+max_allowed_packet = 50M
+```
+
+- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql`
+- `docker run -p 3306:3306 --name mycat-mysql5.7-1 -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/log:/var/log/mysql -v /data/docker/mysql/conf/mycat-mysql-1.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
 - 连上容器：`docker exec -it 09747cd7d0bd /bin/bash`
 - 关于容器的 MySQL 配置，官网是这样说的：<https://hub.docker.com/_/mysql/>
 
@@ -33,6 +62,8 @@
 !includedir /etc/mysql/conf.d/
 !includedir /etc/mysql/mysql.conf.d/
 ```
+
+- 也就是说按正常道理，把自己写的配置文件所在目录挂载在 /etc/mysql/conf.d/ 就可以，但是实际上我测试并没有得到这样的结果。
 
 
 ## MySQL 安装
