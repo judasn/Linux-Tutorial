@@ -15,6 +15,7 @@
 * [SSH 免密登录](markdown-file/SSH-login-without-password.md)
 * [Bash 命令](markdown-file/Bash.md)
 * [Bash 其他常用命令](markdown-file/Bash-Other-Bash.md)
+* [安装的 rm（删除）](markdown-file/shell-safe-rm.md)
 * [Sed 命令](markdown-file/Sed.md)
 * [Linux 下常用压缩文件的解压、压缩](markdown-file/File-Extract-Compress.md)
 * [Yum 下载安装包及对应依赖包](markdown-file/Off-line-Yum-Install.md)
