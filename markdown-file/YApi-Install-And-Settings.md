@@ -6,6 +6,8 @@
 - 系统：`CentOS 7.4`
 - 硬件要求：`1 GB RAM minimum`
 - ip：`http://192.168.1.121`
+- docker version：`17.12.1-ce, build 7390fc6`
+- docker-compose version：`1.18.0, build 8dd22a9`
 
 > 建议部署成 http 站点，因 chrome 浏览器安全限制，部署成 https 会导致测试功能在请求 http 站点时文件上传功能异常。--[来源](https://yapi.ymfe.org/devops.html)
 
