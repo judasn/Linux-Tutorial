@@ -67,4 +67,4 @@
 - [Alfresco 安装和使用](markdown-file/Alfresco-Install-And-Usage.md)
 - [Apache Thrift 安装和使用](markdown-file/Thrift-Install-And-Usage.md)
 - [Node.js 安装和使用](markdown-file/Node-Install-And-Usage.md)
-- [CI 整套服务安装和使用](markdown-file/CI-Install-And-Usage.md)
+- [YApi 安装和配置](markdown-file/YApi-Install-And-Settings.md)
