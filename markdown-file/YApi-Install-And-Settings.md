@@ -20,7 +20,7 @@
 	- permission：`chmod -R 777 /opt/git-data`
 	- run command：`docker-compose up -d`
 	- open chrome：`http://192.168.1.121:3000`
-- 初始化管理员账号名："admin@admin.com"，密码："ymfe.org"
+- 初始化管理员账号名：`admin@admin.com`，密码：`ymfe.org`
 
 ## YApi 介绍
 
