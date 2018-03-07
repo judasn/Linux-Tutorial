@@ -25,9 +25,6 @@ docker run --name mysql3 -p 3336:3306 -e MYSQL_ROOT_PASSWORD=root -d daocloud.io
 - 安装前的准备：
 	- 这台机子必须装有 JDK，并且配置好 JAVA_HOME。JDK 的安装看：<https://github.com/judasn/Linux-Tutorial/blob/master/JDK-Install.md>
 - 开始安装：
-	- 给 Mycat 创建专属系统用户，并设置密码：
-	- `useradd mycat`
-	- `passwd mycat`，进入设置密码，我习惯测试的时候密码为：123456
 	- 假设 Mycat 安装包的完整路径是：**/opt/Mycat-server-1.6-RELEASE-20161028204710-linux.tar.gz**
 		- 解压：`cd /opt ; tar -zxvf Mycat-server-1.6-RELEASE-20161028204710-linux.tar.gz`
 		- 移动解压的目录到官方建议的目录下：`mv /opt/mycat /usr/local/`
@@ -41,7 +38,7 @@ export PATH=$PATH:$MYCAT_HOME/bin
 
 - 刷新配置：`source /etc/profile`
 - 到这里就安装好了，但是先不启动，需要先去配置相应的配置文件。
-	
+
 ## Mycat 只分库配置，并且要可预期租户数量（没有分表、读写分离、高可用）
 
 - 请至少预留 512M 内存给 Mycat
