@@ -144,7 +144,7 @@ export PATH=$PATH:$MYCAT_HOME/bin
 
 
 - `schema.xml`，用于设置 Mycat 的逻辑库、表、数据节点、dataHost 等内容，分库分表、读写分离等等都是在这里进行配置的
-- schema.xml 中特别注意的是分片节点的配置。如下，其中 adg_system_0001,adg_system_0002,adg_system_0003 是需要我们自己在 mysql 对应的机子上人工创建这三个空白数据库和表。
+- schema.xml 中特别注意的是分片节点的配置。如下，其中 adg_system_0000,adg_system_0001,adg_system_0002 是需要我们自己在 mysql 对应的机子上人工创建这三个空白数据库和表。
 
 ```xml
 <?xml version="1.0"?>
@@ -172,15 +172,15 @@ export PATH=$PATH:$MYCAT_HOME/bin
         -->
         
         <!--全局表 start-->
-        <table name="adg_channel" primaryKey="channel_id" type="global" dataNode="dn1,dn2,dn3"/>
-        <table name="adg_shop_channel" primaryKey="shop_channel_id" type="global" dataNode="dn1,dn2,dn3"/>
-        <table name="adg_shop" primaryKey="shop_id" type="global" dataNode="dn1,dn2,dn3"/>
+        <table name="adg_channel" primaryKey="channel_id" type="global" dataNode="dn0,dn1,dn2"/>
+        <table name="adg_shop_channel" primaryKey="shop_channel_id" type="global" dataNode="dn0,dn1,dn2"/>
+        <table name="adg_shop" primaryKey="shop_id" type="global" dataNode="dn0,dn1,dn2"/>
         <!--全局表 end-->
 
         <!--sharding-by-shop-id 为自己已定义的规则：根据店铺 ID 分库-->
         <!--父子表采用 ER 关系分片，规则是由上面的 adg_ads_campaign 表分片规则决定 -->
         <!--parentKey 为与父表建立关联关系的列名-->       
-        <table name="adg_ads_campaign" primaryKey="ads_campaign_id" dataNode="dn1,dn2,dn3" rule="sharding-by-shop-id">
+        <table name="adg_ads_campaign" primaryKey="ads_campaign_id" dataNode="dn0,dn1,dn2" rule="sharding-by-shop-id">
             <childTable name="adg_ads_set" primaryKey="ads_set_id" joinKey="shop_id" parentKey="shop_id">
                 <childTable name="adg_ads" joinKey="ads_set_id" parentKey="ads_set_id"/>
             </childTable>
@@ -194,9 +194,9 @@ export PATH=$PATH:$MYCAT_HOME/bin
     <!--2）dataHost属性：定义该分片所属的数据库实例，属性引用自dataHost标签上定义的name属性-->
     <!--3）database属性：定义该分片所属的数据库实例上的具体数据库。-->
 
+    <dataNode name="dn0" dataHost="mysql_host_0" database="adg_system_0000"/>
     <dataNode name="dn1" dataHost="mysql_host_1" database="adg_system_0001"/>
     <dataNode name="dn2" dataHost="mysql_host_2" database="adg_system_0002"/>
-    <dataNode name="dn3" dataHost="mysql_host_3" database="adg_system_0003"/>
 
     <!--======================================================-->
 
@@ -219,17 +219,17 @@ export PATH=$PATH:$MYCAT_HOME/bin
     <!--                   2表示基于mysql主从同步的状态决定是否切换。-->
     <!--                  3表示基于mysql galaxy cluster 的切换机制-->
     <!--9）tempReadHostAvailable属性：如果配置了writeHost属性，下面的readHost依旧可以使用，默认为0-->
-    <dataHost name="mysql_host_1" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+    <dataHost name="mysql_host_0" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
         <heartbeat>select user()</heartbeat>
         <writeHost host="hostM1" url="116.196.111.68:3316" user="root" password="root"/>
     </dataHost>
     
-    <dataHost name="mysql_host_2" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+    <dataHost name="mysql_host_1" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
         <heartbeat>select user()</heartbeat>
         <writeHost host="hostM1" url="116.196.111.68:3326" user="root" password="root"/>
     </dataHost>
     
-    <dataHost name="mysql_host_3" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+    <dataHost name="mysql_host_2" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
         <heartbeat>select user()</heartbeat>
         <writeHost host="hostM1" url="116.196.111.68:3336" user="root" password="root"/>
     </dataHost>
@@ -334,7 +334,7 @@ export PATH=$PATH:$MYCAT_HOME/bin
 
     <function name="by-shop-id" class="io.mycat.route.function.PartitionByFileMap">
         <property name="mapFile">sharding-by-shop-id.txt</property>
-        <property name="type">0</property>
+        <property name="type">1</property><!-- 默认是0，表示 Integer，非零表示 String。因为我们这里是根据 shop_id 来分，而 shop_id 在表设计的时候是 bigint 类型，值是 18 位，所以这里必须填写非零值才行。-->
         <property name="defaultNode">0</property>
     </function>
     
@@ -394,16 +394,17 @@ export PATH=$PATH:$MYCAT_HOME/bin
 ```
 
 - 还需要在 conf 新增文件 sharding-by-shop-id.txt 文件，内容是：
+- 需要注意的是：
 
 ```
-1=0
-2=1
-3=2
+417454619141211000=0
+417454619141211001=1
+417454619141211002=2
 ```
 
-- 表示 shop_id 为 1 的时候，用 adg_system_0001 库
-- 表示 shop_id 为 2 的时候，用 adg_system_0002 库
-- 表示 shop_id 为 3 的时候，用 adg_system_0003 库
+- 表示 shop_id 为 1 的时候，用 adg_system_0000 库
+- 表示 shop_id 为 2 的时候，用 adg_system_0001 库
+- 表示 shop_id 为 3 的时候，用 adg_system_0002 库
 - 其中第一个库是从下表 0 开始的。
 
 #### log4j2.xml 配置详解
@@ -417,226 +418,22 @@ export PATH=$PATH:$MYCAT_HOME/bin
 - 在 MySQL 实例 1 中执行如下初始化脚本：
 
 ```sql
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0001` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
-USE `adg_system_0001`;
-
-DROP TABLE IF EXISTS `adg_ads`;
-
-CREATE TABLE `adg_ads` (
-  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
-
-DROP TABLE IF EXISTS `adg_ads_set`;
-
-CREATE TABLE `adg_ads_set` (
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_set_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
-
-DROP TABLE IF EXISTS `adg_ads_campaign`;
-
-CREATE TABLE `adg_ads_campaign` (
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_campaign_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
-
-DROP TABLE IF EXISTS `adg_channel`;
-
-CREATE TABLE `adg_channel` (
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
-
-
-DROP TABLE IF EXISTS `adg_shop`;
-
-CREATE TABLE `adg_shop` (
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  PRIMARY KEY (`shop_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
-
-
-DROP TABLE IF EXISTS `adg_shop_channel`;
-
-CREATE TABLE `adg_shop_channel` (
-  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`shop_channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0000` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE `adg_system_0000`;
 ```
 
 - 在 MySQL 实例 2 中执行如下初始化脚本：
 
 ```sql
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0002` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
-USE `adg_system_0002`;
-
-DROP TABLE IF EXISTS `adg_ads`;
-
-CREATE TABLE `adg_ads` (
-  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
-
-DROP TABLE IF EXISTS `adg_ads_set`;
-
-CREATE TABLE `adg_ads_set` (
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_set_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
-
-DROP TABLE IF EXISTS `adg_ads_campaign`;
-
-CREATE TABLE `adg_ads_campaign` (
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_campaign_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
-
-DROP TABLE IF EXISTS `adg_channel`;
-
-CREATE TABLE `adg_channel` (
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
-
-
-DROP TABLE IF EXISTS `adg_shop`;
-
-CREATE TABLE `adg_shop` (
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  PRIMARY KEY (`shop_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
-
-
-DROP TABLE IF EXISTS `adg_shop_channel`;
-
-CREATE TABLE `adg_shop_channel` (
-  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`shop_channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0001` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE `adg_system_0001`;
 ```
 
 - 在 MySQL 实例 3 中执行如下初始化脚本：
 
 ```sql
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0003` /*!40100 DEFAULT CHARACTER SET utf8 */;
-
-USE `adg_system_0003`;
-
-DROP TABLE IF EXISTS `adg_ads`;
-
-CREATE TABLE `adg_ads` (
-  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告表';
-
-DROP TABLE IF EXISTS `adg_ads_set`;
-
-CREATE TABLE `adg_ads_set` (
-  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
-  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_set_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告组表';
-
-DROP TABLE IF EXISTS `adg_ads_campaign`;
-
-CREATE TABLE `adg_ads_campaign` (
-  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
-  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`ads_campaign_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='广告系列表';
-
-DROP TABLE IF EXISTS `adg_channel`;
-
-CREATE TABLE `adg_channel` (
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='渠道表';
-
-
-DROP TABLE IF EXISTS `adg_shop`;
-
-CREATE TABLE `adg_shop` (
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  PRIMARY KEY (`shop_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='商品表';
-
-
-DROP TABLE IF EXISTS `adg_shop_channel`;
-
-CREATE TABLE `adg_shop_channel` (
-  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
-  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
-  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
-  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
-  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
-  PRIMARY KEY (`shop_channel_id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='店铺渠道中间表';
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`adg_system_0002` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE `adg_system_0002`;
 ```
 
 ## 其他设置
@@ -669,122 +466,195 @@ CREATE TABLE `adg_shop_channel` (
 
 ## 使用 Navicat 连接 MyCat 测试 SQL
 
+
+#### 创建表 SQL
+
 ```sql
-INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (1,'NC站');
-INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (2,'BG站');
+
+CREATE TABLE `adg_ads` (
+  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='广告表';
+
+
+CREATE TABLE `adg_ads_set` (
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_set_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='广告组表';
+
+
+CREATE TABLE `adg_ads_campaign` (
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_campaign_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='广告系列表';
+
+
+CREATE TABLE `adg_channel` (
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='渠道表';
+
+
+CREATE TABLE `adg_shop` (
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  PRIMARY KEY (`shop_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
+
+
+CREATE TABLE `adg_shop_channel` (
+  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`shop_channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='店铺渠道中间表';
+```
+
+#### 创建数据 SQL
+
+```sql
+INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (417454619141211000,'NC站');
+INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (417454619141211001,'BG站');
 
 INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (1,'Facebook');
 INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (2,'Google');
 INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (3,'Twitter');
 
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,1,'NC站','Facebook');
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,1,2,'NC站','Google');
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (3,2,1,'BG站','Facebook');
-INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (4,2,2,'BG站','Google');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,417454619141211000,2,'NC站','Google');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (3,417454619141211001,1,'BG站','Facebook');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (4,417454619141211001,2,'BG站','Google');
 
-INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告系列',1,1,'NC站','Facebook');
-INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告系列',2,2,'BG站','Google');
+INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告系列',417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告系列',417454619141211001,2,'BG站','Google');
 
-INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告集',1,1,1,'NC站','Facebook');
-INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告集',2,2,2,'BG站','Google');
+INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告集',1,417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告集',2,417454619141211001,2,'BG站','Google');
 
-INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,'第1个广告',1,1,'NC站','Facebook');
-INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,2,'第2个广告',2,2,'BG站','Google');
+INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,'第1个广告',417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,2,'第2个广告',417454619141211001,2,'BG站','Google');
 ```
-
 
 
 ## mycat 正常启动的 log 内容
 
 ```log
-2018-02-05 14:15:41.432  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.<init>(PhysicalDBPool.java:100)) - total resouces of dataHost mysql_host_1 is :1
-2018-02-05 14:15:41.435  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.<init>(PhysicalDBPool.java:100)) - total resouces of dataHost mysql_host_3 is :1
+2018-02-05 14:15:41.432  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.<init>(PhysicalDBPool.java:100)) - total resouces of dataHost mysql_host_0 is :1
 2018-02-05 14:15:41.435  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.<init>(PhysicalDBPool.java:100)) - total resouces of dataHost mysql_host_2 is :1
+2018-02-05 14:15:41.435  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.<init>(PhysicalDBPool.java:100)) - total resouces of dataHost mysql_host_1 is :1
 2018-02-05 14:15:41.442  INFO [WrapperSimpleAppMain] (io.mycat.cache.CacheService.createLayeredPool(CacheService.java:125)) - create layer cache pool TableID2DataNodeCache of type encache ,default cache size 10000 ,default expire seconds18000
 2018-02-05 14:15:41.445  INFO [WrapperSimpleAppMain] (io.mycat.cache.DefaultLayedCachePool.createChildCache(DefaultLayedCachePool.java:80)) - create child Cache: TESTDB_ORDERS for layered cache TableID2DataNodeCache, size 50000, expire seconds 18000
 2018-02-05 14:15:41.597  INFO [WrapperSimpleAppMain] (io.mycat.config.classloader.DynaClassLoader.<init>(DynaClassLoader.java:34)) - dyna class load from ./catlet,and auto check for class file modified every 60 seconds
 2018-02-05 14:15:41.601  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:266)) - ===============================================
 2018-02-05 14:15:41.602  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:267)) - MyCat is ready to startup ...
 2018-02-05 14:15:41.602  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:279)) - Startup processors ...,total processors:1,aio thread pool size:4 each process allocated socket buffer pool  bytes ,a page size:2097152  a page's chunk number(PageSize/ChunkSize) is:512  buffer page's number is:20
-2018-02-05 14:15:41.602  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:280)) - sysconfig params:SystemConfig [processorBufferLocalPercent=100, frontSocketSoRcvbuf=1048576, frontSocketSoSndbuf=4194304, backSocketSoRcvbuf=4194304, backSocketSoSndbuf=1048576, frontSocketNoDelay=1, backSocketNoDelay=1, maxStringLiteralLength=65535, frontWriteQueueSize=2048, bindIp=0.0.0.0, serverPort=8066, managerPort=9066, charset=utf8, processors=1, processorExecutor=4, timerExecutor=2, managerExecutor=2, idleTimeout=1800000, catletClassCheckSeconds=60, sqlExecuteTimeout=300, processorCheckPeriod=1000, dataNodeIdleCheckPeriod=300000, dataNodeHeartbeatPeriod=10000, clusterHeartbeatUser=_HEARTBEAT_USER_, clusterHeartbeatPass=_HEARTBEAT_PASS_, clusterHeartbeatPeriod=5000, clusterHeartbeatTimeout=10000, clusterHeartbeatRetry=10, txIsolation=3, parserCommentVersion=50148, sqlRecordCount=10, bufferPoolPageSize=2097152, bufferPoolChunkSize=4096, bufferPoolPageNumber=20, maxResultSet=524288, bigResultSizeSqlCount=10, bufferUsagePercent=80, flowControlRejectStrategy=0, clearBigSqLResultSetMapMs=600000, defaultMaxLimit=100, sequnceHandlerType=2, sqlInterceptor=io.mycat.server.interceptor.impl.DefaultSqlInterceptor, sqlInterceptorType=select, sqlInterceptorFile=/usr/local/mycat/logs/sql.txt, mutiNodeLimitType=0, mutiNodePatchSize=100, defaultSqlParser=druidparser, usingAIO=0, packetHeaderSize=4, maxPacketSize=16777216, mycatNodeId=1]
+2018-02-05 14:15:41.602  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:280)) - sysconfig params:SystemConfig [processorBufferLocalPercent=100, frontSocketSoRcvbuf=1048576, frontSocketSoSndbuf=4194304, backSocketSoRcvbuf=4194304, backSocketSoSndbuf=1048576, frontSocketNoDelay=1, backSocketNoDelay=1, maxStringLiteralLength=65535, frontWriteQueueSize=2048, bindIp=0.0.0.0, serverPort=8066, managerPort=9066, charset=utf8mb4, processors=1, processorExecutor=4, timerExecutor=2, managerExecutor=2, idleTimeout=1800000, catletClassCheckSeconds=60, sqlExecuteTimeout=300, processorCheckPeriod=1000, dataNodeIdleCheckPeriod=300000, dataNodeHeartbeatPeriod=10000, clusterHeartbeatUser=_HEARTBEAT_USER_, clusterHeartbeatPass=_HEARTBEAT_PASS_, clusterHeartbeatPeriod=5000, clusterHeartbeatTimeout=10000, clusterHeartbeatRetry=10, txIsolation=3, parserCommentVersion=50148, sqlRecordCount=10, bufferPoolPageSize=2097152, bufferPoolChunkSize=4096, bufferPoolPageNumber=20, maxResultSet=524288, bigResultSizeSqlCount=10, bufferUsagePercent=80, flowControlRejectStrategy=0, clearBigSqLResultSetMapMs=600000, defaultMaxLimit=100, sequnceHandlerType=2, sqlInterceptor=io.mycat.server.interceptor.impl.DefaultSqlInterceptor, sqlInterceptorType=select, sqlInterceptorFile=/usr/local/mycat/logs/sql.txt, mutiNodeLimitType=0, mutiNodePatchSize=100, defaultSqlParser=druidparser, usingAIO=0, packetHeaderSize=4, maxPacketSize=16777216, mycatNodeId=1]
 2018-02-05 14:15:41.667  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:381)) - using nio network handler 
 2018-02-05 14:15:41.681  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:397)) - $_MyCatManager is started and listening on 9066
 2018-02-05 14:15:41.682  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:401)) - $_MyCatServer is started and listening on 8066
 2018-02-05 14:15:41.682  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:403)) - ===============================================
 2018-02-05 14:15:41.682  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.startup(MycatServer.java:407)) - Initialize dataHost ...
 2018-02-05 14:15:41.682  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:294)) - init backend myqsl source ,create connections total 10 for hostM1 index :0
-2018-02-05 14:15:41.683  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.686  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.686  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.689  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
-2018-02-05 14:15:41.834  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=1, lastTime=1517811341834, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=793, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.835  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=2, lastTime=1517811341835, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=797, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.835  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=4, lastTime=1517811341835, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=795, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.836  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=8, lastTime=1517811341836, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=796, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.836  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=7, lastTime=1517811341836, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=794, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.837  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=3, lastTime=1517811341837, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=801, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.837  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=5, lastTime=1517811341837, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=798, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.838  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=6, lastTime=1517811341838, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=799, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.840  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=10, lastTime=1517811341840, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=800, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:41.842  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=9, lastTime=1517811341842, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=802, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.683  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.686  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.686  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.689  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.690  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0000
+2018-02-05 14:15:41.834  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=1, lastTime=1517811341834, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=793, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.835  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=2, lastTime=1517811341835, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=797, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.835  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=4, lastTime=1517811341835, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=795, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.836  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=8, lastTime=1517811341836, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=796, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.836  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=7, lastTime=1517811341836, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=794, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.837  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=3, lastTime=1517811341837, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=801, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.837  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=5, lastTime=1517811341837, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=798, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.838  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=6, lastTime=1517811341838, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=799, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.840  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=10, lastTime=1517811341840, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=800, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.842  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=9, lastTime=1517811341842, user=root, schema=adg_system_0000, old shema=adg_system_0000, borrowed=true, fromSlaveDB=false, threadId=802, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3316, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
 2018-02-05 14:15:41.899  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:319)) - init result :finished 10 success 10 target count:10
-2018-02-05 14:15:41.899  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_1 index:0 init success
-2018-02-05 14:15:41.899  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_1 cur index 0
+2018-02-05 14:15:41.899  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_0 index:0 init success
+2018-02-05 14:15:41.899  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_0 cur index 0
 2018-02-05 14:15:41.907  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:294)) - init backend myqsl source ,create connections total 10 for hostM1 index :0
-2018-02-05 14:15:41.907  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.908  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.908  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.909  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.912  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.915  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.916  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.916  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.916  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:41.917  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0003
-2018-02-05 14:15:42.021  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=12, lastTime=1517811342021, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=779, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.023  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=11, lastTime=1517811342022, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=780, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.027  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=13, lastTime=1517811342027, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=781, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.027  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=14, lastTime=1517811342027, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=782, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.030  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=17, lastTime=1517811342030, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=783, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.032  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=16, lastTime=1517811342032, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=785, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.034  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=15, lastTime=1517811342034, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=784, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.036  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=18, lastTime=1517811342036, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=786, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.043  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=19, lastTime=1517811342043, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=787, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.043  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=20, lastTime=1517811342043, user=root, schema=adg_system_0003, old shema=adg_system_0003, borrowed=true, fromSlaveDB=false, threadId=788, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:41.907  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.908  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.908  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.909  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.912  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.915  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.916  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.916  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.916  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:41.917  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
+2018-02-05 14:15:42.021  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=12, lastTime=1517811342021, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=779, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.023  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=11, lastTime=1517811342022, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=780, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.027  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=13, lastTime=1517811342027, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=781, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.027  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=14, lastTime=1517811342027, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=782, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.030  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=17, lastTime=1517811342030, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=783, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.032  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=16, lastTime=1517811342032, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=785, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.034  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=15, lastTime=1517811342034, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=784, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.036  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=18, lastTime=1517811342036, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=786, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.043  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=19, lastTime=1517811342043, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=787, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.043  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=20, lastTime=1517811342043, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=788, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3336, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
 2018-02-05 14:15:42.118  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:319)) - init result :finished 10 success 10 target count:10
-2018-02-05 14:15:42.118  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_3 index:0 init success
-2018-02-05 14:15:42.118  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_3 cur index 0
+2018-02-05 14:15:42.118  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_2 index:0 init success
+2018-02-05 14:15:42.118  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_2 cur index 0
 2018-02-05 14:15:42.118  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:294)) - init backend myqsl source ,create connections total 10 for hostM1 index :0
-2018-02-05 14:15:42.119  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.120  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.120  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.121  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.121  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.122  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.122  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.122  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.123  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.123  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0002
-2018-02-05 14:15:42.235  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=21, lastTime=1517811342235, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=776, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.237  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=23, lastTime=1517811342237, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=777, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.239  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=26, lastTime=1517811342239, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=781, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.240  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=22, lastTime=1517811342240, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=778, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.243  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=25, lastTime=1517811342243, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=779, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.245  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=24, lastTime=1517811342245, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=780, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.249  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=29, lastTime=1517811342249, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=782, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.249  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=30, lastTime=1517811342249, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=783, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.250  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=28, lastTime=1517811342250, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=785, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
-2018-02-05 14:15:42.251  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=27, lastTime=1517811342251, user=root, schema=adg_system_0002, old shema=adg_system_0002, borrowed=true, fromSlaveDB=false, threadId=784, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.119  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.120  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.120  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.121  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.121  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.122  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.122  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.122  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.123  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.123  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDatasource.getConnection(PhysicalDatasource.java:413)) - no ilde connection in pool,create new connection for hostM1 of schema adg_system_0001
+2018-02-05 14:15:42.235  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=21, lastTime=1517811342235, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=776, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.237  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=23, lastTime=1517811342237, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=777, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.239  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=26, lastTime=1517811342239, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=781, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.240  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=22, lastTime=1517811342240, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=778, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.243  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=25, lastTime=1517811342243, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=779, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.245  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=24, lastTime=1517811342245, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=780, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.249  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=29, lastTime=1517811342249, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=782, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.249  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=30, lastTime=1517811342249, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=783, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.250  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=28, lastTime=1517811342250, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=785, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
+2018-02-05 14:15:42.251  INFO [$_NIOREACTOR-0-RW] (io.mycat.backend.mysql.nio.handler.GetConnectionHandler.connectionAcquired(GetConnectionHandler.java:67)) - connected successfuly MySQLConnection [id=27, lastTime=1517811342251, user=root, schema=adg_system_0001, old shema=adg_system_0001, borrowed=true, fromSlaveDB=false, threadId=784, charset=latin1, txIsolation=3, autocommit=true, attachment=null, respHandler=null, host=116.196.111.68, port=3326, statusSync=null, writeQueue=0, modifiedSQLExecuted=false]
 2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.initSource(PhysicalDBPool.java:319)) - init result :finished 10 success 10 target count:10
-2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_2 index:0 init success
-2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_2 cur index 0
+2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.backend.datasource.PhysicalDBPool.init(PhysicalDBPool.java:265)) - mysql_host_1 index:0 init success
+2018-02-05 14:15:42.324  INFO [WrapperSimpleAppMain] (io.mycat.MycatServer.saveDataHostIndex(MycatServer.java:604)) - save DataHost index  mysql_host_1 cur index 0
 ```
+
+## 使用细节
+
+- 声明：
+	- mycat 的库表这里我们称作虚拟库表
+- 创建新表流程：
+	- 先编辑 /conf/schema.xml 文件，增加对应的表信息
+	- 把创建表 SQL 放在虚拟库上执行，则各个节点的物理库表会增加对应的表结构
 
 ## 资料
 
