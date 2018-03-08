@@ -31,6 +31,7 @@
 - [Iptables 介绍](markdown-file/Iptables.md)
 - [花生壳-安装介绍](markdown-file/Hsk-Install.md)
 - [JDK 安装](markdown-file/JDK-Install.md)
+- [Java bin 目录下的工具](markdown-file/Java-bin.md)
 - [SVN 安装和配置](markdown-file/SVN-Install-And-Settings.md)
 - [Tomcat 安装和配置、优化](markdown-file/Tomcat-Install-And-Settings.md)
 - [Jenkins 安装和配置](markdown-file/Jenkins-Install-And-Settings.md)
