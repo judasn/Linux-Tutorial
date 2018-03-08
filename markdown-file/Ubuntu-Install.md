@@ -1,6 +1,6 @@
 # Ubuntu 安装和分区
 
-- 先下载该系列教程：<http://pan.baidu.com/s/1gdw7CuJ>
+- 先下载该系列教程（提取码：8qfg）：<https://pan.baidu.com/s/1EHsgLsUZGOBzwNcEuDUKWA>
 
 ![Ubuntu 安装和分区视频](../images/Ubuntu-a-1.jpg)
 

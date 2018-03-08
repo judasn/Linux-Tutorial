@@ -75,13 +75,15 @@
         directory mask = 0747
         force directory mode = 0747
  ```
-- 启动服务（CentOS 6、Ubuntu）：
+- 启动服务（CentOS 6）：
  - `sudo service samba restart`
  - `service smb restart` # 启动 samba
 - 启动服务（CentOS 7）：
  - `systemctl start smb.service`    # 启动 samba
  - `systemctl enable smb.service`    # 激活
  - `systemctl status smb.service`    # 查询 samba 状态（启动 samba 前后可以用查询验证）
+- 启动服务（Ubuntu 16.04.3 -- ljoaquin提供）：
+ - `sudo service smbd restart`
 
 
 ## Samba 登录及验证

@@ -257,7 +257,7 @@ fi
 
 ```
 
-## 静止外网通过 8080 端口访问 Tomcat
+## 禁止外网通过 8080 端口访问 Tomcat
 
 - 添加 iptables 规则：
 	- `iptables -t filter -A INPUT -p tcp -m tcp --dport 8080 -s localhost -j ACCEPT`
