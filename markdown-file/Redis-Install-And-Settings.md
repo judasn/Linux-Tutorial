@@ -14,17 +14,16 @@
 
 ## Docker 下安装 Redis
 
-- 创建一个宿主机目录用来存放 redis 配置文件：`mkdir -p /opt/conf/redis`
-- 创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/redis/db`
-- 安装镜像：`docker pull redis:3.2`
-- 查看下载下来的镜像：`docker images`
-- 自己编写一个配置文件 `vim /opt/conf/redis/redis.conf`，内容如下：
+- 创建一个宿主机目录用来存放 redis 配置文件：`mkdir -p /data/docker/redis/conf`
+- 创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/docker/redis/db`
+- 赋权：`chmod 777 -R /data/docker/redis`
+- 自己编写一个配置文件 `vim /data/docker/redis/conf/redis.conf`，内容如下：
 
 - Redis 默认的配置文件内容：
 
 ``` ini
 bind 0.0.0.0
-requirepass casredis123456
+requirepass adgredis123456
 protected-mode yes
 port 6379
 tcp-backlog 511
@@ -78,10 +77,10 @@ hz 10
 aof-rewrite-incremental-fsync yes
 ```
 
-- 启动镜像：`docker run -d -ti -p 6379:6379 -v /opt/conf/redis/redis.conf:/etc/redis/redis.conf -v /data/redis/db:/data --restart always --name cas-redis redis:3.2 redis-server /etc/redis/redis.conf`
+- 启动镜像：`docker run -d -ti -p 6379:6379 -v /data/docker/redis/conf/redis.conf:/etc/redis/redis.conf -v /data/docker/redis/db:/data --restart always --name cloud-redis redis:3.2 redis-server /etc/redis/redis.conf`
 - 查看镜像运行情况：`docker ps`
-- 进入镜像中 redis shell 交互界面：`docker exec -it 0cdc76fef7b4 redis-cli -h 127.0.0.1 -p 6379 -a casredis123456`
-- 重新启动服务：`docker restart cas-redis`
+- 进入镜像中 redis shell 交互界面：`docker exec -it cloud-redis redis-cli -h 127.0.0.1 -p 6379 -a adgredis123456`
+- 重新启动服务：`docker restart cloud-redis`
 
 
 ## Redis 安装

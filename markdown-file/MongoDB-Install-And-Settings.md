@@ -25,9 +25,9 @@
 
 ## Docker 下安装 MongoDB
 
-- 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/mongo/db`
-- 赋权：`chmod 777 -R /data/mongo/db`
-- 首次运行镜像：`docker run --name cloud-mongo -p 27017:27017 -v /data/mongo/db:/data/db -d mongo:3.4`
+- 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/docker/mongo/db`
+- 赋权：`chmod 777 -R /data/docker/mongo/db`
+- 首次运行镜像：`docker run --name cloud-mongo -p 27017:27017 -v /data/docker/mongo/db:/data/db -d mongo:3.4`
 - 进入容器中 mongo shell 交互界面：`docker exec -it cloud-mongo mongo adg_mongo_db`
 - 创建一个用户：
 
@@ -46,7 +46,7 @@ db.createUser(
 
 - 然后停掉容器：`docker stop cloud-mongo`
 - 然后删除容器：`docker rm cloud-mongo`
-- 重新运行镜像，这次增加需要授权才能访问的配置：`docker run -d -p 27017:27017 -v /data/mongo/db:/data/db --restart always --name cloud-mongo mongo:3.4 --auth`
+- 重新运行镜像，这次增加需要授权才能访问的配置：`docker run -d -p 27017:27017 -v /data/docker/mongo/db:/data/db --restart always --name cloud-mongo mongo:3.4 --auth`
 - 重新启动服务：`docker restart cloud-mongo`
 
 
