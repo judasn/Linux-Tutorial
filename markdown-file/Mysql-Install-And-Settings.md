@@ -27,7 +27,7 @@ symbolic-links=0
 # 下面开始的内容就是我自己配置的
 log-error=/var/log/mysql/error.log
 default-storage-engine = InnoDB
-collation-server = utf8mb4_general_ci
+collation-server = utf8mb4_unicode_ci
 init_connect = 'SET NAMES utf8mb4'
 character-set-server = utf8mb4
 lower_case_table_names = 1
@@ -90,7 +90,7 @@ max_allowed_packet = 50M
         - 安装依赖包、编译包：`yum install -y make gcc-c++ cmake bison-devel  ncurses-devel`
         - 进入解压目录：`cd /usr/program/mysql-5.6.35/`
         - 生成安装目录：`mkdir -p /usr/program/mysql/data`
-        - 生成配置（使用 InnoDB）：`cmake -DCMAKE_INSTALL_PREFIX=/usr/program/mysql -DMYSQL_DATADIR=/usr/program/mysql/data -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DWITH_EXTRA_CHARSETS:STRING=utf8 -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DENABLED_LOCAL_INFILE=1`
+        - 生成配置（使用 InnoDB）：`cmake -DCMAKE_INSTALL_PREFIX=/usr/program/mysql -DMYSQL_DATADIR=/usr/program/mysql/data -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_unicode_ci -DWITH_EXTRA_CHARSETS:STRING=utf8mb4 -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DENABLED_LOCAL_INFILE=1`
             - 更多参数说明可以查看：<http://dev.mysql.com/doc/refman/5.6/en/source-configuration-options.html>
         - 编译：`make`，这个过程比较漫长，一般都在 30 分钟左右，具体还得看机子配置，如果最后结果有 error，建议删除整个 mysql 目录后重新解压一个出来继续处理
         - 安装：`make install`
