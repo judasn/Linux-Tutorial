@@ -29,7 +29,7 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 ```
 
 - 解决办法：`chown -R 1000:1000 /data/jenkins/jenkins_home`，具体原因：[点击查看](http://www.cnblogs.com/jackluo/p/5783116.html)
-	- 问题的本质就是，jenkins 镜像中的系统用户是：jenkins，当你进入容器 bash 内，输入：`whoami && id`，你就可以看到他的 uid 是 1000，所以这里拆 chown 1000
+	- 问题的本质就是，jenkins 镜像中的系统用户是：jenkins，当你进入容器 bash 内，输入：`whoami && id`，你就可以看到他的 uid 是 1000，所以这里才 chown 1000
 - 查看容器运行情况：`docker ps`
 - 进入容器中 Jenkins shell 交互界面：`docker exec -it bd290d5eb0d /bin/bash`
 

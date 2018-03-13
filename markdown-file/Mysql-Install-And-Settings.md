@@ -34,8 +34,11 @@ lower_case_table_names = 1
 max_allowed_packet = 50M
 ```
 
-- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql`
-- `docker run -p 3306:3306 --name mycat-mysql5.7-1 -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/log:/var/log/mysql -v /data/docker/mysql/conf/mycat-mysql-1.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
+- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql/datadir /data/docker/mysql/log`
+- 赋权：`chown -R 0:0 /data/docker/mysql/conf`
+	- 配置文件的赋权比较特殊，如果是给 777 权限会报：[Warning] World-writable config file '/etc/mysql/conf.d/mycat-mysql-1.cnf' is ignored，所以这里要特殊对待。容器内是用 root 的 uid，所以这里与之相匹配赋权即可。
+	- 我是进入容器 bash 内，输入：`whoami && id`，看到默认用户的 uid 是 0，所以这里才 chown 0
+- `docker run -p 3306:3306 --name cloud-mysql -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/log:/var/log/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
 - 连上容器：`docker exec -it 09747cd7d0bd /bin/bash`
 - 关于容器的 MySQL 配置，官网是这样说的：<https://hub.docker.com/_/mysql/>
 
@@ -64,6 +67,7 @@ max_allowed_packet = 50M
 ```
 
 - 也就是说按正常道理，把自己写的配置文件所在目录挂载在 /etc/mysql/conf.d/ 就可以，但是实际上我测试并没有得到这样的结果。
+- `chown -R 0:0 /data/docker/mysql/conf`
 - docker 的 MySQL 备份和还原：
 	- 备份：`docker exec cloud-mysql /usr/bin/mysqldump -u root --password=123456 DATABASE_Name > /opt/backup.sql`
 	- 还原：`docker exec -i cloud-mysql /usr/bin/mysql -u root --password=123456 DATABASE_Name < /opt/backup.sql`
