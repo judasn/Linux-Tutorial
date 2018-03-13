@@ -64,6 +64,9 @@ max_allowed_packet = 50M
 ```
 
 - 也就是说按正常道理，把自己写的配置文件所在目录挂载在 /etc/mysql/conf.d/ 就可以，但是实际上我测试并没有得到这样的结果。
+- docker 的 MySQL 备份和还原：
+	- 备份：`docker exec cloud-mysql /usr/bin/mysqldump -u root --password=123456 DATABASE_Name > /opt/backup.sql`
+	- 还原：`docker exec -i cloud-mysql /usr/bin/mysql -u root --password=123456 DATABASE_Name < /opt/backup.sql`
 
 
 ## MySQL 安装
