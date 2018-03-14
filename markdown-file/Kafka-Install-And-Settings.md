@@ -15,6 +15,11 @@
 	- topic：可以理解为：消息主题、消息标签
 - 业界常用的 docker 镜像：
 	- [wurstmeister/kafka-docker（不断更新，优先）](https://github.com/wurstmeister/kafka-docker/)
+		- 运行的机子不要小于 2G 内存
+		- 修改 docker-compose.yml 中参数 KAFKA_ADVERTISED_HOST_NAME，改为你宿主机的 IP 地址
+		- 先启动 zookeeper：`docker-compose up -d`
+		- 添加 kafka 节点：`docker-compose scale kafka=3`
+		- 停止容器：`docker-compose stop`
 	- [spotify/docker-kafka](https://github.com/spotify/docker-kafka)
 
 
