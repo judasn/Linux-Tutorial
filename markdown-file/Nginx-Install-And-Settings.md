@@ -209,6 +209,25 @@ exit $RETVAL
 - 重启服务：`service nginx restart`
 
 
+## Nginx 无缝升级
+
+- 使用新的参数`configure`后执行`make`重新编译,注意之后不要执行`make install`.新构建的nginx会在`objs`目录下
+- 备份旧的nginx `cp 老的nginx目录/sbin/nginx 老的nginx目录/sbin/nginx.old`
+- 复制新的nginx `cp ./objs/nginx 老的nginx目录/sbin/`,可能提示nginx被占用,如果是则强制覆盖即可.
+- 检查下Makefile的更新指令 `cat Makefile`,检查下路径是否匹配,一般没什么问题毕竟是根据你的参数生成的文件.
+```bash
+upgrade:
+	/var/local/nginx/sbin/nginx -t
+
+	kill -USR2 `cat /var/local/nginx/nginx.pid`
+	sleep 1
+	test -f /var/local/nginx/nginx.pid.oldbin
+
+	kill -QUIT `cat /var/local/nginx/nginx.pid.oldbin`
+```
+- 更新 `make upgrade`
+
+
 ## Nginx 全局变量
 
 - $arg_PARAMETER #这个变量包含GET请求中，如果有变量PARAMETER时的值。
