@@ -23,10 +23,18 @@
 		- 再添加 kafka 节点：`docker-compose scale kafka=3`
 		- 停止容器：`docker-compose stop`
 		- 进入容器：`docker exec -it 54f /bin/bash`
-		- 容器中 kafka home：`/opt/kafka`
 	- [spotify/docker-kafka](https://github.com/spotify/docker-kafka)
 	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
 		- 目前（201803） spring-kafka 必须是 2.1.x 才能对应 kafka 1.0.x
+- 官网 quickstart 指导：<https://kafka.apache.org/quickstart>
+- 常用命令：
+	- 容器中 kafka home：`/opt/kafka`
+	- 我的 zookeeper 地址：`10.135.157.34:2181`，有多个节点用逗号隔开
+	- 列出所有 topic：`bin/kafka-topics.sh --list --zookeeper 10.135.157.34:2181`
+	- 创建 topic：`bin/kafka-topics.sh --create --topic kafka-test-topic-1 --partitions 3 --replication-factor 1 --zookeeper 10.135.157.34:2181`
+		- 创建名为 kafka-test-topic-1 的 topic，3个分区分别存放数据，数据备份总共 2 份
+	- 查看特定 topic 的详情：`bin/kafka-topics.sh --describe --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
+	- 删除 topic：`bin/kafka-topics.sh --delete --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 
 ## 资料
 
