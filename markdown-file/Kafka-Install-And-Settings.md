@@ -23,7 +23,8 @@
 		- 再添加 kafka 节点：`docker-compose scale kafka=3`
 		- 停止容器：`docker-compose stop`
 	- [spotify/docker-kafka](https://github.com/spotify/docker-kafka)
-
+	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
+		- 目前（201803） spring-kafka 必须是 2.1.x 才能对应 kafka 1.0.x
 
 ## 资料
 
