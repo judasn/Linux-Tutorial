@@ -35,10 +35,20 @@
 		- 创建名为 kafka-test-topic-1 的 topic，3个分区分别存放数据，数据备份总共 2 份
 	- 查看特定 topic 的详情：`bin/kafka-topics.sh --describe --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
+	- 更多命令可以看：<http://orchome.com/454>
 
 ## 资料
 
 - <http://www.ituring.com.cn/article/499268>
+- <http://orchome.com/kafka/index>
+- <https://www.cnblogs.com/ding2016/p/8282907.html>
+- <http://blog.csdn.net/fuyuwei2015/article/details/73379055>
+- <https://segmentfault.com/a/1190000012990954>
+- <http://www.54tianzhisheng.cn/2018/01/04/Kafka/>
+- <https://renwole.com/archives/442>
+- <http://www.bijishequ.com/detail/542646?p=85>
+- <http://blog.csdn.net/zhbr_f1/article/details/73732299>
+- <http://wangzs.leanote.com/post/kafka-manager%E5%AE%89%E8%A3%85>
 - <https://cloud.tencent.com/developer/article/1013313>
 - <http://blog.csdn.net/boling_cavalry/article/details/78309050>
 - <https://www.jianshu.com/p/d77149efa59f>
