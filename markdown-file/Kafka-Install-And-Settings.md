@@ -41,6 +41,10 @@
 
 - <http://www.ituring.com.cn/article/499268>
 - <http://orchome.com/kafka/index>
+- <http://blog.51cto.com/wangchunyi/2046163>
+- <https://www.jianshu.com/p/263164fdcac7>
+- <http://www.bijishequ.com/detail/536308>
+- <http://lanxinglan.cn/2017/10/18/%E5%9C%A8Docker%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%83%A8%E7%BD%B2Kafka/>
 - <https://www.cnblogs.com/ding2016/p/8282907.html>
 - <http://blog.csdn.net/fuyuwei2015/article/details/73379055>
 - <https://segmentfault.com/a/1190000012990954>

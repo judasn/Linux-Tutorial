@@ -64,6 +64,7 @@
         - `d$`，删除光标至 **行尾** 所有字符
         - `dG`，删除光标至 **文件尾** 所有字符
         - `3dd`，从当前光标开始，删掉 3 行
+        - `echo > aa.txt`，从 bash 角度清空文件内容，这个比较高效
     - 复制
         - `y`，复制光标所选字符
         - `yw`，复制光标后单词
@@ -112,6 +113,9 @@
 	- 在假设你已经备份好你的 Vim 配置文件后，使用该配置文件：`curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc`
 	- 效果如下：
 		- ![vim-for-server](https://raw.githubusercontent.com/wklken/gallery/master/vim/vim-for-server.png)
+- 需要特别注意的是，如果你平时粘贴内容到终端 Vim 出现缩进错乱，一般需要这样做：
+	- 进入 vim 后，按 `F5`，然后 `shirt + insert` 进行粘贴。这种事就不会错乱了。
+	- 原因是：`vim ~/.vimrc` 中有一行这样的设置：`set pastetoggle=<F5>`
 
 ## 资料
 
