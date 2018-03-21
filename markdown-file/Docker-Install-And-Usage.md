@@ -258,6 +258,7 @@ java -jar /root/spring-boot-my-demo.jar
     - `docker exec -i -t 容器ID /bin/bash`，进入正在运行的 docker 容器，并启动终端交互
     - `docker exec -d 容器ID touch /opt/test.txt`，已守护式的方式进入 docker 容器，并创建一个文件
 - `docker stop 容器ID`，停止容器
+    - `docker stop $(docker ps -a -q)`，停止所有容器
 - `docker start 容器ID`，重新启动已经停止的容器（重新启动，docker run 参数还是保留之前的）
 - `docker restart 容器ID`，重启容器
 - `docker rm`，删除容器

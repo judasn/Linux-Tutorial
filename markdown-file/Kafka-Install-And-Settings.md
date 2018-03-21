@@ -37,6 +37,33 @@
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 更多命令可以看：<http://orchome.com/454>
 
+## 单个实例部署
+
+- 我的宿主机 ip：`172.16.0.2`，下面会用到
+- 部署 zookeeper：`docker run -d --name one-zookeeper -p 2181:2181 -v /etc/localtime:/etc/localtime zookeeper:3.4`
+- 部署 kafka：
+	- 目前 latest 用的时候 kafka 1.0.1，要指定版本可以去作者 [github](https://github.com/wurstmeister/kafka-docker) 看下 tag 目录，切换不同 tag，然后看下 Dockerfile 里面的 kafka 版本号
+
+```
+docker run -d --name one-kafka -p 9092:9092 \
+--link one-zookeeper \
+--env KAFKA_ZOOKEEPER_CONNECT=one-zookeeper:2181 \
+--env KAFKA_ADVERTISED_HOST_NAME=172.16.0.2 \
+--env KAFKA_ADVERTISED_PORT=9092 \
+-v /etc/localtime:/etc/localtime \
+wurstmeister/kafka:latest
+```
+
+- 测试：
+	- 进入 kafka 容器：`docker exec -it one-kafka /bin/bash`
+	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
+	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper one-zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
+	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper one-zookeeper:2181`
+	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
+	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+
+
 ## 资料
 
 - <http://www.ituring.com.cn/article/499268>
