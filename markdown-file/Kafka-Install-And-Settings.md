@@ -25,7 +25,9 @@
 		- 进入容器：`docker exec -it 54f /bin/bash`
 	- [spotify/docker-kafka](https://github.com/spotify/docker-kafka)
 	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
-		- 目前（201803） spring-kafka 必须是 2.1.x 才能对应 kafka 1.0.x
+		- 目前（201803） 
+		- spring boot 2.0 以上基础框架版本，kafka 版本 1.0.x，推荐使用：spring-kafka 2.1.4.RELEASE
+		- spring boot 2.0 以下基础框架版本，kafka 版本 0.11.0.x, 1.0.x，推荐使用：spring-kafka 1.3.3.RELEASE
 - 官网 quickstart 指导：<https://kafka.apache.org/quickstart>
 - 常用命令：
 	- 容器中 kafka home：`/opt/kafka`
@@ -37,7 +39,7 @@
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 更多命令可以看：<http://orchome.com/454>
 
-## 单个实例部署
+## Docker 单个实例部署
 
 - 我的宿主机 ip：`172.16.0.2`，下面会用到
 - 部署 zookeeper：`docker run -d --name one-zookeeper -p 2181:2181 -v /etc/localtime:/etc/localtime zookeeper:3.4`
@@ -59,16 +61,125 @@ wurstmeister/kafka:latest
 	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
 	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper one-zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
 	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper one-zookeeper:2181`
+	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper one-zookeeper:2181`
 	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
 	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
 	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+
+
+## Kafka 1.0.1 源码安装
+
+- 一台机子：CentOS 7.4
+- 确保本机安装有 JDK8
+- 先用上面的 docker 方式部署一个 zookeeper，我这里的 zookeeper IP 地址为：`172.16.0.2`
+	- **如果该 zookeeper 前面已经用过了，最好重新删除，重新 run，因为 zookeeper 上保留的旧的 topic 配置**
+- 官网下载：<https://kafka.apache.org/downloads>
+- 当前（201803）最新版本为：**1.0.1，同时推荐 Scala 版本为 2.11**
+	- 找到：`Binary downloads` 下面的链接
+	- 下载：`wget http://mirrors.shu.edu.cn/apache/kafka/1.0.1/kafka_2.11-1.0.1.tgz`
+- 解压：`tar zxvf kafka_2.11-1.0.1.tgz`，假设当前目录为：`/usr/local/kafka_2.11-1.0.1`
+- 为了方便，修改目录名字：`mv /usr/local/kafka_2.11-1.0.1 /usr/local/kafka`
+- 创建 log 输出目录：`mkdir -p /data/kafka/logs`
+- 修改 kafka-server 的配置文件：`vim /usr/local/kafka/config/server.properties`
+- 找到下面两个参数内容，修改成如下：
+
+```
+broker.id=1
+log.dir=/data/kafka/logs
+zookeeper.connect=172.16.0.2:2181
+```
+
+- 启动 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
+- 再开一个终端测试：
+	- 进入目录：`cd /usr/local/kafka`
+	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper 172.16.0.2:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
+	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper 172.16.0.2:2181`
+	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper 172.16.0.2:2181`
+	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list 172.16.0.2:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server 172.16.0.2:9092 --topic my-topic-test --from-beginning`
+	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+- Spring Boot 依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.kafka</groupId>
+	<artifactId>spring-kafka</artifactId>
+	<version>1.3.3.RELEASE</version>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.kafka</groupId>
+	<artifactId>kafka-clients</artifactId>
+	<version>1.0.1</version>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.kafka</groupId>
+	<artifactId>kafka-streams</artifactId>
+	<version>1.0.1</version>
+</dependency>
+```
+
+
+
+## Kafka 0.11.0.1 源码安装
+
+- 一台机子：CentOS 7.4
+- 确保本机安装有 JDK8
+- 先用上面的 docker 方式部署一个 zookeeper，我这里的 zookeeper IP 地址为：`172.16.0.2`
+	- **如果该 zookeeper 前面已经用过了，最好重新删除，重新 run，因为 zookeeper 上保留的旧的 topic 配置**
+- 官网下载：<https://kafka.apache.org/downloads>
+- 下载：`wget http://mirrors.shu.edu.cn/apache/kafka/0.11.0.2/kafka_2.11-0.11.0.2.tgz`
+- 解压：`tar zxvf kafka_2.11-0.11.0.2.tgz`，假设当前目录为：`/usr/local/kafka_2.11-0.11.0.2`
+- 为了方便，修改目录名字：`mv /usr/local/kafka_2.11-0.11.0.2 /usr/local/kafka`
+- 创建 log 输出目录：`mkdir -p /data/kafka/logs`
+- 修改 kafka-server 的配置文件：`vim /usr/local/kafka/config/server.properties`
+- 找到下面两个参数内容，修改成如下：
+
+```
+broker.id=1
+log.dir=/data/kafka/logs
+zookeeper.connect=172.16.0.2:2181
+```
+
+- 启动 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
+- 再开一个终端测试：
+	- 进入目录：`cd /usr/local/kafka`
+	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper 172.16.0.2:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
+	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper 172.16.0.2:2181`
+	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper 172.16.0.2:2181`
+	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list 172.16.0.2:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server 172.16.0.2:9092 --topic my-topic-test --from-beginning`
+	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+- Spring Boot 依赖：
+
+```xml
+<dependency>
+	<groupId>org.springframework.kafka</groupId>
+	<artifactId>spring-kafka</artifactId>
+	<version>1.3.3.RELEASE</version>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.kafka</groupId>
+	<artifactId>kafka-clients</artifactId>
+	<version>0.11.0.2</version>
+</dependency>
+
+<dependency>
+	<groupId>org.apache.kafka</groupId>
+	<artifactId>kafka-streams</artifactId>
+	<version>0.11.0.2</version>
+</dependency>
+```
+
+
 
 
 ## 资料
 
 - <http://www.ituring.com.cn/article/499268>
 - <http://orchome.com/kafka/index>
-- <http://blog.51cto.com/wangchunyi/2046163>
 - <https://www.jianshu.com/p/263164fdcac7>
 - <http://www.bijishequ.com/detail/536308>
 - <http://lanxinglan.cn/2017/10/18/%E5%9C%A8Docker%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%83%A8%E7%BD%B2Kafka/>
