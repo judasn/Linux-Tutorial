@@ -19,6 +19,8 @@
 182.61.19.178 youmeekhost
 ```
 
+----------------------------------------------------------------------------------------------
+
 
 ## Kafka 介绍
 
@@ -37,6 +39,7 @@
     - Consumer Group：每个 Consumer 属于一个特定的 Consumer Group（可为每个 Consumer 指定 group name，若不指定 group name 则属于默认的 group）一般一个集群指定一个 group
 - 业界常用的 docker 镜像：
 	- [wurstmeister/kafka-docker（不断更新，优先）](https://github.com/wurstmeister/kafka-docker/)
+		- 这个示例，部署是成功了，开发环境没法调通，暂时无解。
 		- 运行的机子不要小于 2G 内存
 		- clone 项目：`git clone https://github.com/wurstmeister/kafka-docker.git`
 		- 修改 `vim docker-compose.yml` 中参数 KAFKA_ADVERTISED_HOST_NAME，改为你 /etc/hosts 下的配置
@@ -44,14 +47,13 @@
 		- 再添加 kafka 节点：`docker-compose scale kafka=3`
 		- 停止容器：`docker-compose stop`
 		- 进入容器：`docker exec -it 54f /bin/bash`
-	- [spotify/docker-kafka](https://github.com/spotify/docker-kafka)
 	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
 		- 目前（201803） 
 		- spring boot 2.0 以上基础框架版本，kafka 版本 1.0.x，推荐使用：spring-kafka 2.1.4.RELEASE
 		- spring boot 2.0 以下基础框架版本，kafka 版本 0.11.0.x, 1.0.x，推荐使用：spring-kafka 1.3.3.RELEASE
 - 官网 quickstart 指导：<https://kafka.apache.org/quickstart>
 - 常用命令：
-	- 容器中 kafka home：`/opt/kafka`
+	- 容器中 kafka home：`cd /opt/kafka`
 	- 我的 zookeeper 地址：`10.135.157.34:2181`，如果你有多个节点用逗号隔开
 	- 列出所有 topic：`bin/kafka-topics.sh --list --zookeeper 10.135.157.34:2181`
 	- 创建 topic：`bin/kafka-topics.sh --create --topic kafka-test-topic-1 --partitions 3 --replication-factor 1 --zookeeper 10.135.157.34:2181`
@@ -59,6 +61,9 @@
 	- 查看特定 topic 的详情：`bin/kafka-topics.sh --describe --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 更多命令可以看：<http://orchome.com/454>
+
+----------------------------------------------------------------------------------------------
+
 
 ## Docker 单个实例部署
 
@@ -87,6 +92,154 @@ wurstmeister/kafka:latest
 	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
 	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
 
+----------------------------------------------------------------------------------------------
+
+
+## Docker 多机多实例部署
+
+- 三台机子：
+	- 内网 ip：
+	- 内网 ip：
+	- 内网 ip：
+- 三台机子的 hosts 修改为：`vim /etc/hosts`
+
+```
+172.16.0.2 youmeekhost1
+172.16.0.2 youmeekhost2
+172.16.0.2 youmeekhost3
+```
+
+#### 各个节点部署 zookeeper：
+
+- 节点 1：
+
+```
+docker run -d \
+-v /data/docker/zookeeper/data:/data \
+-v /data/docker/zookeeper/log:/datalog \
+-e ZOO_MY_ID=1 \
+-e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
+--name=zookeeper1 --net=host --restart=always zookeeper:3.4
+```
+
+
+- 节点 2：
+
+```
+docker run -d \
+-v /data/docker/zookeeper/data:/data \
+-v /data/docker/zookeeper/log:/datalog \
+-e ZOO_MY_ID=2 \
+-e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
+--name=zookeeper2 --net=host --restart=always zookeeper:3.4
+```
+
+
+- 节点 3：
+
+```
+docker run -d \
+-v /data/docker/zookeeper/data:/data \
+-v /data/docker/zookeeper/log:/datalog \
+-e ZOO_MY_ID=3 \
+-e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
+--name=zookeeper3 --net=host --restart=always zookeeper:3.4
+```
+
+#### 先安装 nc 再来校验 zookeeper 集群情况
+
+- 环境：CentOS 7.4
+- 官网下载：<https://nmap.org/download.html>，找到 rpm 包
+- 当前时间（201803）最新版本下载：`wget https://nmap.org/dist/ncat-7.60-1.x86_64.rpm`
+- 安装：`sudo rpm -i ncat-7.60-1.x86_64.rpm`
+- ln 下：`sudo ln -s /usr/bin/ncat /usr/bin/nc`
+- 检验：`nc --version`
+
+#### zookeeper 测试
+
+- 各节点执行命令：`echo stat | nc youmeekhost1 2181`，能得到如下信息：
+
+```
+Zookeeper version: 3.4.11-37e277162d567b55a07d1755f0b31c32e93c01a0, built on 11/01/2017 18:06 GMT
+Clients:
+ /172.21.0.1:33344[0](queued=0,recved=1,sent=0)
+
+Latency min/avg/max: 0/0/0
+Received: 1
+Sent: 0
+Connections: 1
+Outstanding: 0
+Zxid: 0x500000000
+Mode: leader
+Node count: 4
+```
+
+
+#### 部署 Kafka
+
+- 节点 1 执行：
+
+```
+docker run -d --name kafka1 -p 9092:9092 \
+--link zookeeper1 \
+--env KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181 \
+--env KAFKA_ADVERTISED_HOST_NAME=youmeekhost1 \
+--env KAFKA_ADVERTISED_PORT=9092 \
+-v /etc/localtime:/etc/localtime \
+wurstmeister/kafka:latest
+```
+
+- 节点 2 执行：
+
+```
+docker run -d --name kafka2 -p 9092:9092 \
+--link zookeeper2 \
+--env KAFKA_ZOOKEEPER_CONNECT=zookeeper2:2181 \
+--env KAFKA_ADVERTISED_HOST_NAME=youmeekhost1 \
+--env KAFKA_ADVERTISED_PORT=9092 \
+-v /etc/localtime:/etc/localtime \
+wurstmeister/kafka:latest
+```
+
+- 节点 3 执行：
+
+```
+docker run -d --name kafka3 -p 9092:9092 \
+--link zookeeper3 \
+--env KAFKA_ZOOKEEPER_CONNECT=zookeeper3:2181 \
+--env KAFKA_ADVERTISED_HOST_NAME=youmeekhost1 \
+--env KAFKA_ADVERTISED_PORT=9092 \
+-v /etc/localtime:/etc/localtime \
+wurstmeister/kafka:latest
+```
+
+----------------------------------------------------------------------------------------------
+
+#### Docker 单实例 kafka
+
+- 目前 latest 用的时候 kafka 1.0.1，要指定版本可以去作者 [github](https://github.com/wurstmeister/kafka-docker) 看下 tag 目录，切换不同 tag，然后看下 Dockerfile 里面的 kafka 版本号
+
+```
+docker run -d --name one-kafka -p 9092:9092 \
+--link one-zookeeper \
+--env KAFKA_ZOOKEEPER_CONNECT=one-zookeeper:2181 \
+--env KAFKA_ADVERTISED_HOST_NAME=172.16.0.2 \
+--env KAFKA_ADVERTISED_PORT=9092 \
+-v /etc/localtime:/etc/localtime \
+wurstmeister/kafka:latest
+```
+
+- 测试：
+	- 进入 kafka 容器：`docker exec -it one-kafka /bin/bash`
+	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
+	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper one-zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
+	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper one-zookeeper:2181`
+	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper one-zookeeper:2181`
+	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
+	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+
+----------------------------------------------------------------------------------------------
 
 ## Kafka 1.0.1 源码安装
 
@@ -160,6 +313,7 @@ zookeeper.connect=youmeekhost:2181
 </dependency>
 ```
 
+----------------------------------------------------------------------------------------------
 
 
 ## 资料
