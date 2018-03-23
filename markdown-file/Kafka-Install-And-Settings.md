@@ -98,15 +98,23 @@ wurstmeister/kafka:latest
 ## Docker 多机多实例部署
 
 - 三台机子：
-	- 内网 ip：
-	- 内网 ip：
-	- 内网 ip：
-- 三台机子的 hosts 修改为：`vim /etc/hosts`
+	- 内网 ip：`172.18.218.98`
+	- 内网 ip：`172.18.218.99`
+	- 内网 ip：`172.18.218.100
+- 三台机子的 hosts 都修改为如下内容：`vim /etc/hosts`
 
 ```
-172.16.0.2 youmeekhost1
-172.16.0.2 youmeekhost2
-172.16.0.2 youmeekhost3
+172.18.218.98 youmeekhost1
+172.18.218.99 youmeekhost2
+172.18.218.100 youmeekhost3
+```
+
+- 开发机设置 hosts：
+
+```
+47.106.78.154 youmeekhost1
+47.106.72.69 youmeekhost2
+47.106.76.16 youmeekhost3
 ```
 
 #### 各个节点部署 zookeeper：
@@ -115,6 +123,7 @@ wurstmeister/kafka:latest
 
 ```
 docker run -d \
+--restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
 -e ZOO_MY_ID=1 \
@@ -127,6 +136,7 @@ docker run -d \
 
 ```
 docker run -d \
+--restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
 -e ZOO_MY_ID=2 \
@@ -139,6 +149,7 @@ docker run -d \
 
 ```
 docker run -d \
+--restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
 -e ZOO_MY_ID=3 \
@@ -175,17 +186,29 @@ Node count: 4
 ```
 
 
-#### 部署 Kafka
+#### 部署 Kafka 1.0.1
+
+- 因为当前时间（201803） wurstmeister/kafka:latest 是 1.0.1，如果你是未来时间在这篇文章，则那些 env 不一定就有效了。
 
 - 节点 1 执行：
 
 ```
 docker run -d --name kafka1 -p 9092:9092 \
+--restart=always \
+--net=host \
 --link zookeeper1 \
+--env KAFKA_BROKER_ID=1 \
 --env KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181 \
---env KAFKA_ADVERTISED_HOST_NAME=youmeekhost1 \
+--env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost1:9092 \
+--env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
+--env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
 --env KAFKA_ADVERTISED_PORT=9092 \
+--env KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
+--env KAFKA_LOG_RETENTION_HOURS=168 \
+--env KAFKA_HEAP_OPTS="-Xmx1G -Xms1G" \
 -v /etc/localtime:/etc/localtime \
+-v /data/docker/kafka/logs:/data/docker/kafka/logs \
+-v /etc/hosts:/etc/hosts \
 wurstmeister/kafka:latest
 ```
 
@@ -193,11 +216,21 @@ wurstmeister/kafka:latest
 
 ```
 docker run -d --name kafka2 -p 9092:9092 \
+--restart=always \
+--net=host \
 --link zookeeper2 \
+--env KAFKA_BROKER_ID=2 \
 --env KAFKA_ZOOKEEPER_CONNECT=zookeeper2:2181 \
---env KAFKA_ADVERTISED_HOST_NAME=youmeekhost1 \
+--env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost2:9092 \
+--env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
+--env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
 --env KAFKA_ADVERTISED_PORT=9092 \
+--env KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
+--env KAFKA_LOG_RETENTION_HOURS=168 \
+--env KAFKA_HEAP_OPTS="-Xmx1G -Xms1G" \
 -v /etc/localtime:/etc/localtime \
+-v /data/docker/kafka/logs:/data/docker/kafka/logs \
+-v /etc/hosts:/etc/hosts \
 wurstmeister/kafka:latest
 ```
 
@@ -205,13 +238,29 @@ wurstmeister/kafka:latest
 
 ```
 docker run -d --name kafka3 -p 9092:9092 \
+--restart=always \
+--net=host \
 --link zookeeper3 \
+--env KAFKA_BROKER_ID=3 \
 --env KAFKA_ZOOKEEPER_CONNECT=zookeeper3:2181 \
---env KAFKA_ADVERTISED_HOST_NAME=youmeekhost1 \
+--env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost3:9092 \
+--env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
+--env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
 --env KAFKA_ADVERTISED_PORT=9092 \
+--env KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
+--env KAFKA_LOG_RETENTION_HOURS=168 \
+--env KAFKA_HEAP_OPTS="-Xmx1G -Xms1G" \
 -v /etc/localtime:/etc/localtime \
+-v /data/docker/kafka/logs:/data/docker/kafka/logs \
+-v /etc/hosts:/etc/hosts \
 wurstmeister/kafka:latest
 ```
+
+#### 部署 kafka-manager
+
+- 节点 1：
+
+docker run -d --name=kafka-manager --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181" sheepkiller/kafka-manager:latest
 
 ----------------------------------------------------------------------------------------------
 

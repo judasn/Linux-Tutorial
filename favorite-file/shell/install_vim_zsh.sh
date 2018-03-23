@@ -8,7 +8,6 @@ echo "开始安装 zsh"
 yum install -y zsh
 
 echo "开始安装 oh-my-zsh"
-yum install -y git
 wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh
 
 echo "设置默认终端为 oh-my-zsh"
