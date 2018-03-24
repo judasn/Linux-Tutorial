@@ -98,67 +98,66 @@ wurstmeister/kafka:latest
 ## Docker 多机多实例部署
 
 - 三台机子：
-	- 内网 ip：`172.31.154.16`
-	- 内网 ip：`172.31.154.17`
-	- 内网 ip：`172.31.65.88`
+	- 内网 ip：`172.31.65.89`，外网 ip：`47.75.186.22`
+	- 内网 ip：`172.31.65.90`，外网 ip：`47.75.188.54`
+	- 内网 ip：`172.31.65.91`，外网 ip：`47.75.41.196`
 - 三台机子的 hosts 都修改为如下内容：`vim /etc/hosts`
 
 ```
-172.31.154.16 youmeekhost1
-172.31.154.17 youmeekhost2
-172.31.65.88 youmeekhost3
+172.31.65.89 youmeekhost1
+172.31.65.90 youmeekhost2
+172.31.65.91 youmeekhost3
 ```
 
 - 开发机设置 hosts：
 
 ```
-47.75.107.100 youmeekhost1
-47.75.107.9 youmeekhost2
-47.75.107.27 youmeekhost3
+47.75.186.22 youmeekhost1
+47.75.188.54 youmeekhost2
+47.75.41.196 youmeekhost3
 ```
 
-- 新建 docker 网络：`docker network create kafkanetwork`
 - 查看当前网络列表：`docker network ls`
-- 查看某个网络的具体信息：`docker network inspect kafkanetwork`
+- 查看某个网络的具体信息：`docker network inspect host`
 
 #### 各个节点部署 zookeeper：
 
 - 节点 1：
 
 ```
-docker run --net=kafkanetwork -d -p 2181 \
+docker run --net=host -d -p 2181 \
 --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
 -e ZOO_MY_ID=1 \
 -e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper1 --net=host --restart=always zookeeper:3.4
+--name=zookeeper1 zookeeper:3.4
 ```
 
 
 - 节点 2：
 
 ```
-docker run --net=kafkanetwork -d -p 2181 \
+docker run --net=host -d -p 2181 \
 --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
 -e ZOO_MY_ID=2 \
 -e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper2 --net=host --restart=always zookeeper:3.4
+--name=zookeeper2 zookeeper:3.4
 ```
 
 
 - 节点 3：
 
 ```
-docker run --net=kafkanetwork -d -p 2181 \
+docker run --net=host -d -p 2181 \
 --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
 -e ZOO_MY_ID=3 \
 -e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper3 --net=host --restart=always zookeeper:3.4
+--name=zookeeper3 zookeeper:3.4
 ```
 
 #### 先安装 nc 再来校验 zookeeper 集群情况
@@ -166,8 +165,7 @@ docker run --net=kafkanetwork -d -p 2181 \
 - 环境：CentOS 7.4
 - 官网下载：<https://nmap.org/download.html>，找到 rpm 包
 - 当前时间（201803）最新版本下载：`wget https://nmap.org/dist/ncat-7.60-1.x86_64.rpm`
-- 安装：`sudo rpm -i ncat-7.60-1.x86_64.rpm`
-- ln 下：`sudo ln -s /usr/bin/ncat /usr/bin/nc`
+- 安装并 ln：`sudo rpm -i ncat-7.60-1.x86_64.rpm && ln -s /usr/bin/ncat /usr/bin/nc`
 - 检验：`nc --version`
 
 #### zookeeper 测试
@@ -231,9 +229,8 @@ Node count: 4
 - 节点 1 执行：
 
 ```
-docker run -d --net=kafkanetwork --name kafka1 -p 9092 \
+docker run -d --net=host --hostname=youmeekhost1 --name=kafka1 -p 9092 \
 --restart=always \
---net=host \
 --env KAFKA_BROKER_ID=1 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
 --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost1:9092 \
@@ -252,9 +249,8 @@ wurstmeister/kafka:latest
 - 节点 2 执行：
 
 ```
-docker run -d --net=kafkanetwork --name kafka2 -p 9092 \
+docker run -d --net=host --hostname=youmeekhost2 --name=kafka2 -p 9092 \
 --restart=always \
---net=host \
 --env KAFKA_BROKER_ID=2 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
 --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost2:9092 \
@@ -273,9 +269,8 @@ wurstmeister/kafka:latest
 - 节点 3 执行：
 
 ```
-docker run -d --net=kafkanetwork --name kafka3 -p 9092 \
+docker run -d --net=host --hostname=youmeekhost3 --name=kafka3 -p 9092 \
 --restart=always \
---net=host \
 --env KAFKA_BROKER_ID=3 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
 --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost3:9092 \
@@ -293,22 +288,26 @@ wurstmeister/kafka:latest
 
 #### 测试
 
-- 进入 kafka 容器：`docker exec -it kafka1 /bin/bash`
-- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
-- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper one-zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
-- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper one-zookeeper:2181`
-- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper one-zookeeper:2181`
-- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
-- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
-- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
-
+- 在 kafka1 上测试：
+	- 进入 kafka1 容器：`docker exec -it kafka1 /bin/bash`
+	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
+	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 --replication-factor 3 --partitions 3 --topic my-topic-test`
+	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181`
+	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list youmeekhost1:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+- 在 kafka2 上测试：
+	- 进入 kafka2 容器：`docker exec -it kafka2 /bin/bash`
+	- 接受消息：`cd /opt/kafka && bin/kafka-console-consumer.sh --bootstrap-server youmeekhost2:9092 --topic my-topic-test --from-beginning`
+- 在 kafka3 上测试：
+	- 进入 kafka3 容器：`docker exec -it kafka3 /bin/bash`
+	- 接受消息：`cd /opt/kafka && bin/kafka-console-consumer.sh --bootstrap-server youmeekhost3:9092 --topic my-topic-test --from-beginning`
+- 如果 kafka1 输入的消息，kafka2 和 kafka3 能收到，则表示已经成功。
 
 #### 部署 kafka-manager
 
 - 节点 1：
 
-docker run -d --name=kafka-manager --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181" sheepkiller/kafka-manager:latest
-
+docker run -d --name=kafka-manager --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181" sheepkiller/kafka-manager:latest
+访问：192.168.83.153:9000
 ----------------------------------------------------------------------------------------------
 
 #### Docker 单实例 kafka
