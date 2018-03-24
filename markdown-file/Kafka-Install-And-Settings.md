@@ -117,9 +117,6 @@ wurstmeister/kafka:latest
 47.75.41.196 youmeekhost3
 ```
 
-- 查看当前网络列表：`docker network ls`
-- 查看某个网络的具体信息：`docker network inspect host`
-
 #### 各个节点部署 zookeeper：
 
 - 节点 1：
