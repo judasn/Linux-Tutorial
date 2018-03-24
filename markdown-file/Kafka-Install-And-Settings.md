@@ -98,31 +98,35 @@ wurstmeister/kafka:latest
 ## Docker 多机多实例部署
 
 - 三台机子：
-	- 内网 ip：`172.18.218.98`
-	- 内网 ip：`172.18.218.99`
-	- 内网 ip：`172.18.218.100
+	- 内网 ip：`172.31.154.16`
+	- 内网 ip：`172.31.154.17`
+	- 内网 ip：`172.31.65.88`
 - 三台机子的 hosts 都修改为如下内容：`vim /etc/hosts`
 
 ```
-172.18.218.98 youmeekhost1
-172.18.218.99 youmeekhost2
-172.18.218.100 youmeekhost3
+172.31.154.16 youmeekhost1
+172.31.154.17 youmeekhost2
+172.31.65.88 youmeekhost3
 ```
 
 - 开发机设置 hosts：
 
 ```
-47.106.78.154 youmeekhost1
-47.106.72.69 youmeekhost2
-47.106.76.16 youmeekhost3
+47.75.107.100 youmeekhost1
+47.75.107.9 youmeekhost2
+47.75.107.27 youmeekhost3
 ```
+
+- 新建 docker 网络：`docker network create kafkanetwork`
+- 查看当前网络列表：`docker network ls`
+- 查看某个网络的具体信息：`docker network inspect kafkanetwork`
 
 #### 各个节点部署 zookeeper：
 
 - 节点 1：
 
 ```
-docker run -d \
+docker run --net=kafkanetwork -d -p 2181 \
 --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
@@ -135,7 +139,7 @@ docker run -d \
 - 节点 2：
 
 ```
-docker run -d \
+docker run --net=kafkanetwork -d -p 2181 \
 --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
@@ -148,7 +152,7 @@ docker run -d \
 - 节点 3：
 
 ```
-docker run -d \
+docker run --net=kafkanetwork -d -p 2181 \
 --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
@@ -168,20 +172,54 @@ docker run -d \
 
 #### zookeeper 测试
 
-- 各节点执行命令：`echo stat | nc youmeekhost1 2181`，能得到如下信息：
+- 节点 1 执行命令：`echo stat | nc youmeekhost1 2181`，能得到如下信息：
 
 ```
 Zookeeper version: 3.4.11-37e277162d567b55a07d1755f0b31c32e93c01a0, built on 11/01/2017 18:06 GMT
 Clients:
- /172.21.0.1:33344[0](queued=0,recved=1,sent=0)
+ /172.31.154.16:35336[0](queued=0,recved=1,sent=0)
 
 Latency min/avg/max: 0/0/0
 Received: 1
 Sent: 0
 Connections: 1
 Outstanding: 0
-Zxid: 0x500000000
+Zxid: 0x0
+Mode: follower
+Node count: 4
+```
+
+- 节点 2 执行命令：`echo stat | nc youmeekhost2 2181`，能得到如下信息：
+
+```
+Zookeeper version: 3.4.11-37e277162d567b55a07d1755f0b31c32e93c01a0, built on 11/01/2017 18:06 GMT
+Clients:
+ /172.31.154.17:55236[0](queued=0,recved=1,sent=0)
+
+Latency min/avg/max: 0/0/0
+Received: 1
+Sent: 0
+Connections: 1
+Outstanding: 0
+Zxid: 0x100000000
 Mode: leader
+Node count: 4
+```
+
+- 节点 3 执行命令：`echo stat | nc youmeekhost3 2181`，能得到如下信息：
+
+```
+Zookeeper version: 3.4.11-37e277162d567b55a07d1755f0b31c32e93c01a0, built on 11/01/2017 18:06 GMT
+Clients:
+ /172.31.65.88:41840[0](queued=0,recved=1,sent=0)
+
+Latency min/avg/max: 0/0/0
+Received: 1
+Sent: 0
+Connections: 1
+Outstanding: 0
+Zxid: 0x100000000
+Mode: follower
 Node count: 4
 ```
 
@@ -193,12 +231,11 @@ Node count: 4
 - 节点 1 执行：
 
 ```
-docker run -d --name kafka1 -p 9092:9092 \
+docker run -d --net=kafkanetwork --name kafka1 -p 9092 \
 --restart=always \
 --net=host \
---link zookeeper1 \
 --env KAFKA_BROKER_ID=1 \
---env KAFKA_ZOOKEEPER_CONNECT=zookeeper1:2181 \
+--env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
 --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost1:9092 \
 --env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
 --env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
@@ -215,12 +252,11 @@ wurstmeister/kafka:latest
 - 节点 2 执行：
 
 ```
-docker run -d --name kafka2 -p 9092:9092 \
+docker run -d --net=kafkanetwork --name kafka2 -p 9092 \
 --restart=always \
 --net=host \
---link zookeeper2 \
 --env KAFKA_BROKER_ID=2 \
---env KAFKA_ZOOKEEPER_CONNECT=zookeeper2:2181 \
+--env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
 --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost2:9092 \
 --env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
 --env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
@@ -237,12 +273,11 @@ wurstmeister/kafka:latest
 - 节点 3 执行：
 
 ```
-docker run -d --name kafka3 -p 9092:9092 \
+docker run -d --net=kafkanetwork --name kafka3 -p 9092 \
 --restart=always \
 --net=host \
---link zookeeper3 \
 --env KAFKA_BROKER_ID=3 \
---env KAFKA_ZOOKEEPER_CONNECT=zookeeper3:2181 \
+--env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
 --env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost3:9092 \
 --env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
 --env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
@@ -255,6 +290,18 @@ docker run -d --name kafka3 -p 9092:9092 \
 -v /etc/hosts:/etc/hosts \
 wurstmeister/kafka:latest
 ```
+
+#### 测试
+
+- 进入 kafka 容器：`docker exec -it kafka1 /bin/bash`
+- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
+- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper one-zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
+- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper one-zookeeper:2181`
+- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper one-zookeeper:2181`
+- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
+- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+
 
 #### 部署 kafka-manager
 
