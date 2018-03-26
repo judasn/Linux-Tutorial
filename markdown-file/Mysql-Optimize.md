@@ -9,7 +9,7 @@
 	- 查看系统状态：`SHOW STATUS;`
 	- 查看刚刚执行 SQL 是否有警告信息：`SHOW WARNINGS;`
 	- 查看刚刚执行 SQL 是否有错误信息：`SHOW ERRORS;`
-	- 查看已经连接的所有线程状况：`SHOW PROCESSLIST;`
+	- 查看已经连接的所有线程状况：`SHOW FULL PROCESSLIST;`
 	- 查看当前连接数量：`SHOW STATUS LIKE 'max_used_connections';`
 	- 查看变量，在 my.cnf 中配置的变量会在这里显示：`SHOW VARIABLES;`
 	- 查看当前MySQL 中已经记录了多少条慢查询，前提是配置文件中开启慢查询记录了.
