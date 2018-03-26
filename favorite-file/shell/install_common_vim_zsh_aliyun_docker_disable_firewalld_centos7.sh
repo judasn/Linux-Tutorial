@@ -58,7 +58,18 @@ echo "-----------------------------------------输出 docker compose 版本号"
 
 docker-compose --version
 
+echo "-----------------------------------------docker 加速"
 
+touch /etc/docker/daemon.json
 
+cat << EOF >> /etc/docker/daemon.json
+{
+  "registry-mirrors": ["https://ldhc17y9.mirror.aliyuncs.com"]
+}
+EOF
+
+systemctl daemon-reload
+
+systemctl restart docker
 
 

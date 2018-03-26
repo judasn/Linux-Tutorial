@@ -97,64 +97,155 @@ services:
 ## Docker 多机多实例部署
 
 - 三台机子：
-	- 内网 ip：`172.31.65.89`，外网 ip：`47.75.186.22`
-	- 内网 ip：`172.31.65.90`，外网 ip：`47.75.188.54`
-	- 内网 ip：`172.31.65.91`，外网 ip：`47.75.41.196`
+	- 内网 ip：`172.24.165.128`，外网 ip：`47.74.2.1`
+	- 内网 ip：`172.24.165.126`，外网 ip：`47.74.1.249`
+	- 内网 ip：`172.24.165.127`，外网 ip：`47.74.12.50`
+- 修改三台机子 hostname：
+	- 节点 1：`hostnamectl --static set-hostname youmeekhost1`
+	- 节点 2：`hostnamectl --static set-hostname youmeekhost2`
+	- 节点 3：`hostnamectl --static set-hostname youmeekhost3`
 - 三台机子的 hosts 都修改为如下内容：`vim /etc/hosts`
 
 ```
-172.31.65.89 youmeekhost1
-172.31.65.90 youmeekhost2
-172.31.65.91 youmeekhost3
+172.24.165.128 youmeekhost1
+172.24.165.126 youmeekhost2
+172.24.165.127 youmeekhost3
 ```
 
 - 开发机设置 hosts：
 
 ```
-47.75.186.22 youmeekhost1
-47.75.188.54 youmeekhost2
-47.75.41.196 youmeekhost3
-```
-
-#### 各个节点部署 zookeeper：
-
-- 节点 1：
-
-```
-docker run --net=host -d -p 2181 \
---restart=always \
--v /data/docker/zookeeper/data:/data \
--v /data/docker/zookeeper/log:/datalog \
--e ZOO_MY_ID=1 \
--e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper1 zookeeper:3.4
+47.74.2.1 youmeekhost1
+47.74.1.249 youmeekhost2
+47.74.12.50 youmeekhost3
 ```
 
 
-- 节点 2：
+#### 各个节点部署 docker compose：
+
+- 节点 1：`vim docker-compose.yml`
 
 ```
-docker run --net=host -d -p 2181 \
---restart=always \
--v /data/docker/zookeeper/data:/data \
--v /data/docker/zookeeper/log:/datalog \
--e ZOO_MY_ID=2 \
--e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper2 zookeeper:3.4
+version: '3.2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    restart: always
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=172.24.165.128:2888:3888 server.2=172.24.165.126:2888:3888 server.3=172.24.165.127:2888:3888
+    volumes:
+      - /data/docker/zookeeper/data:/data
+      - /data/docker/zookeeper/log:/datalog
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
+    environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_PROTOCOL_NAME: OUTSIDE
+      KAFKA_ADVERTISED_PORT: 9094
+      KAFKA_PROTOCOL_NAME: INSIDE
+      KAFKA_PORT: 9092
+      KAFKA_LOG_DIRS: /data/docker/kafka/logs
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_HOURS: 168
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/docker/kafka/logs:/data/docker/kafka/logs
 ```
 
-
-- 节点 3：
+- 节点 2：`vim docker-compose.yml`
 
 ```
-docker run --net=host -d -p 2181 \
---restart=always \
--v /data/docker/zookeeper/data:/data \
--v /data/docker/zookeeper/log:/datalog \
--e ZOO_MY_ID=3 \
--e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper3 zookeeper:3.4
+version: '3.2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    restart: always
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=172.24.165.128:2888:3888 server.2=0.0.0.0:2888:3888 server.3=172.24.165.127:2888:3888
+    volumes:
+      - /data/docker/zookeeper/data:/data
+      - /data/docker/zookeeper/log:/datalog
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
+    environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_PROTOCOL_NAME: OUTSIDE
+      KAFKA_ADVERTISED_PORT: 9094
+      KAFKA_PROTOCOL_NAME: INSIDE
+      KAFKA_PORT: 9092
+      KAFKA_LOG_DIRS: /data/docker/kafka/logs
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_HOURS: 168
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/docker/kafka/logs:/data/docker/kafka/logs
 ```
+
+- 节点 3：`vim docker-compose.yml`
+
+```
+version: '3.2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    restart: always
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=172.24.165.128:2888:3888 server.2=172.24.165.126:2888:3888 server.3=0.0.0.0:2888:3888
+    volumes:
+      - /data/docker/zookeeper/data:/data
+      - /data/docker/zookeeper/log:/datalog
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
+    environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_PROTOCOL_NAME: OUTSIDE
+      KAFKA_ADVERTISED_PORT: 9094
+      KAFKA_PROTOCOL_NAME: INSIDE
+      KAFKA_PORT: 9092
+      KAFKA_LOG_DIRS: /data/docker/kafka/logs
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_HOURS: 168
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /data/docker/kafka/logs:/data/docker/kafka/logs
+```
+
 
 #### 先安装 nc 再来校验 zookeeper 集群情况
 

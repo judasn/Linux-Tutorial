@@ -1,5 +1,27 @@
 # Elasticsearch 知识
 
+## Docker 部署
+
+```
+version: "3"
+
+services:
+  elasticsearch:
+    image: elasticsearch:5.6.8
+    restart: always
+    container_name: elasticsearch
+    hostname: elasticsearch
+    environment:
+      - 'http.host=0.0.0.0'
+      - 'transport.host=127.0.0.1'
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - /data/docker/elasticsearch/data:/usr/share/elasticsearch/data
+```
+
 ## 环境
 
 - CentOS 7.3
