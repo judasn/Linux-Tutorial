@@ -127,36 +127,39 @@ services:
 - 节点 1：
 
 ```
-docker run -d \
+docker run -d --name=zookeeper1 --net=host --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
+-v /etc/hosts:/etc/hosts \
 -e ZOO_MY_ID=1 \
 -e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper1 --net=host --restart=always zookeeper
+zookeeper:latest
 ```
 
 
 - 节点 2：
 
 ```
-docker run -d \
+docker run -d --name=zookeeper2 --net=host --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
+-v /etc/hosts:/etc/hosts \
 -e ZOO_MY_ID=2 \
 -e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper2 --net=host --restart=always zookeeper
+zookeeper:latest
 ```
 
 
 - 节点 3：
 
 ```
-docker run -d \
+docker run -d --name=zookeeper3 --net=host --restart=always \
 -v /data/docker/zookeeper/data:/data \
 -v /data/docker/zookeeper/log:/datalog \
+-v /etc/hosts:/etc/hosts \
 -e ZOO_MY_ID=3 \
 -e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
---name=zookeeper3 --net=host --restart=always zookeeper
+zookeeper:latest
 ```
 
 
@@ -227,7 +230,7 @@ Node count: 4
 - 节点 1 执行：
 
 ```
-docker run -d --net=host --name=kafka1 -p 9092 \
+docker run -d --net=host --name=kafka1 \
 --restart=always \
 --env KAFKA_BROKER_ID=1 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
@@ -251,7 +254,7 @@ wurstmeister/kafka:latest
 - 节点 2 执行：
 
 ```
-docker run -d --net=host --name=kafka2 -p 9092 \
+docker run -d --net=host --name=kafka2 \
 --restart=always \
 --env KAFKA_BROKER_ID=2 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
@@ -275,7 +278,7 @@ wurstmeister/kafka:latest
 - 节点 3 执行：
 
 ```
-docker run -d --net=host --name=kafka3 -p 9092 \
+docker run -d --net=host --name=kafka3 \
 --restart=always \
 --env KAFKA_BROKER_ID=3 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
