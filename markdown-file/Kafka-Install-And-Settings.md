@@ -37,8 +37,9 @@
 ----------------------------------------------------------------------------------------------
 
 
-## Docker 单个实例部署
+## Docker 单个实例部署（1.0.1）
 
+- 目前 latest 用的时候 kafka 1.0.1，要指定版本可以去作者 [github](https://github.com/wurstmeister/kafka-docker) 看下 tag 目录，切换不同 tag，然后看下 Dockerfile 里面的 kafka 版本号
 - 我的服务器外网 ip：`182.61.19.177`，hostname 为：`instance-3v0pbt5d`
 - 在我的开发机上上配置 host：
 
@@ -94,12 +95,12 @@ services:
 ----------------------------------------------------------------------------------------------
 
 
-## Docker 多机多实例部署
+## Docker 多机多实例部署（外网无法访问）
 
 - 三台机子：
-	- 内网 ip：`172.24.165.128`，外网 ip：`47.74.2.1`
-	- 内网 ip：`172.24.165.126`，外网 ip：`47.74.1.249`
-	- 内网 ip：`172.24.165.127`，外网 ip：`47.74.12.50`
+	- 内网 ip：`172.24.165.129`，外网 ip：`47.91.22.116`
+	- 内网 ip：`172.24.165.130`，外网 ip：`47.91.22.124`
+	- 内网 ip：`172.24.165.131`，外网 ip：`47.74.6.138`
 - 修改三台机子 hostname：
 	- 节点 1：`hostnamectl --static set-hostname youmeekhost1`
 	- 节点 2：`hostnamectl --static set-hostname youmeekhost2`
@@ -107,144 +108,57 @@ services:
 - 三台机子的 hosts 都修改为如下内容：`vim /etc/hosts`
 
 ```
-172.24.165.128 youmeekhost1
-172.24.165.126 youmeekhost2
-172.24.165.127 youmeekhost3
+172.24.165.129 youmeekhost1
+172.24.165.130 youmeekhost2
+172.24.165.131 youmeekhost3
 ```
 
 - 开发机设置 hosts：
 
 ```
-47.74.2.1 youmeekhost1
-47.74.1.249 youmeekhost2
-47.74.12.50 youmeekhost3
+47.91.22.116 youmeekhost1
+47.91.22.124 youmeekhost2
+47.74.6.138 youmeekhost3
 ```
 
 
-#### 各个节点部署 docker compose：
+#### Zookeeper 集群
 
-- 节点 1：`vim docker-compose.yml`
-
-```
-version: '3.2'
-services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    restart: always
-    hostname: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=172.24.165.128:2888:3888 server.2=172.24.165.126:2888:3888 server.3=172.24.165.127:2888:3888
-    volumes:
-      - /data/docker/zookeeper/data:/data
-      - /data/docker/zookeeper/log:/datalog
-  kafka:
-    image: wurstmeister/kafka:latest
-    ports:
-      - target: 9094
-        published: 9094
-        protocol: tcp
-        mode: host
-    environment:
-      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_ADVERTISED_PROTOCOL_NAME: OUTSIDE
-      KAFKA_ADVERTISED_PORT: 9094
-      KAFKA_PROTOCOL_NAME: INSIDE
-      KAFKA_PORT: 9092
-      KAFKA_LOG_DIRS: /data/docker/kafka/logs
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_LOG_RETENTION_HOURS: 168
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /data/docker/kafka/logs:/data/docker/kafka/logs
-```
-
-- 节点 2：`vim docker-compose.yml`
+- 节点 1：
 
 ```
-version: '3.2'
-services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    restart: always
-    hostname: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=172.24.165.128:2888:3888 server.2=0.0.0.0:2888:3888 server.3=172.24.165.127:2888:3888
-    volumes:
-      - /data/docker/zookeeper/data:/data
-      - /data/docker/zookeeper/log:/datalog
-  kafka:
-    image: wurstmeister/kafka:latest
-    ports:
-      - target: 9094
-        published: 9094
-        protocol: tcp
-        mode: host
-    environment:
-      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_ADVERTISED_PROTOCOL_NAME: OUTSIDE
-      KAFKA_ADVERTISED_PORT: 9094
-      KAFKA_PROTOCOL_NAME: INSIDE
-      KAFKA_PORT: 9092
-      KAFKA_LOG_DIRS: /data/docker/kafka/logs
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_LOG_RETENTION_HOURS: 168
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /data/docker/kafka/logs:/data/docker/kafka/logs
+docker run -d \
+-v /data/docker/zookeeper/data:/data \
+-v /data/docker/zookeeper/log:/datalog \
+-e ZOO_MY_ID=1 \
+-e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
+--name=zookeeper1 --net=host --restart=always zookeeper
 ```
 
-- 节点 3：`vim docker-compose.yml`
+
+- 节点 2：
 
 ```
-version: '3.2'
-services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    restart: always
-    hostname: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=172.24.165.128:2888:3888 server.2=172.24.165.126:2888:3888 server.3=0.0.0.0:2888:3888
-    volumes:
-      - /data/docker/zookeeper/data:/data
-      - /data/docker/zookeeper/log:/datalog
-  kafka:
-    image: wurstmeister/kafka:latest
-    ports:
-      - target: 9094
-        published: 9094
-        protocol: tcp
-        mode: host
-    environment:
-      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_ADVERTISED_PROTOCOL_NAME: OUTSIDE
-      KAFKA_ADVERTISED_PORT: 9094
-      KAFKA_PROTOCOL_NAME: INSIDE
-      KAFKA_PORT: 9092
-      KAFKA_LOG_DIRS: /data/docker/kafka/logs
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_LOG_RETENTION_HOURS: 168
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /data/docker/kafka/logs:/data/docker/kafka/logs
+docker run -d \
+-v /data/docker/zookeeper/data:/data \
+-v /data/docker/zookeeper/log:/datalog \
+-e ZOO_MY_ID=2 \
+-e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
+--name=zookeeper2 --net=host --restart=always zookeeper
 ```
+
+
+- 节点 3：
+
+```
+docker run -d \
+-v /data/docker/zookeeper/data:/data \
+-v /data/docker/zookeeper/log:/datalog \
+-e ZOO_MY_ID=3 \
+-e "ZOO_SERVERS=server.1=youmeekhost1:2888:3888 server.2=youmeekhost2:2888:3888 server.3=youmeekhost3:2888:3888" \
+--name=zookeeper3 --net=host --restart=always zookeeper
+```
+
 
 
 #### 先安装 nc 再来校验 zookeeper 集群情况
@@ -255,7 +169,7 @@ services:
 - 安装并 ln：`sudo rpm -i ncat-7.60-1.x86_64.rpm && ln -s /usr/bin/ncat /usr/bin/nc`
 - 检验：`nc --version`
 
-#### zookeeper 测试
+#### zookeeper 集群测试
 
 - 节点 1 执行命令：`echo stat | nc youmeekhost1 2181`，能得到如下信息：
 
@@ -308,25 +222,26 @@ Mode: follower
 Node count: 4
 ```
 
-
-#### 部署 Kafka 1.0.1
-
-- 因为当前时间（201803） wurstmeister/kafka:latest 是 1.0.1，如果你是未来时间在这篇文章，则那些 env 不一定就有效了。
+##### Kafka 集群
 
 - 节点 1 执行：
 
 ```
-docker run -d --net=host --hostname=youmeekhost1 --name=kafka1 -p 9092 \
+docker run -d --net=host --name=kafka1 -p 9092 \
 --restart=always \
 --env KAFKA_BROKER_ID=1 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
---env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost1:9092 \
 --env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
---env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
---env KAFKA_ADVERTISED_PORT=9092 \
+--env HOSTNAME_COMMAND="docker info | grep ^Name: | cut -d' ' -f 2" \
+--env KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT \
+--env KAFKA_ADVERTISED_PROTOCOL_NAME=OUTSIDE \
+--env KAFKA_ADVERTISED_PORT=9094 \
+--env KAFKA_PROTOCOL_NAME=INSIDE \
+--env KAFKA_PORT=9092 \
 --env KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
 --env KAFKA_LOG_RETENTION_HOURS=168 \
 --env KAFKA_HEAP_OPTS="-Xmx1G -Xms1G" \
+-v /var/run/docker.sock:/var/run/docker.sock \
 -v /etc/localtime:/etc/localtime \
 -v /data/docker/kafka/logs:/data/docker/kafka/logs \
 -v /etc/hosts:/etc/hosts \
@@ -336,17 +251,21 @@ wurstmeister/kafka:latest
 - 节点 2 执行：
 
 ```
-docker run -d --net=host --hostname=youmeekhost2 --name=kafka2 -p 9092 \
+docker run -d --net=host --name=kafka2 -p 9092 \
 --restart=always \
 --env KAFKA_BROKER_ID=2 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
---env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost2:9092 \
 --env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
---env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
---env KAFKA_ADVERTISED_PORT=9092 \
+--env HOSTNAME_COMMAND="docker info | grep ^Name: | cut -d' ' -f 2" \
+--env KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT \
+--env KAFKA_ADVERTISED_PROTOCOL_NAME=OUTSIDE \
+--env KAFKA_ADVERTISED_PORT=9094 \
+--env KAFKA_PROTOCOL_NAME=INSIDE \
+--env KAFKA_PORT=9092 \
 --env KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
 --env KAFKA_LOG_RETENTION_HOURS=168 \
 --env KAFKA_HEAP_OPTS="-Xmx1G -Xms1G" \
+-v /var/run/docker.sock:/var/run/docker.sock \
 -v /etc/localtime:/etc/localtime \
 -v /data/docker/kafka/logs:/data/docker/kafka/logs \
 -v /etc/hosts:/etc/hosts \
@@ -356,24 +275,28 @@ wurstmeister/kafka:latest
 - 节点 3 执行：
 
 ```
-docker run -d --net=host --hostname=youmeekhost3 --name=kafka3 -p 9092 \
+docker run -d --net=host --name=kafka3 -p 9092 \
 --restart=always \
 --env KAFKA_BROKER_ID=3 \
 --env KAFKA_ZOOKEEPER_CONNECT=youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181 \
---env KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://youmeekhost3:9092 \
 --env KAFKA_LOG_DIRS=/data/docker/kafka/logs \
---env KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
---env KAFKA_ADVERTISED_PORT=9092 \
+--env HOSTNAME_COMMAND="docker info | grep ^Name: | cut -d' ' -f 2" \
+--env KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT \
+--env KAFKA_ADVERTISED_PROTOCOL_NAME=OUTSIDE \
+--env KAFKA_ADVERTISED_PORT=9094 \
+--env KAFKA_PROTOCOL_NAME=INSIDE \
+--env KAFKA_PORT=9092 \
 --env KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
 --env KAFKA_LOG_RETENTION_HOURS=168 \
 --env KAFKA_HEAP_OPTS="-Xmx1G -Xms1G" \
+-v /var/run/docker.sock:/var/run/docker.sock \
 -v /etc/localtime:/etc/localtime \
 -v /data/docker/kafka/logs:/data/docker/kafka/logs \
 -v /etc/hosts:/etc/hosts \
 wurstmeister/kafka:latest
 ```
 
-#### 测试
+#### Kafka 集群测试
 
 - 在 kafka1 上测试：
 	- 进入 kafka1 容器：`docker exec -it kafka1 /bin/bash`
@@ -389,37 +312,11 @@ wurstmeister/kafka:latest
 	- 接受消息：`cd /opt/kafka && bin/kafka-console-consumer.sh --bootstrap-server youmeekhost3:9092 --topic my-topic-test --from-beginning`
 - 如果 kafka1 输入的消息，kafka2 和 kafka3 能收到，则表示已经成功。
 
-#### 部署 kafka-manager
 
-- 节点 1：
 
-docker run -d --name=kafka-manager --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181" sheepkiller/kafka-manager:latest
-访问：192.168.83.153:9000
-----------------------------------------------------------------------------------------------
+#### 部署 kafka-manager（未能访问成功）
 
-#### Docker 单实例 kafka
-
-- 目前 latest 用的时候 kafka 1.0.1，要指定版本可以去作者 [github](https://github.com/wurstmeister/kafka-docker) 看下 tag 目录，切换不同 tag，然后看下 Dockerfile 里面的 kafka 版本号
-
-```
-docker run -d --name one-kafka -p 9092:9092 \
---link one-zookeeper \
---env KAFKA_ZOOKEEPER_CONNECT=one-zookeeper:2181 \
---env KAFKA_ADVERTISED_HOST_NAME=172.16.0.2 \
---env KAFKA_ADVERTISED_PORT=9092 \
--v /etc/localtime:/etc/localtime \
-wurstmeister/kafka:latest
-```
-
-- 测试：
-	- 进入 kafka 容器：`docker exec -it one-kafka /bin/bash`
-	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
-	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper one-zookeeper:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
-	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper one-zookeeper:2181`
-	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper one-zookeeper:2181`
-	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
-	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
-	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
+- 节点 1：`docker run -d --name=kafka-manager1 --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181" sheepkiller/kafka-manager:latest`
 
 ----------------------------------------------------------------------------------------------
 
