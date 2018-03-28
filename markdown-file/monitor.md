@@ -368,6 +368,49 @@ tcp6       0      0 :::43107                :::*                    LISTEN      
 - 查看当前连接80端口的机子有多少：`netstat -an|grep 80|sort -r`
 - 查看已经连接的IP有多少连接数：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n`
 
+#### 网络排查
+
+- ping 命令查看丢包、域名解析地址
+	- `ping 116.196.110.69`
+	- `ping www.GitNavi.com`
+- telnet 测试端口的连通性
+	- `yum install -y telnet`
+	- `telnet 116.196.110.68 3306`
+- tracert（跟踪路由）查看网络请求节点访问情况，用于确定 IP 数据报访问目标所采取的路径。
+	- `yum install -y traceroute`
+	- `traceroute gitnavi.com`
+- nslookup 命令查看 DNS 是否可用
+	- `yum install -y bind-utils`
+	- 输入：`nslookup`，然后终端进入交互模式，然后输入：`www.baidu.com`，此时会展示类似这样的信息：
+
+```
+Server:		103.224.222.221（这个是你本机的信息）
+Address:	103.224.222.221#53（这个是你本机的信息）
+
+（下面是百度的信息）
+Non-authoritative answer:
+www.baidu.COM	canonical name = www.a.shifen.COM.
+Name:	www.a.shifen.COM
+Address: 220.181.112.244
+Name:	www.a.shifen.COM
+Address: 220.181.111.188
+```
+
+- 此时我们假设换个 DNS，我们在刚刚的交互阶段继续输入：`server 8.8.8.8`，表示我们此时用 8.8.8.8 的 DNS，然后我们在交互中再输入：`www.baidu.com`，此时会出现这个信息：
+
+```
+Server:		8.8.8.8
+Address:	8.8.8.8#53
+
+Non-authoritative answer:
+www.baidu.com	canonical name = www.a.shifen.com.
+Name:	www.a.shifen.com
+Address: 180.97.33.108
+Name:	www.a.shifen.com
+Address: 180.97.33.107
+```
+
+- 以上表明，不同的 DNS 情况下，我们获取到的域名所属 IP 是不同的。
 
 
 ## 参考资料
