@@ -16,7 +16,8 @@
 	- Broker：可以理解为：存放消息的管道（kafka）
 	- Topic：可以理解为：消息主题、消息标签（物理上不同 Topic 的消息分开存储，逻辑上一个 Topic 的消息虽然保存于一个或多个 broker 上但用户只需指定消息的 Topic 即可生产或消费数据而不必关心数据存于何处）
 - Partition：Partition 是物理上的概念，每个Topic包含一个或多个Partition。一般有几个节点集群，填写分区最好是等于大于节点值。分区目的主要是数据分片。副本为 1 的时候每个节点都会存有一份，目的主要是容错。
-    - Consumer Group：每个 Consumer 属于一个特定的 Consumer Group（可为每个 Consumer 指定 group name，若不指定 group name 则属于默认的 group）一般一个集群指定一个 group
+
+- Consumer Group：每个 Consumer 属于一个特定的 Consumer Group（可为每个 Consumer 指定 group name，若不指定 group name 则属于默认的 group）一般一个集群指定一个 group
 - 业界常用的 docker 镜像：
 	- [wurstmeister/kafka-docker（不断更新，优先）](https://github.com/wurstmeister/kafka-docker/)
 	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
