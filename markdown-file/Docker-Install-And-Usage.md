@@ -221,6 +221,17 @@ java -jar /root/spring-boot-my-demo.jar
 
 #### 本地镜像管理
 
+- `docker stats`：查看当前启动的容器各自占用的系统资源
+	- `bin docker stats --no-stream kafkadocker_kafka_1 kafkadocker_zookeeper_1`：查看指定容器的占用资源情况
+	- 更加高级的监控方式有一个软件叫做：ctop（推荐使用）：<https://github.com/bcicen/ctop>
+	
+```
+CONTAINER ID        NAME                      CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+4532a9ee27b8        cloud-cadvisor            1.49%               53.28MiB / 3.702GiB   1.41%               13.5MB / 646MB      265MB / 0B          19
+3895d5d50a5e        kafkadocker_kafka_1       1.45%               1.24GiB / 3.702GiB    33.51%              145MB / 186MB       499MB / 724MB       128
+1d1a6a7c48d8        kafkadocker_zookeeper_1   0.11%               70.85MiB / 3.702GiB   1.87%               55.8MB / 33.7MB     209MB / 1.22MB      23
+```
+
 - `docker images`：显示本地所有的镜像列表
 	- 关注 REPOSITORY(名称)，TAG(标签)，IMAGE ID(镜像ID)三列
 - `docker images centos`：查看具体镜像情况
