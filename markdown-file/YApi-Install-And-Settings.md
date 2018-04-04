@@ -18,7 +18,7 @@
 	- work path：`mkdir -p /opt/git-data`
 	- clone：`cd /opt/git-data && git clone https://github.com/branchzero/yapi-docker.git`
 	- permission：`chmod -R 777 /opt/git-data`
-	- run command：`docker-compose up -d`
+	- run command：`cd /opt/git-data/yapi-docker && docker-compose up -d`
 	- open chrome：`http://192.168.1.121:3000`
 - 初始化管理员账号名：`admin@admin.com`，密码：`ymfe.org`
 
