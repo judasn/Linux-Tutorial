@@ -1,7 +1,7 @@
 ## Redis 安装和配置
 
 
-## 如果你用 Spring Data MongoDB 依赖请注意
+## 如果你用 Spring Data Redis 依赖请注意
 
 - 请先看官网最新支持到哪个版本的依赖：<https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#new-features>
 	- 查看锚点为：`New in Spring Data Redis` 的内容
