@@ -65,6 +65,7 @@
 * [ELK 日志收集系统安装和配置](markdown-file/ELK-Install-And-Settings.md)
 * [Dubbo 安装和配置](markdown-file/Dubbo-Install-And-Settings.md)
 * [GitLab 安装和配置](markdown-file/Gitlab-Install-And-Settings.md)
+* [JMeter 安装和配置](markdown-file/JMeter-Install-And-Settings.md)
 * [Docker 安装和使用](markdown-file/Docker-Install-And-Usage.md)
 * [LDAP 安装和使用](markdown-file/LDAP-Install-And-Settings.md)
 * [Alfresco 安装和使用](markdown-file/Alfresco-Install-And-Usage.md)
