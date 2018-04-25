@@ -551,6 +551,36 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 - Docker 运行一段时间，如果你的容器有大量的输出信息，则这个 log 文件会非常大，所以要考虑清理。
 - log 位置：`/var/lib/docker/containers/容器ID值/容器ID值-json.log`
 - 可以考虑在停到容器的时候备份这个文件到其他位置，然后：`echo > 容器ID值-json.log`
+- 当然，官网也提供了自动化的方案：<https://docs.docker.com/config/containers/logging/json-file/>
+	- 修改 Docker 是配置文件：`vim /etc/docker/daemon.json`，（如果没有这个文件，自己新增）增加如下内容：
+ 
+``` bash
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "5"
+  }
+}
+```
+
+- 如果你已经有该文件文件莱使用国内源，那修改方案应该是这样的：
+ 
+``` bash
+{
+	"registry-mirrors": ["https://ldhc17y9.mirror.aliyuncs.com"],
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "10m",
+	    "max-file": "5"
+	}
+}
+```
+
+## Docker daemon.json 可配置参数
+
+- <https://docs.docker.com/engine/reference/commandline/dockerd/>
+
 
 ## Dockerfile 解释
 
