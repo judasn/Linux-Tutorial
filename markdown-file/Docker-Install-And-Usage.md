@@ -546,6 +546,11 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 ]
 ```
 
+## Docker 容器产生的 log 位置
+
+- Docker 运行一段时间，如果你的容器有大量的输出信息，则这个 log 文件会非常大，所以要考虑清理。
+- log 位置：`/var/lib/docker/containers/容器ID值/容器ID值-json.log`
+- 可以考虑在停到容器的时候备份这个文件到其他位置，然后：`echo > 容器ID值-json.log`
 
 ## Dockerfile 解释
 
