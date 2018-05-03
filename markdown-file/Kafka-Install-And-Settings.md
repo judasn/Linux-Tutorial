@@ -350,9 +350,9 @@ advertised.listeners=PLAINTEXT://youmeekhost:9092
 # 数据目录
 log.dirs=/data/kafka/logs
 # 允许删除topic
-delete.topic.enable=true
+delete.topic.enable=false
 # 允许自动创建topic
-auto.create.topics.enable=true
+auto.create.topics.enable=false
 # 磁盘IO不足的时候，可以适当调大该值 ( 当内存足够时 )
 #log.flush.interval.messages=10000
 #log.flush.interval.ms=1000
@@ -421,10 +421,8 @@ zookeeper.connect=youmeekhost:2181
 - <http://www.bijishequ.com/detail/536308>
 - <http://blog.51cto.com/13323775/2063420>
 - <http://lanxinglan.cn/2017/10/18/%E5%9C%A8Docker%E7%8E%AF%E5%A2%83%E4%B8%8B%E9%83%A8%E7%BD%B2Kafka/>
-- <http://www.cnblogs.com/huxi2b/p/6592862.html>
 - <http://www.cnblogs.com/huxi2b/p/7929690.html>
 - <http://blog.csdn.net/HG_Harvey/article/details/79198496>
 - <http://blog.csdn.net/vtopqx/article/details/78638996>
 - <http://www.weduoo.com/archives/2047>
-- <http://www.jishurensheng.com/461884086.html>
 - <https://blog.52itstyle.com/archives/2358/>
