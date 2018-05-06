@@ -287,7 +287,15 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
     - `docker commit -m="这是一个描述信息" --author="GitNavi" 容器ID gitnavi/docker-nodejs-test:0.1`
 	    - 在提交镜像时指定更多的数据（包括标签）来详细描述所做的修改
 - `docker diff 容器ID`：显示容器文件系统的前后变化
-
+- `--link` 同一个宿主机下的不同容器的连接：
+	- `docker run -it 镜像ID --link redis-name:myredis /bin/bash`
+		- `redis-name` 是容器名称
+		- `myredis` 是容器别名，其他容器连接它可以用这个别名来写入到自己的配置文件中
+- `--network` docker 网络模式：
+	- bridge 默认模式，在 docker0 的网桥上创建新网络栈，确保独立的网络环境，实现网络隔离：`docker run -it 镜像ID --network=bridge /bin/bash`
+	- none 不适用网卡，无法联网：`docker run -it 镜像ID --network=none /bin/bash`
+	- host 使用宿主机网络 IP、端口联网：`docker run -it 镜像ID --network=host /bin/bash`
+	- 自定义-使用自己命名的网络栈，但是需要手动配置网卡、IP 信息：`docker run -it 镜像ID --network=自定义名称 /bin/bash`
 
 #### 容器管理操作
  
@@ -504,7 +512,7 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
             "Bridge": "",
             "SandboxID": "7eabf418238f4d9f5fd5163fd4d173bbaea7764687a5cf40a9757d42b90ab2f9",
             "HairpinMode": false,
-            "LinkLocalIPv6Address": "",
+            "Link                                                            LocalIPv6Address": "",
             "LinkLocalIPv6PrefixLen": 0,
             "Ports": {
                 "27017/tcp": [
@@ -608,7 +616,7 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 	- `ENV`，定义环境变量，该变量可以在后续的任何 RUN 指令中使用，使用方式：$HOME_DIR。在 docker run 的时候可以该方式来覆盖变量值 `docker run -e “HOME_DIR=/opt”`
 	- `RUN`，执行命令并创建新的镜像层，RUN 经常用于安装软件包
 	- `CMD`，执行命令，并且一个 Dockerfile 只能有一条 CMD，有多条的情况下最后一条有效。在一种场景下 CMD 命令无效：docker run 的时候也指定了相同命令，则 docker run 命令优先级最高
-	- `ENTRYPOINT`，配置容器启动时运行的命令，不会被 docker run 指令覆盖，并且 docker run 的命令还可以作为参数传递到 ENTRYPOINT 中。要覆盖 ENTRYPOINT 命令也是有办法的：docker run --entrypoint 方式。
+	- `ENTRYPOINT`，配置容器启动时运行的命令，不会被 docker run 指令覆盖，并且 docker run 的指令可以作为参数传递到 ENTRYPOINT 中。要覆盖 ENTRYPOINT 命令也是有办法的：docker run --entrypoint 方式。Dockerfile 同时有 CMD 和 ENTRYPOINT 的时候，CMD 的指令是作为参数传递给 ENTRYPOINT 使用。
 		- 特别注意：RUN、CMD 和 ENTRYPOINT 这三个 Dockerfile 指令看上去很类似，很容易混淆。
 		- 最佳实战：[来源](https://www.ibm.com/developerworks/community/blogs/132cfa78-44b0-4376-85d0-d3096cd30d3f/entry/RUN_vs_CMD_vs_ENTRYPOINT_%E6%AF%8F%E5%A4%A95%E5%88%86%E9%92%9F%E7%8E%A9%E8%BD%AC_Docker_%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF_17?lang=en_us)
 			- 使用 RUN 指令安装应用和软件包，构建镜像。
@@ -822,7 +830,6 @@ Master选举确保kube-scheduler和kube-controller-manager高可用
 ## 资料
 
 - 书籍：《第一本 Docker 书》
-- 书籍：《Docker 容器》
 
 
 
