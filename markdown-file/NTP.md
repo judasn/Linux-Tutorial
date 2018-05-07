@@ -28,7 +28,10 @@
 	server 3.asia.pool.ntp.org
     ```
 - 启动服务：
+ - `sudo service ntpd stop`（改配置后，先停再启动）
  - `sudo service ntpd start`
+- 手动更新时间：
+ - `sudo ntpdate ntp1.aliyun.com`
 - 服务加到启动项
 	- CentOS 系统
 		- `sudo chkconfig ntpd on`
