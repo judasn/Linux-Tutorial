@@ -8,26 +8,6 @@
 - 官网下载 2：<https://sourceforge.net/projects/fastdfs/files/>
 - 官网下载 3：<http://code.google.com/p/fastdfs/downloads/list>
 
-## 为什么会出现
-
-
-
-## 哪些人喜欢它
-
-
-## 哪些人不喜欢它
-
-
-
-## 为什么学习它
-
-
-
-
-## 同类工具
-
-
-
 ### 单机安装部署（CentOS 6.7 环境）
 
 - 环境准备：
