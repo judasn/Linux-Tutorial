@@ -6,18 +6,26 @@
 > A distributed streaming platform
 
 - 官网：<https://kafka.apache.org/>
+- Github：<https://github.com/apache/kafka>
+	- 主要是由 Java 和 Scala 开发
 - 官网下载：<https://kafka.apache.org/downloads>
 - 当前最新稳定版本（201803）：**1.0.1**
 - 官网 quickstart：<https://kafka.apache.org/quickstart>
 - 运行的机子不要小于 2G 内存
+- 现在流行的主要原因：
+	- 支持常见的发布订阅功能
+	- 分布式
+	- 高吞吐量
+	- 磁盘数据持久化，消费者 down 后，重新 up 的时候可以继续接收前面未接收到的消息
+	- 支持流数据处理，常见于大数据
+	- Consumer Group 下可以设置只能一个节点消费消息
 - 核心概念：
 	- Producer：生产者（业务系统），负责发布消息到 broker
 	- Consumer：消费者（业务系统），向 broker 读取消息的客户端
-	- Broker：可以理解为：存放消息的管道（kafka）
+	- Broker：可以理解为：存放消息的管道（kafka 软件节点本身）
 	- Topic：可以理解为：消息主题、消息标签（物理上不同 Topic 的消息分开存储，逻辑上一个 Topic 的消息虽然保存于一个或多个 broker 上但用户只需指定消息的 Topic 即可生产或消费数据而不必关心数据存于何处）
-- Partition：Partition 是物理上的概念，每个Topic包含一个或多个Partition。一般有几个节点集群，填写分区最好是等于大于节点值。分区目的主要是数据分片。副本为 1 的时候每个节点都会存有一份，目的主要是容错。
-
-- Consumer Group：每个 Consumer 属于一个特定的 Consumer Group（可为每个 Consumer 指定 group name，若不指定 group name 则属于默认的 group）一般一个业务系统集群指定同一个一个 group id，然后一个业务系统集群只能一个节点来消费同一个消息。
+	- Partition：Partition 是物理上的概念，每个Topic包含一个或多个Partition。一般有几个节点集群，填写分区最好是等于大于节点值。分区目的主要是数据分片。副本为 1 的时候每个节点都会存有一份，目的主要是容错。
+	- Consumer Group：每个 Consumer 属于一个特定的 Consumer Group（可为每个 Consumer 指定 group name，若不指定 group name 则属于默认的 group）一般一个业务系统集群指定同一个一个 group id，然后一个业务系统集群只能一个节点来消费同一个消息。
 - 业界常用的 docker 镜像：
 	- [wurstmeister/kafka-docker（不断更新，优先）](https://github.com/wurstmeister/kafka-docker/)
 	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
@@ -341,7 +349,7 @@ wurstmeister/kafka:latest
 - 找到下面两个参数内容，修改成如下：
 
 ```
-# 唯一ID（kafka 集群环境下，该值必须唯一）
+# 唯一ID（kafka 集群环境下，该值必须唯一），和 zookeeper 的配置文件中的 myid 类似道理
 broker.id=1
 # 监听地址
 listeners=PLAINTEXT://0.0.0.0:9092
@@ -351,7 +359,7 @@ advertised.listeners=PLAINTEXT://youmeekhost:9092
 log.dirs=/data/kafka/logs
 # 允许删除topic
 delete.topic.enable=false
-# 允许自动创建topic
+# 允许自动创建topic（默认是 true）
 auto.create.topics.enable=false
 # 磁盘IO不足的时候，可以适当调大该值 ( 当内存足够时 )
 #log.flush.interval.messages=10000
@@ -361,8 +369,21 @@ log.retention.hours=168
 # zookeeper
 zookeeper.connect=youmeekhost:2181
 
-# 其余都使用默认配置
+# 其余都使用默认配置，但是顺便解释下：
+# borker 进行网络处理的线程数
+num.network.threads=3
 
+# borker 进行 I/O 处理的线程数
+num.io.threads=8
+
+# 发送缓冲区 buffer 大小，数据不是一下子就发送的，先回存储到缓冲区了到达一定的大小后在发送，能提高性能
+socket.send.buffer.bytes=102400
+
+# 接收缓冲区大小，当数据到达一定大小后在序列化到磁盘
+socket.receive.buffer.bytes=102400
+
+# 这个参数是向 kafka 请求消息或者向 kafka 发送消息的请请求的最大数，这个值不能超过 java 的堆栈大小
+socket.request.max.bytes=104857600
 ```
 
 - 启动 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
@@ -398,6 +419,150 @@ zookeeper.connect=youmeekhost:2181
 
 ----------------------------------------------------------------------------------------------
 
+## kafka 1.0.1 默认配置文件内容
+
+```
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# see kafka.server.KafkaConfig for additional details and defaults
+
+############################# Server Basics #############################
+
+# The id of the broker. This must be set to a unique integer for each broker.
+broker.id=0
+
+############################# Socket Server Settings #############################
+
+# The address the socket server listens on. It will get the value returned from 
+# java.net.InetAddress.getCanonicalHostName() if not configured.
+#   FORMAT:
+#     listeners = listener_name://host_name:port
+#   EXAMPLE:
+#     listeners = PLAINTEXT://your.host.name:9092
+#listeners=PLAINTEXT://:9092
+
+# Hostname and port the broker will advertise to producers and consumers. If not set, 
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+#advertised.listeners=PLAINTEXT://your.host.name:9092
+
+# Maps listener names to security protocols, the default is for them to be the same. See the config documentation for more details
+#listener.security.protocol.map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+
+# The number of threads that the server uses for receiving requests from the network and sending responses to the network
+num.network.threads=3
+
+# The number of threads that the server uses for processing requests, which may include disk I/O
+num.io.threads=8
+
+# The send buffer (SO_SNDBUF) used by the socket server
+socket.send.buffer.bytes=102400
+
+# The receive buffer (SO_RCVBUF) used by the socket server
+socket.receive.buffer.bytes=102400
+
+# The maximum size of a request that the socket server will accept (protection against OOM)
+socket.request.max.bytes=104857600
+
+
+############################# Log Basics #############################
+
+# A comma seperated list of directories under which to store log files
+log.dirs=/tmp/kafka-logs
+
+# The default number of log partitions per topic. More partitions allow greater
+# parallelism for consumption, but this will also result in more files across
+# the brokers.
+num.partitions=1
+
+# The number of threads per data directory to be used for log recovery at startup and flushing at shutdown.
+# This value is recommended to be increased for installations with data dirs located in RAID array.
+num.recovery.threads.per.data.dir=1
+
+############################# Internal Topic Settings  #############################
+# The replication factor for the group metadata internal topics "__consumer_offsets" and "__transaction_state"
+# For anything other than development testing, a value greater than 1 is recommended for to ensure availability such as 3.
+offsets.topic.replication.factor=1
+transaction.state.log.replication.factor=1
+transaction.state.log.min.isr=1
+
+############################# Log Flush Policy #############################
+
+# Messages are immediately written to the filesystem but by default we only fsync() to sync
+# the OS cache lazily. The following configurations control the flush of data to disk.
+# There are a few important trade-offs here:
+#    1. Durability: Unflushed data may be lost if you are not using replication.
+#    2. Latency: Very large flush intervals may lead to latency spikes when the flush does occur as there will be a lot of data to flush.
+#    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to exceessive seeks.
+# The settings below allow one to configure the flush policy to flush data after a period of time or
+# every N messages (or both). This can be done globally and overridden on a per-topic basis.
+
+# The number of messages to accept before forcing a flush of data to disk
+#log.flush.interval.messages=10000
+
+# The maximum amount of time a message can sit in a log before we force a flush
+#log.flush.interval.ms=1000
+
+############################# Log Retention Policy #############################
+
+# The following configurations control the disposal of log segments. The policy can
+# be set to delete segments after a period of time, or after a given size has accumulated.
+# A segment will be deleted whenever *either* of these criteria are met. Deletion always happens
+# from the end of the log.
+
+# The minimum age of a log file to be eligible for deletion due to age
+log.retention.hours=168
+
+# A size-based retention policy for logs. Segments are pruned from the log unless the remaining
+# segments drop below log.retention.bytes. Functions independently of log.retention.hours.
+#log.retention.bytes=1073741824
+
+# The maximum size of a log segment file. When this size is reached a new log segment will be created.
+log.segment.bytes=1073741824
+
+# The interval at which log segments are checked to see if they can be deleted according
+# to the retention policies
+log.retention.check.interval.ms=300000
+
+############################# Zookeeper #############################
+
+# Zookeeper connection string (see zookeeper docs for details).
+# This is a comma separated host:port pairs, each corresponding to a zk
+# server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
+# You can also append an optional chroot string to the urls to specify the
+# root directory for all kafka znodes.
+zookeeper.connect=localhost:2181
+
+# Timeout in ms for connecting to zookeeper
+zookeeper.connection.timeout.ms=6000
+
+
+############################# Group Coordinator Settings #############################
+
+# The following configuration specifies the time, in milliseconds, that the GroupCoordinator will delay the initial consumer rebalance.
+# The rebalance will be further delayed by the value of group.initial.rebalance.delay.ms as new members join the group, up to a maximum of max.poll.interval.ms.
+# The default value for this is 3 seconds.
+# We override this to 0 here as it makes for a better out-of-the-box experience for development and testing.
+# However, in production environments the default value of 3 seconds is more suitable as this will help to avoid unnecessary, and potentially expensive, rebalances during application startup.
+group.initial.rebalance.delay.ms=0
+```
+
+
+----------------------------------------------------------------------------------------------
+
 
 ## 资料
 
@@ -426,3 +591,4 @@ zookeeper.connect=youmeekhost:2181
 - <http://blog.csdn.net/vtopqx/article/details/78638996>
 - <http://www.weduoo.com/archives/2047>
 - <https://blog.52itstyle.com/archives/2358/>
+
