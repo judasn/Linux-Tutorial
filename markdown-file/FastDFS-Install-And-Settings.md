@@ -1,32 +1,19 @@
 # FastDFS 安装和配置
 
 
-## 它是什么
+## FastDFS 介绍
 
 - FastDFS 介绍：<http://www.oschina.net/p/fastdfs>
 - 官网下载 1：<https://github.com/happyfish100/fastdfs/releases>
 - 官网下载 2：<https://sourceforge.net/projects/fastdfs/files/>
 - 官网下载 3：<http://code.google.com/p/fastdfs/downloads/list>
-
-## 为什么会出现
-
-
-
-## 哪些人喜欢它
-
-
-## 哪些人不喜欢它
-
-
-
-## 为什么学习它
-
-
-
-
-## 同类工具
-
-
+- 主要场景：
+	- 小图片
+	- 音频、小视频
+	- 其他类型小文件
+- 更加复杂的文件存储场景可以选择：[Ceph](https://ceph.com/)
+	- 支持对象存储、块存储和文件存储
+	- 高性能、高可靠性和高扩展
 
 ### 单机安装部署（CentOS 6.7 环境）
 
