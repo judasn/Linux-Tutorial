@@ -1,5 +1,12 @@
 # Kafka 安装和配置
 
+## 消息系统的好处
+
+- 解耦（各个业务系统各自为政，有各自新需求，各自系统自行修改，只通过消息来通信）
+- 大系统层面的扩展性（不用改旧业务系统代码，增加新系统，接收新消息）
+- 异步通信（一个消息，多个业务系统来消费。某些场景可以堆积到一定程度再去消费）
+- 缓冲（解耦某些需要长时间处理业务）
+
 
 ## Kafka 介绍
 
@@ -12,21 +19,27 @@
 - 当前最新稳定版本（201803）：**1.0.1**
 - 官网 quickstart：<https://kafka.apache.org/quickstart>
 - 运行的机子不要小于 2G 内存
-- 现在流行的主要原因：
+- Kafka 流行的主要原因：
 	- 支持常见的发布订阅功能
 	- 分布式
-	- 高吞吐量
+	- 高吞吐量（听说：普通单机也支持每秒 100000 条消息的传输）
 	- 磁盘数据持久化，消费者 down 后，重新 up 的时候可以继续接收前面未接收到的消息
 	- 支持流数据处理，常见于大数据
-	- Consumer Group 下可以设置只能一个节点消费消息
 - 核心概念：
 	- Producer：生产者（业务系统），负责发布消息到 broker
 	- Consumer：消费者（业务系统），向 broker 读取消息的客户端
 	- Broker：可以理解为：存放消息的管道（kafka 软件节点本身）
-	- Topic：可以理解为：消息主题、消息标签（物理上不同 Topic 的消息分开存储，逻辑上一个 Topic 的消息虽然保存于一个或多个 broker 上但用户只需指定消息的 Topic 即可生产或消费数据而不必关心数据存于何处）
-	- Partition：Partition 是物理上的概念，每个Topic包含一个或多个Partition。一般有几个节点集群，填写分区最好是等于大于节点值。分区目的主要是数据分片。副本为 1 的时候每个节点都会存有一份，目的主要是容错。
+	- Topic：可以理解为：消息主题、消息标签、消息通道、消息队列（物理上不同 Topic 的消息分开存储，根据 Partition 参数决定一个 Topic 的消息保存于一个或多个 broker 上。作为使用者，不用关心 Topic 实际物理存储地方。）
+	- Partition：是物理上的概念，每个 Topic 包含一个或多个 Partition。一般有几个 Broker，填写分区最好是等于大于节点值。分区目的主要是数据分片，解决水平扩展、高吞吐量。当 Producer 生产消息的时候，消息会被算法计算后分配到对应的分区，Consumer 读取的时候算法也会帮我们找到消息所在分区，这是内部实现的，应用层面不用管。
+	- Replication-factor：副本。假设有 3 个 Broker 的情况下，当副本为 3 的时候每个 Partition 会在每个 Broker 都会存有一份，目的主要是容错。
+		- 其中有一个 Leader。
 	- Consumer Group：每个 Consumer 属于一个特定的 Consumer Group（可为每个 Consumer 指定 group name，若不指定 group name 则属于默认的 group）一般一个业务系统集群指定同一个一个 group id，然后一个业务系统集群只能一个节点来消费同一个消息。
 		- Consumer Group 信息存储在 zookeeper 中，需要通过 zookeeper 的客户端来查看和设置
+		- 如果某 Consumer Group 中 consumer 数量少于 partition 数量，则至少有一个 consumer 会消费多个 partition 的数据
+		- 如果 consumer 的数量与 partition 数量相同，则正好一个 consumer 消费一个 partition 的数据
+		- 如果 consumer 的数量多于 partition 的数量时，会有部分 consumer 无法消费该 topic 下任何一条消息。
+		- 具体实验可以看这篇文章：[Kafka深度解析](http://www.jasongj.com/2015/01/02/Kafka%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/)
+	- Record：消息数据本身，由一个 key、value、timestamp 组成
 - 业界常用的 docker 镜像：
 	- [wurstmeister/kafka-docker（不断更新，优先）](https://github.com/wurstmeister/kafka-docker/)
 	- Spring 项目选用依赖包的时候，对于版本之间的关系可以看这里：<http://projects.spring.io/spring-kafka/>
@@ -43,6 +56,24 @@
 	- 查看特定 topic 的详情：`bin/kafka-topics.sh --describe --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic kafka-test-topic-1 --zookeeper 10.135.157.34:2181`
 	- 更多命令可以看：<http://orchome.com/454>
+- 假设 topic 详情的返回信息如下：
+	- `PartitionCount:6`：分区为 6 个
+	- `ReplicationFactor:3`：副本为 3 个
+	- `Partition: 0 Leader: 3`：Partition 下标为 0 的主节点是 broker.id=3
+		- 当 Leader down 掉之后，其他节点会选举中一个新 Leader
+	- `Replicas: 3,1,2`：在 `Partition: 0` 下共有 3 个副本，broker.id 分别为 3,1,2
+	- `Isr: 3,1,2`：在 `Partition: 0` 下目前存活的 broker.id 分别为 3,1,2
+
+```
+Topic:kafka-all    PartitionCount:6    ReplicationFactor:3    Configs:
+    Topic: kafka-all    Partition: 0    Leader: 3    Replicas: 3,1,2    Isr: 3,1,2
+    Topic: kafka-all    Partition: 1    Leader: 1    Replicas: 1,2,3    Isr: 1,2,3
+    Topic: kafka-all    Partition: 2    Leader: 2    Replicas: 2,3,1    Isr: 2,3,1
+    Topic: kafka-all    Partition: 3    Leader: 3    Replicas: 3,2,1    Isr: 3,2,1
+    Topic: kafka-all    Partition: 4    Leader: 1    Replicas: 1,3,2    Isr: 1,3,2
+    Topic: kafka-all    Partition: 5    Leader: 2    Replicas: 2,1,3    Isr: 2,1,3
+```
+
 
 ----------------------------------------------------------------------------------------------
 
@@ -100,6 +131,7 @@ services:
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper zookeeper:2181`
 	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
 	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic-test --from-beginning`
+		- 其中 `--from-beginning` 参数表示在启动该客户端的时候接受前面 kafka 的所有记录。不加这个参数，则旧数据不会收到，生产者新生产的消息才会接收到。
 	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
 
 ----------------------------------------------------------------------------------------------
@@ -336,11 +368,11 @@ wurstmeister/kafka:latest
 ## Kafka 1.0.1 源码安装
 
 - 一台机子：CentOS 7.4，根据文章最开头，已经修改了 hosts
-- 确保本机安装有 JDK8
+- 确保本机安装有 JDK8（JDK 版本不能随便挑选）
 - 先用上面的 docker 方式部署一个 zookeeper，我这里的 zookeeper IP 地址为：`172.16.0.2`
 	- **如果该 zookeeper 前面已经用过了，最好重新删除，重新 run，因为 zookeeper 上保留的旧的 topic 配置**
 - 官网下载：<https://kafka.apache.org/downloads>
-- 当前（201803）最新版本为：**1.0.1，同时推荐 Scala 版本为 2.11**
+- 当前（201803）最新版本为：**1.0.1，同时推荐 Scala 版本为 2.11**，这里要特别注意：kafka_2.11-1.0.1.tgz 中的 2.11 指的是 Scala 版本
 	- 找到：`Binary downloads` 下面的链接
 	- 下载：`wget http://mirrors.shu.edu.cn/apache/kafka/1.0.1/kafka_2.11-1.0.1.tgz`
 - 解压：`tar zxvf kafka_2.11-1.0.1.tgz`，假设当前目录为：`/usr/local/kafka_2.11-1.0.1`
@@ -350,14 +382,17 @@ wurstmeister/kafka:latest
 - 找到下面两个参数内容，修改成如下：
 
 ```
-# 唯一ID（kafka 集群环境下，该值必须唯一），和 zookeeper 的配置文件中的 myid 类似道理
+# 唯一ID（kafka 集群环境下，该值必须唯一，默认从 0 开始），和 zookeeper 的配置文件中的 myid 类似道理（单节点多 broker 的情况下该参数必改）
 broker.id=1
-# 监听地址
+# 监听地址（单节点多 broker 的情况下该参数必改）
 listeners=PLAINTEXT://0.0.0.0:9092
-# 向 Zookeeper 注册的地址。这里可以直接填写外网IP地址，但是不建议这样做，而是通过配置 hosts 的方式来设置。不然填写外网 IP 地址会导致所有流量都走外网
+# 向 Zookeeper 注册的地址。这里可以直接填写外网IP地址，但是不建议这样做，而是通过配置 hosts 的方式来设置。不然填写外网 IP 地址会导致所有流量都走外网（单节点多 broker 的情况下该参数必改）
 advertised.listeners=PLAINTEXT://youmeekhost:9092
-# 数据目录
+# 日志数据目录，可以通过逗号来指定多个目录（单节点多 broker 的情况下该参数必改）
 log.dirs=/data/kafka/logs
+# 创建新 topic 的时候默认 1 个分区。需要特别注意的是：已经创建好的 topic 的 partition 的个数只可以被增加，不能被减少。
+# 如果对消息有高吞吐量的要求，可以增加分区数来分摊压力
+num.partitions=1
 # 允许删除topic
 delete.topic.enable=false
 # 允许自动创建topic（默认是 true）
@@ -367,7 +402,7 @@ auto.create.topics.enable=false
 #log.flush.interval.ms=1000
 # kafka 数据保留时间 默认 168 小时 == 7 天
 log.retention.hours=168
-# zookeeper
+# zookeeper，存储了 broker 的元信息
 zookeeper.connect=youmeekhost:2181
 
 # 其余都使用默认配置，但是顺便解释下：
@@ -387,7 +422,8 @@ socket.receive.buffer.bytes=102400
 socket.request.max.bytes=104857600
 ```
 
-- 启动 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
+- 启动 kafka 服务（必须制定配置文件）：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
+	- 后台方式运行 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh -daemon config/server.properties`
 - 再开一个终端测试：
 	- 进入目录：`cd /usr/local/kafka`
 	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper youmeekhost:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
@@ -565,9 +601,10 @@ group.initial.rebalance.delay.ms=0
 ----------------------------------------------------------------------------------------------
 
 
-## 资料
+## 其他资料
 
 - [管理Kafka的Consumer-Group信息](http://lsr1991.github.io/2016/01/03/kafka-consumer-group-management/)
+- [Kafka--Consumer消费者](http://blog.xiaoxiaomo.com/2016/05/14/Kafka-Consumer%E6%B6%88%E8%B4%B9%E8%80%85/)
 - <http://www.ituring.com.cn/article/499268>
 - <http://orchome.com/kafka/index>
 - <https://www.jianshu.com/p/263164fdcac7>
