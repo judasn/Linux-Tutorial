@@ -244,6 +244,25 @@ Using config: /usr/program/zookeeper/zookeeper-3.4.8/bin/../conf/zoo.cfg
 Mode: follower 或者 Mode: leader
 ```
 
+## Zookeeper 客户端工具
+
+#### ZooInspector
+
+- 下载地址：<https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip>
+- 解压，双击 jar 文件，效果如下：
+- ![ZooInspector](../images/Zookeeper-Client-ZooInspector.png)
+
+#### zooweb
+
+- 下载地址：<https://github.com/zhuhongyu345/zooweb>
+- Spring Boot 的 Web 项目，直接：`java -jar zooweb-1.0.jar` 启动 web 服务，然后访问：<http://127.0.0.1:9345>
+- ![zooweb](../images/Zookeeper-Client-zooweb.png)
+
+
+
+
+
+
 ## 资料
 
 - <https://liwei.io/2017/07/19/zookeeper-cluster-in-docker/>
