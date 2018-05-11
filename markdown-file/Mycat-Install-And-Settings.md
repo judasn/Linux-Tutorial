@@ -402,9 +402,9 @@ export PATH=$PATH:$MYCAT_HOME/bin
 417454619141211002=2
 ```
 
-- 表示 shop_id 为 1 的时候，用 adg_system_0000 库
-- 表示 shop_id 为 2 的时候，用 adg_system_0001 库
-- 表示 shop_id 为 3 的时候，用 adg_system_0002 库
+- 表示 shop_id 为 417454619141211000 的时候，用 adg_system_0000 库
+- 表示 shop_id 为 417454619141211001 的时候，用 adg_system_0001 库
+- 表示 shop_id 为 417454619141211002 的时候，用 adg_system_0002 库
 - 其中第一个库是从下表 0 开始的。
 
 #### log4j2.xml 配置详解
