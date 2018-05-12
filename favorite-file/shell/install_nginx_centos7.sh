@@ -8,10 +8,6 @@ if [ ! -d "/opt/setups" ]; then
 	mkdir /opt/setups
 fi
 
-if [ ! -d "/usr/program" ]; then
-	mkdir /usr/program
-fi
-
 if [ ! -d "/usr/local/nginx" ]; then
 	mkdir -p /usr/local/nginx
 fi

@@ -72,9 +72,6 @@ systemctl daemon-reload
 
 systemctl restart docker
 
-echo "-----------------------------------------安装 htop、ctop"
+echo "-----------------------------------------安装 htop"
 yum install -y htop
-
-wget https://github.com/bcicen/ctop/releases/download/v0.7.1/ctop-0.7.1-linux-amd64 -O /usr/local/bin/ctop
-chmod +x /usr/local/bin/ctop
 

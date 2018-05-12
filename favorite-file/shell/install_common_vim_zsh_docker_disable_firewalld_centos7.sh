@@ -58,10 +58,8 @@ echo "-----------------------------------------输出 docker compose 版本号"
 
 docker-compose --version
 
-echo "-----------------------------------------安装 htop、ctop"
+echo "-----------------------------------------安装 htop"
 yum install -y htop
 
-wget https://github.com/bcicen/ctop/releases/download/v0.7.1/ctop-0.7.1-linux-amd64 -O /usr/local/bin/ctop
-chmod +x /usr/local/bin/ctop
 
 
