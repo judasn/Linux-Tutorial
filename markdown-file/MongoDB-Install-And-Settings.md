@@ -242,9 +242,6 @@ auth=true
 - 卸载命令：`yum erase $(rpm -qa | grep mongodb-org)`
 	- 删除数据库：`rm -r /var/lib/mongo`
     - 删除 log：`rm -r /var/log/mongodb`
-- 数据的导出、导入
-	- 导出：`mongoexport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 -o /opt/mongodb.json --type json`
-	- 导入：`mongoimport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 --file /opt/mongodb.json --type json`
 
 ## 添加授权用户
 
@@ -346,6 +343,12 @@ $ne ->not equal 不等于
 	- <http://www.cookqq.com/blog/51277786-c26c-4f94-9be2-428f3633d9e5>
 	- <http://www.thinksaas.cn/topics/0/513/513705.html>
 	- <https://www.fedte.cc/p/511.html>
+
+## 导入 / 导出 / 备份 /还原
+
+- 数据的导出、导入
+	- 导出：`mongoexport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 -o /opt/mongodb.json --type json`
+	- 导入：`mongoimport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 --file /opt/mongodb.json --type json`
 
 
 ## Java 包
