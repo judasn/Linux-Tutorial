@@ -424,6 +424,7 @@ socket.request.max.bytes=104857600
 
 - 启动 kafka 服务（必须制定配置文件）：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
 	- 后台方式运行 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh -daemon config/server.properties`
+	- 停止 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-stop.sh`
 - 再开一个终端测试：
 	- 进入目录：`cd /usr/local/kafka`
 	- 创建 topic 命令：`bin/kafka-topics.sh --create --zookeeper youmeekhost:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
