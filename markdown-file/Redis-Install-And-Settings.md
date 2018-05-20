@@ -107,7 +107,8 @@ aof-rewrite-incremental-fsync yes
             - 改为新值：`daemonize yes` 
         - 启动：`/usr/local/bin/redis-server /etc/redis.conf`
         - 关闭：`redis-cli -h 127.0.0.1 -p 6379 shutdown`
-        - 查看是否启动：`ps -ef | grep redis`
+	- 关闭（带密码）：`redis-cli -h 127.0.0.1 -p 6379 -a 123456 shutdown`
+        - 查看是否启动：`ps -ef | grep redis`
         - 进入客户端：`redis-cli`
         - 关闭客户端：`redis-cli shutdown`
         - 开机启动配置：`echo "/usr/local/bin/redis-server /etc/redis.conf" >> /etc/rc.local`
