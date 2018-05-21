@@ -39,8 +39,6 @@ echo "-----------------------------------------输出 docker compose 版本号"
 
 docker-compose --version
 
-echo "-----------------------------------------安装 htop"
-yum install -y htop
 
 
 

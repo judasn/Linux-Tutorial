@@ -52,6 +52,4 @@ systemctl daemon-reload
 
 systemctl restart docker
 
-echo "-----------------------------------------安装 htop"
-yum install -y htop
 
