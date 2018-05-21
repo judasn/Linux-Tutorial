@@ -78,6 +78,20 @@
         - 安装：`make install`
     - rar 解压：`rar x 文件名.rar`
 
+## jar 包操作
+
+### 修改 jar 包配置文件
+
+- 命令：`vim mytest.jar`，这时候会展示 jar 中所有层级目录下的所有文件
+- 输入：`/log4j2.xml` 回车，光标定位到该文件，然后再回车，进入编辑该文件状态
+- 此时可以修改配置文件了，修改后 `:wq` 保存退出，接着 `：q` 退出 jar 编辑状态
+
+### 更新 Jar 包中的文件
+
+- 替换（新增）jar 根目录下的文件：`jar uvf mytest.jar ClassToAdd.class`  
+- 一般 class 文件都是在多层目录里面的，需要这样做：`jar uvf mytest.jar com/youmeek/ClassToAdd.class`
+	- 需要在 jar 所在的文件夹下创建：`mkdir -p ./com/youmeek`，该目录必须和原 jar 里面的层级目录结构一致
+
 
 ## 资料
 
