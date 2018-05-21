@@ -4,25 +4,6 @@ echo "-----------------------------------------禁用防火墙"
 systemctl stop firewalld.service
 systemctl disable firewalld.service
 
-echo "-----------------------------------------开始常用工具安装"
-yum install -y zip unzip lrzsz git epel-release
-
-echo "-----------------------------------------开始常用工具结束"
-echo "-----------------------------------------开始安装 zsh"
-yum install -y zsh
-
-echo "-----------------------------------------开始安装 oh-my-zsh"
-wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh
-
-echo "-----------------------------------------设置默认终端为 oh-my-zsh"
-chsh -s /bin/zsh root
-
-
-echo "-----------------------------------------开始安装 vim"
-yum install -y vim
-
-echo "-----------------------------------------设置 vim 配置"
-curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
 
 echo "-----------------------------------------安装 docker 所需环境"
 
@@ -50,7 +31,7 @@ docker run hello-world
 echo "-----------------------------------------安装 docker compose"
 echo "docker compose 的版本检查：https://docs.docker.com/compose/install/#install-compose"
 
-curl -L https://github.com/docker/compose/releases/download/1.20.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 
 chmod +x /usr/local/bin/docker-compose
 
@@ -58,20 +39,8 @@ echo "-----------------------------------------输出 docker compose 版本号"
 
 docker-compose --version
 
-echo "-----------------------------------------docker 加速"
-
-touch /etc/docker/daemon.json
-
-cat << EOF >> /etc/docker/daemon.json
-{
-  "registry-mirrors": ["https://ldhc17y9.mirror.aliyuncs.com"]
-}
-EOF
-
-systemctl daemon-reload
-
-systemctl restart docker
-
 echo "-----------------------------------------安装 htop"
 yum install -y htop
+
+
 
