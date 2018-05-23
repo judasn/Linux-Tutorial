@@ -327,7 +327,8 @@ Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 
 ## 端口使用情况
 
-- 查看 3316 端口是否有被使用：`lsof -i:3316`，有被使用会输出类似如下信息，如果没被使用会没有任何信息返回。
+- 安装 lsof：`yum install -y lsof`
+- 查看 3316 端口是否有被使用：`lsof -i:3316`，**有被使用会输出类似如下信息，如果没被使用会没有任何信息返回**
 
 ```
 COMMAND     PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
