@@ -271,6 +271,7 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
     - `docker exec -d 容器ID touch /opt/test.txt`，已守护式的方式进入 docker 容器，并创建一个文件
 - `docker stop 容器ID`，停止容器
     - `docker stop $(docker ps -a -q)`，停止所有容器
+    - `docker kill $(docker ps -q) ; docker rm $(docker ps -a -q)`，停止所有容器，并删除所有容器
 - `docker start 容器ID`，重新启动已经停止的容器（重新启动，docker run 参数还是保留之前的）
 - `docker restart 容器ID`，重启容器
 - `docker rm`，删除容器
@@ -278,7 +279,8 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
     - `docker rm -f 容器ID`，删除指定容器（该容器如果正在运行可以这样删除）
     - `docker rm $(docker ps -a -q)`，删除所有容器
     - `docker rm -f $(docker ps -a -q)`，强制删除所有容器
-	- `docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm`删除老的(一周前创建)容器
+	- `docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm` 删除老的(一周前创建)容器
+	- `docker kill $(docker ps -q) ; docker rm $(docker ps -a -q) ; docker rmi $(docker images -q -a)` 停止所有容器，删除所有容器，删除所有镜像
 - `docker commit`，把容器打成镜像
 	- `docker commit 容器ID gitnavi/docker-nodejs-test:0.1`
 		- gitnavi 是你注册的 https://store.docker.com/ 的名字，如果你没有的话，那需要先注册
@@ -584,6 +586,15 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 	    "max-file": "5"
 	}
 }
+```
+
+## 删除 Docker 镜像中为 none 的镜像
+
+- Dockerfile 代码更新频繁，自然 docker build 构建同名镜像也频繁的很，产生了众多名为 none 的无用镜像
+
+
+```
+docker rmi $(docker images -f "dangling=true" -q)
 ```
 
 ## Docker daemon.json 可配置参数
