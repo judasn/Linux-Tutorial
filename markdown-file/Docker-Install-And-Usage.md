@@ -646,6 +646,9 @@ docker rmi $(docker images -f "dangling=true" -q)
 FROM java:8-jre
 MAINTAINER skb-user zch <gitnavi@qq.com>
 
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ADD skb-user-0.0.1-SNAPSHOT.jar /usr/local/skb/user/
 
 CMD ["java", "-Xmx500m", "-jar", "/usr/local/skb/user/skb-user-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=test"]
@@ -663,6 +666,14 @@ EXPOSE 9096
 - 防火墙开放端口：
 	- `firewall-cmd --zone=public --add-port=9096/tcp --permanent`
 	- `firewall-cmd --reload`
+- 解释：
+
+```
+# 是为了解决容器的时区和宿主机不一致问题
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+```
+
 
 ## Docker Compose
 
