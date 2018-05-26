@@ -316,6 +316,9 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
     - `docker logs --tail 10 容器ID`，获取日志最后 10 行
     - `docker logs --tail 0 -f 容器ID`，跟踪某个容器的最新日志而不必读取日志文件
     - `docker logs -f -t --since="2018-05-26" --tail=200 容器ID` 根据某个时间读取日志
+    - `docker logs -f -t --since="2018-05-26T11:13:40" --tail=200 容器ID` 根据某个时间读取日志
+    - `docker logs -f -t --since="2018-05-25T11:13:40" --until "2018-05-26T11:13:40" --tail=200 容器ID` 根据某个时间读取日志
+    - `docker logs --since 10m 容器ID` 查看最近 10 分钟的日志
         - `-f` : 表示查看实时日志 
         - `-t` : 显示时间戳
         - `-since` : 显示某个开始时间的所有日志
