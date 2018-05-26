@@ -315,6 +315,11 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
     - `docker logs -ft 容器ID`，在 -f 的基础上又增加 -t 表示为每条日志加上时间戳，方便调试
     - `docker logs --tail 10 容器ID`，获取日志最后 10 行
     - `docker logs --tail 0 -f 容器ID`，跟踪某个容器的最新日志而不必读取日志文件
+    - `docker logs -f -t --since="2018-05-26" --tail=200 容器ID` 根据某个时间读取日志
+        - `-f` : 表示查看实时日志 
+        - `-t` : 显示时间戳
+        - `-since` : 显示某个开始时间的所有日志
+        - `-tail=200` : 查看最后的 200 条日志
 - `docker wait`，阻塞到一个容器，直到容器停止运行
 - `docker export`，将容器整个文件系统导出为一个tar包，不带layers、tag等信息
 - `docker port`，显示容器的端口映射
