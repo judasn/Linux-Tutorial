@@ -1,7 +1,6 @@
 # SSH（Secure Shell）介绍
 
 
-
 ## SSH 安装
 
 - 查看是否已安装：
@@ -12,16 +11,22 @@
  - CentOS 6：`sudo yum install -y openssh-server openssh-clients`
  - Ubuntu：`sudo apt-get install -y openssh-server openssh-client`
 
+## 特别注意：本文内容，修改完配置都要记得重启服务
+
+- 命令：`service sshd restart`
+- 命令：`systemctl restart sshd.service`
 
 ## SSH 修改连接端口
 
 - 配置文件介绍（记得先备份）：`sudo vim /etc/ssh/sshd_config`
 - 打开这一行注释：Port 22
 	- 自定义端口选择建议在万位的端口，如：10000-65535之间，假设这里我改为 60001
-- 给新端口加到防火墙中：
+- CentOS 6 给新端口加到防火墙中：
     - 添加规则：`iptables -I INPUT -p tcp -m tcp --dport 60001 -j ACCEPT`
     - 保存规则：`service iptables save`
     - 重启 iptables：`service iptables restart`
+- CentOS 7：添加端口：`firewall-cmd --zone=public --add-port=60001/tcp --permanent`
+	- 重启防火墙：`firewall-cmd --reload`
 
 ## 设置超时
 
@@ -71,9 +76,6 @@
 - 在该配置文件：`vim /etc/ssh/sshd_config`
 	- 添加该内容：`AllowUsers root userName1 userName2`
 
-## 修改完配置都要记得重启服务
-
-- 命令：`service sshd restart`
 
 ## 常用 SSH 连接终端
 
