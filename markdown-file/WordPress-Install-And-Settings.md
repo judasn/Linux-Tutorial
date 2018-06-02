@@ -59,8 +59,14 @@ systemctl restart  mysqld.service
 	- `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '上一步的新密码' WITH GRANT OPTION;`
 	- `systemctl restart  mysqld.service`
 - 试一下：`mysql -h localhost -u root -p` 然后输入密码，在 MySQL 终端输入：`select 1;`
-- 如果报：`You must reset your password using ALTER USER statement before executing this statement`
-	- `set password = password('新密码');`
+- 如果报：`You must reset your password using ALTER USER statement before executing this statement`，解决办法：
+
+```
+set global validate_password_policy=0; #密码强度设为最低等级
+set global validate_password_length=6; #密码允许最小长度为6
+set password = password('新密码');
+FLUSH PRIVILEGES;
+```
 
 ## 安装 PHP
 
