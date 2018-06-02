@@ -13,8 +13,8 @@
 
 ## 特别注意：本文内容，修改完配置都要记得重启服务
 
-- 命令：`service sshd restart`
-- 命令：`systemctl restart sshd.service`
+- CentOS 6 命令：`service sshd restart`
+- CentOS 7 命令：`systemctl restart sshd.service`
 
 ## SSH 修改连接端口
 
