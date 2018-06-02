@@ -58,8 +58,7 @@ systemctl restart  mysqld.service
 	- `UPDATE user SET authentication_string=PASSWORD('新密码') where USER='root';FLUSH PRIVILEGES;` 
 	- `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '上一步的新密码' WITH GRANT OPTION;`
 	- `systemctl restart  mysqld.service`
-- 试一下：`mysql -h localhost -u root -p`
-- 然后输入密码，输入：`select 1;`
+- 试一下：`mysql -h localhost -u root -p` 然后输入密码，在 MySQL 终端输入：`select 1;`
 - 如果报：`You must reset your password using ALTER USER statement before executing this statement`
 	- `set password = password('新密码');`
 
