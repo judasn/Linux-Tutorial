@@ -75,3 +75,4 @@
 * [YApi 安装和配置](markdown-file/YApi-Install-And-Settings.md)
 * [Kafka 安装和配置](markdown-file/Kafka-Install-And-Settings.md)
 * [Showdoc 安装和配置](markdown-file/Showdoc-Install-And-Settings.md)
+* [WordPress 安装和配置](markdown-file/WordPress-Install-And-Settings.md)

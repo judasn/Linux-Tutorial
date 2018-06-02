@@ -86,18 +86,8 @@
 - [YApi 安装和配置](markdown-file/YApi-Install-And-Settings.md)
 - [Kafka 安装和配置](markdown-file/Kafka-Install-And-Settings.md)
 - [Showdoc 安装和配置](markdown-file/Showdoc-Install-And-Settings.md)
+- [WordPress 安装和配置](markdown-file/WordPress-Install-And-Settings.md)
 
-
-## 下一步(Next)
-
-- Apache 安装和配置
-- LVS + Keepalived 高可用
-- MySQL + Keepalived 高可用
-- ActiveMQ 服务安装和配置
-- Zabbix 安装和配置
-- Nagios 安装和配置
-- sed 学习
-- 常用脚本
 
 ## 联系(Contact)
 
