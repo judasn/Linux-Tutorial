@@ -63,6 +63,7 @@ gitlab-postgresql:
 - 官网下载：<https://about.gitlab.com/downloads/>
 - 安装的系统环境要求：<https://docs.gitlab.com/ce/install/requirements.html>
 	- 从文章看目前要求 ruby 2.3，用 yum 版本过低，那就源码安装 ruby 吧，官网当前最新是：2.4.1（大小：14M）
+- 官网安装说明：<https://about.gitlab.com/installation/#centos-7>
 - 安装 ruby
 	- 下载：<https://www.ruby-lang.org/en/downloads/>
 	- 解压：`tar zxvf ruby-2.4.1.tar.gz`

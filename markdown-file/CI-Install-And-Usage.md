@@ -181,6 +181,7 @@ services:
 
 - 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右。
 - 浏览器访问 Gitlab：<http://192.168.0.105:10080/users/sign_in>
+	- 默认用户是 root，密码首次访问必须重新设置，并且最小长度为 8 位，我习惯设置为：aa123456
 - Gitlab 的具体使用可以看另外文章：[Gitlab 的使用](Gitlab-Install-And-Settings.md)
 
 ## Nexus + Jenkins + SonarQube

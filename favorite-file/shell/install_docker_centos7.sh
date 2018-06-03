@@ -33,3 +33,5 @@ chmod +x /usr/local/bin/docker-compose
 echo "输出 docker compose 版本号"
 
 docker-compose --version
+systemctl restart docker.service
+systemctl enable docker.service
