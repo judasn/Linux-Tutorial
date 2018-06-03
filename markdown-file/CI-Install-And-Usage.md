@@ -268,7 +268,35 @@ services:
 - 浏览器访问 Jenkins：<http://192.168.0.105:18080>
 
 
+## 配置 Jenkins 拉取代码权限
+
+- Gitlab 创建一个 Access Token：<http://192.168.0.105:10080/profile/personal_access_tokens>
+	- 填写任意 Name 字符串
+	- 勾选：API `Access the authenticated user's API`
+	- 点击：Create personal access token，会生成一个类似格式的字符串：`wt93jQzA8yu5a6pfsk3s`，这个 Jenkinsfile 会用到
+- 先访问 Jenkins 插件安装页面，安装下面三个插件：<http://192.168.0.105:18080/pluginManager/available>
+	- Gitlab：可能会直接安装不成功，如果不成功根据报错的详细信息可以看到 hpi 文件的下载地址，挂代理下载下来，然后离线安装即可
+	- Gitlab Hook：用于触发 GitLab 的一些 WebHooks 来构建项目
+	- Gitlab Authentication 这个插件提供了使用GitLab进行用户认证和授权的方案
+- 安装完插件后，访问 Jenkins 这个路径（Jenkins-->Credentials-->System-->Global credentials(unrestricted)-->Add Credentials）
+	- 该路径链接地址：<http://192.168.0.105:18080/credentials/store/system/domain/_/newCredentials>
+	- kind 下拉框选择：`GitLab API token`
+	- token 就填写我们刚刚生成的 access token
+	- ID 填写我们 Gitlab 账号
+
+## Jenkins 配置 JDK
+
+- 访问：<http://192.168.0.105:18080/configureTools/>
+- 因为 docker 镜像有此目录的挂载 `/data/docker/ci/jenkins/home:/var/jenkins_home`，所以我就直接宿主机上把 JDK 和 Maven 解压包放在该目录
+- 配置 JDK 安装，去掉 `自动安装` 复选框，填写 JAVA_HOME 路径：`/var/jenkins_home/jdk1.8.0_171`
 
 
+## Jenkins 配置 Maven
+
+- 配置 Maven 安装，去掉 `自动安装` 复选框，填写 MAVEN_HOME 路径：`/var/jenkins_home/apache-maven-3.5.3`
+- 安装 Jenkins 插件：`Maven Integration`
 
 
+## 资料
+
+- <https://blog.csdn.net/ruangong1203/article/details/73065410>

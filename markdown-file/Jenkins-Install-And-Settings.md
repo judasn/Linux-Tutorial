@@ -35,9 +35,13 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 
 ## 首次使用 Jenkins / Jenkins 插件推荐
 
-- 首次进入 Jenkins 的 Web UI 界面是一个解锁页面，需要让你输入：Administrator password
-	- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it eec22d513b5b /bin/bash`，然后：`cat /data/jenkins/jenkins_home/secrets/initialAdminPassword`
-- 然后再接下来就是插件的安装，我不推荐直接用它推荐给我们的插件直接安装，而是选择：`Select plugins to install`，我们自己选择插件安装。
+- 我这里就不截图了，有需要截图可以看这博文，差不多就是这样的：[点击我o(∩_∩)o ](https://blog.csdn.net/boling_cavalry/article/details/78942408)
+- 首次进入 Jenkins 的 Web UI 界面是一个解锁页面 Unlock Jenkins，需要让你输入：Administrator password
+	- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it eec22d513b5b /bin/bash`
+		- 然后：`cat /data/jenkins/jenkins_home/secrets/initialAdminPassword`
+		- 也有可能是这个目录：`cat /var/jenkins_home/secrets/initialAdminPassword`
+- 然后再接下来就是插件的安装，我推荐直接用它推荐给我们的插件直接安装，稍后再安装自己需要定制的。
+- 插件安装完会进入：Create First Admin User 页面，填写一个用户信息即可。
 - 我的这里的代码仓库是：Gitlab
 - 推荐插件
 	- Publish Over SSH（具体名字要看下）
@@ -74,9 +78,10 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 	- GIT client plugin Git客户端插件
 	- Maven Integration plugin：用于构建 Maven 项目
 	- Gradle Plugin：用于构建 Gradle 项目
-	- Gitlab Hook Plugin：用于触发 GitLab 的一些 WebHooks 来构建项目
-	- FireLine Plugin：代码规范检查，已经集成了阿里巴巴的代码规约（P3C）检查
+	- Gitlab Plugin：可能会直接安装不成功，如果不成功根据报错的详细信息可以看到 hpi 文件的下载地址，挂代理下载下来，然后离线安装即可
+	- Gitlab Hook：用于触发 GitLab 的一些 WebHooks 来构建项目
 	- Gitlab Authentication 这个插件提供了使用GitLab进行用户认证和授权的方案
+	- FireLine Plugin：代码规范检查，已经集成了阿里巴巴的代码规约（P3C）检查
 	- Docker Commons Plugin
 	- Docker plugin
 	- Kubernetes
