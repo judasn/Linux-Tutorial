@@ -266,9 +266,15 @@ services:
 
 - 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右。
 - 浏览器访问 SonarQube：<http://192.168.0.105:19000>
+	- 默认用户名：admin
+	- 默认密码：admin
 - 浏览器访问 Nexus：<http://192.168.0.105:18081>
+	- 默认用户名：admin
+	- 默认密码：admin123
 - 浏览器访问 Jenkins：<http://192.168.0.105:18080>
-
+	- 首次进入 Jenkins 的 Web UI 界面是一个解锁页面 Unlock Jenkins，需要让你输入：Administrator password
+		- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it ci_jenkins_1 /bin/bash`
+			- 然后：`cat /var/jenkins_home/secrets/initialAdminPassword`，找到初始化密码
 ---------------------------------
 
 ## 配置 Jenkins 拉取代码权限
