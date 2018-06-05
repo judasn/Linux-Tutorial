@@ -187,7 +187,7 @@ services:
 ## Nexus + Jenkins + SonarQube
 
 - 预计会使用内存：4G 左右
-- 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
+- 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/lib /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
 - 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
 - 下面有一个细节要特别注意：yml 里面不能有中文。还有就是 sonar 的挂载目录不能直接挂在 /opt/sonarqube 上，不然会启动不了。
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
@@ -242,7 +242,7 @@ services:
     volumes:
       - /data/docker/ci/nexus:/nexus-data
   jenkins:
-    image: jenkins:2.60.3
+    image: wine6823/jenkins:1.1
     restart: always
     ports:
       - "18080:8080"
@@ -251,7 +251,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
-      - /data/docker/ci/jenkins:/var/lib/jenkins/
+      - /etc/localtime:/etc/localtime:ro
+      - /root/.ssh:/root/.ssh
+      - /data/docker/ci/jenkins/lib:/var/lib/jenkins/
       - /data/docker/ci/jenkins/home:/var/jenkins_home
     depends_on:
       - nexus
@@ -291,19 +293,8 @@ services:
 	- 去掉 `防止跨站点请求伪造`
 	- 勾选 `登录用户可以做任何事` 下面的：`Allow anonymous read access`
 
-## Jenkins 配置 JDK
 
-- 访问：<http://192.168.0.105:18080/configureTools/>
-- 因为 docker 镜像有此目录的挂载 `/data/docker/ci/jenkins/home:/var/jenkins_home`，所以我就直接宿主机上把 JDK 和 Maven 解压包放在该目录
-- 配置 JDK 安装，去掉 `自动安装` 复选框，填写 JAVA_HOME 路径：`/var/jenkins_home/jdk1.8.0_171`
-
-
-## Jenkins 配置 Maven
-
-- 配置 Maven 安装，去掉 `自动安装` 复选框，填写 MAVEN_HOME 路径：`/var/jenkins_home/apache-maven-3.5.3`
-- 安装 Jenkins 插件：`Maven Integration`
-
-## 配置 Gitlab webhook
+## 配置 Gitlab Webhook
 
 - Jenkins 访问：<http://192.168.0.105:18080/job/任务名/configure>
 	- 在 `Build Triggers` 勾选：`触发远程构建 (例如,使用脚本)`，在 `身份验证令牌` 输入框填写任意字符串，这个等下 Gitlab 会用到，假设我这里填写：112233
