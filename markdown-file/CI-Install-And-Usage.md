@@ -267,6 +267,7 @@ services:
 - 浏览器访问 Nexus：<http://192.168.0.105:18081>
 - 浏览器访问 Jenkins：<http://192.168.0.105:18080>
 
+---------------------------------
 
 ## 配置 Jenkins 拉取代码权限
 
@@ -284,6 +285,12 @@ services:
 	- token 就填写我们刚刚生成的 access token
 	- ID 填写我们 Gitlab 账号
 
+## Jenkins 特殊配置（减少权限问题，如果是内网的话）
+
+- 访问：<http://192.168.0.105:18080/configureSecurity/>
+	- 去掉 `防止跨站点请求伪造`
+	- 勾选 `登录用户可以做任何事` 下面的：`Allow anonymous read access`
+
 ## Jenkins 配置 JDK
 
 - 访问：<http://192.168.0.105:18080/configureTools/>
@@ -296,6 +303,12 @@ services:
 - 配置 Maven 安装，去掉 `自动安装` 复选框，填写 MAVEN_HOME 路径：`/var/jenkins_home/apache-maven-3.5.3`
 - 安装 Jenkins 插件：`Maven Integration`
 
+## 配置 Gitlab webhook
+
+- Jenkins 访问：<http://192.168.0.105:18080/job/任务名/configure>
+	- 在 `Build Triggers` 勾选：`触发远程构建 (例如,使用脚本)`，在 `身份验证令牌` 输入框填写任意字符串，这个等下 Gitlab 会用到，假设我这里填写：112233
+- Gitlab 访问：<http://192.168.0.105:10080/用户名/项目名/settings/integrations>
+	- 在 `URL` 中填写：`http://192.168.0.105:18080/job/任务名/build?token=112233`
 
 ## 资料
 
