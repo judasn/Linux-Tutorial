@@ -49,7 +49,6 @@ cat << EOF >> /etc/docker/daemon.json
 EOF
 
 systemctl daemon-reload
-
 systemctl restart docker
 
 
