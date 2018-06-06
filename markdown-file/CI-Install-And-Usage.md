@@ -228,8 +228,7 @@ services:
       - /data/docker/ci/sonarqube/extension:/opt/sonarqube/extensions
       - /data/docker/ci/sonarqube/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
     environment:
-      #- SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5433/sonar
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://192.168.0.105:5433/sonar
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonardb:5432/sonar
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
   nexus:
