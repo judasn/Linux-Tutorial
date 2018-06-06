@@ -218,8 +218,8 @@ services:
     ports:
      - "19000:9000"
      - "19092:9092"
-    #networks:
-      #- prodnetwork
+    networks:
+      - prodnetwork
     depends_on:
       - sonardb
     volumes:
