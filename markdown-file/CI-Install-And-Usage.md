@@ -182,13 +182,14 @@ services:
 - 启动：`docker-compose up -d`，启动比较慢，等个 2 分钟左右。
 - 浏览器访问 Gitlab：<http://192.168.0.105:10080/users/sign_in>
 	- 默认用户是 root，密码首次访问必须重新设置，并且最小长度为 8 位，我习惯设置为：aa123456
+	- 添加 SSH key：<http://192.168.0.105:10080/profile/keys>
 - Gitlab 的具体使用可以看另外文章：[Gitlab 的使用](Gitlab-Install-And-Settings.md)
 
 ## Nexus + Jenkins + SonarQube
 
 - 预计会使用内存：4G 左右
-- 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/lib /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
-- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql`
+- 创建宿主机挂载目录：`mkdir -p /data/docker/ci/nexus /data/docker/ci/jenkins /data/docker/ci/jenkins/lib /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql /data/docker/ci/gatling/results`
+- 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/ci/nexus /data/docker/ci/jenkins/lib /data/docker/ci/jenkins/home /data/docker/ci/sonarqube /data/docker/ci/postgresql /data/docker/ci/gatling/results`
 - 下面有一个细节要特别注意：yml 里面不能有中文。还有就是 sonar 的挂载目录不能直接挂在 /opt/sonarqube 上，不然会启动不了。
 - 这里使用 docker-compose 的启动方式，所以需要创建 docker-compose.yml 文件：
 
@@ -251,7 +252,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
       - /etc/localtime:/etc/localtime:ro
-      - /root/.ssh:/root/.ssh
+      - $HOME/.ssh:/root/.ssh
       - /data/docker/ci/jenkins/lib:/var/lib/jenkins/
       - /data/docker/ci/jenkins/home:/var/jenkins_home
     depends_on:
@@ -274,23 +275,14 @@ services:
 	- 首次进入 Jenkins 的 Web UI 界面是一个解锁页面 Unlock Jenkins，需要让你输入：Administrator password
 		- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it ci_jenkins_1 /bin/bash`
 			- 然后：`cat /var/jenkins_home/secrets/initialAdminPassword`，找到初始化密码
+
 ---------------------------------
 
 ## 配置 Jenkins 拉取代码权限
 
-- Gitlab 创建一个 Access Token：<http://192.168.0.105:10080/profile/personal_access_tokens>
-	- 填写任意 Name 字符串
-	- 勾选：API `Access the authenticated user's API`
-	- 点击：Create personal access token，会生成一个类似格式的字符串：`wt93jQzA8yu5a6pfsk3s`，这个 Jenkinsfile 会用到
-- 先访问 Jenkins 插件安装页面，安装下面三个插件：<http://192.168.0.105:18080/pluginManager/available>
-	- Gitlab：可能会直接安装不成功，如果不成功根据报错的详细信息可以看到 hpi 文件的下载地址，挂代理下载下来，然后离线安装即可
-	- Gitlab Hook：用于触发 GitLab 的一些 WebHooks 来构建项目
-	- Gitlab Authentication 这个插件提供了使用GitLab进行用户认证和授权的方案
-- 安装完插件后，访问 Jenkins 这个路径（Jenkins-->Credentials-->System-->Global credentials(unrestricted)-->Add Credentials）
-	- 该路径链接地址：<http://192.168.0.105:18080/credentials/store/system/domain/_/newCredentials>
-	- kind 下拉框选择：`GitLab API token`
-	- token 就填写我们刚刚生成的 access token
-	- ID 填写我们 Gitlab 账号
+- 因为 dockerfile 中我已经把宿主机的 .ssh 下的挂载在 Jenkins 的容器中
+- 所以读取宿主机的 pub：`cat ~/.ssh/id_rsa.pub`，然后配置在 Gitlab 中：<http://192.168.0.105:10080/profile/keys>
+- Jenkinsfile 中 Git URL 使用：ssh 协议，比如：`ssh://git@192.168.0.105:10022/gitnavi/spring-boot-ci-demo.git`
 
 ## Jenkins 特殊配置（减少权限问题，如果是内网的话）
 
@@ -305,6 +297,9 @@ services:
 	- 在 `Build Triggers` 勾选：`触发远程构建 (例如,使用脚本)`，在 `身份验证令牌` 输入框填写任意字符串，这个等下 Gitlab 会用到，假设我这里填写：112233
 - Gitlab 访问：<http://192.168.0.105:10080/用户名/项目名/settings/integrations>
 	- 在 `URL` 中填写：`http://192.168.0.105:18080/job/任务名/build?token=112233`
+
+
+
 
 ## 资料
 

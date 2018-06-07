@@ -37,7 +37,7 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 
 - 我这里就不截图了，有需要截图可以看这博文，差不多就是这样的：[点击我o(∩_∩)o ](https://blog.csdn.net/boling_cavalry/article/details/78942408)
 - 首次进入 Jenkins 的 Web UI 界面是一个解锁页面 Unlock Jenkins，需要让你输入：Administrator password
-	- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it eec22d513b5b /bin/bash`
+	- 这个密码放在：`/var/jenkins_home/secrets/initialAdminPassword`，你需要先：`docker exec -it ci_jenkins_1 /bin/bash`
 		- 然后：`cat /data/jenkins/jenkins_home/secrets/initialAdminPassword`
 		- 也有可能是这个目录：`cat /var/jenkins_home/secrets/initialAdminPassword`
 - 然后再接下来就是插件的安装，我推荐直接用它推荐给我们的插件直接安装，稍后再安装自己需要定制的。
