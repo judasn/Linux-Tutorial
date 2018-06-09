@@ -268,6 +268,10 @@ services:
 - 浏览器访问 SonarQube：<http://192.168.0.105:19000>
 	- 默认用户名：admin
 	- 默认密码：admin
+	- 插件安装地址：<http://192.168.0.105:19000/admin/marketplace>
+	- 代码检查规范选择：<http://192.168.0.105:19000/profiles>
+		- 如果没有安装相关检查插件，默认是没有内容可以设置，建议现在插件市场安装 FindBugs，这样也可以帮你生成插件目录：`/extension/plugins`
+		- 如果你有其他额外插件，可以把 jar 放在 `${SONAR_HOME}/extension/plugins` 目录下，然后重启下 sonar
 - 浏览器访问 Nexus：<http://192.168.0.105:18081>
 	- 默认用户名：admin
 	- 默认密码：admin123
