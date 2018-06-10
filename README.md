@@ -78,6 +78,7 @@
 - [GitLab 安装和配置](markdown-file/Gitlab-Install-And-Settings.md)
 - [JMeter 安装和配置](markdown-file/JMeter-Install-And-Settings.md)
 - [Docker 安装和使用](markdown-file/Docker-Install-And-Usage.md)
+- [Harbor 安装和配置](markdown-file/Harbor-Install-And-Usage.md)
 - [LDAP 安装和使用](markdown-file/LDAP-Install-And-Settings.md)
 - [Alfresco 安装和使用](markdown-file/Alfresco-Install-And-Usage.md)
 - [Apache Thrift 安装和使用](markdown-file/Thrift-Install-And-Usage.md)
