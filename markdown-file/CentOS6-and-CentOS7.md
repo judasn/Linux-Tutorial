@@ -36,7 +36,9 @@
 
 ### 开放端口
 
-- 添加端口：`firewall-cmd --zone=public --add-port=8883/tcp --permanent`
+- 添加单个端口：`firewall-cmd --zone=public --add-port=8883/tcp --permanent`
+- 添加范围端口：`firewall-cmd --zone=public --add-port=8883-8885/tcp --permanent`
+- 删除端口：`firewall-cmd --zone=public --remove-port=8883/tcp --permanent`
 - 重启防火墙：`firewall-cmd --reload`
 	- 命令解释：
 	- `--zone` #作用域
