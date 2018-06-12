@@ -121,13 +121,42 @@ listen  proxy-mysql
 	- 密码：`gitnavi123456`
 	- 然后在上面创建对应的数据，如果所有节点都有对应的数据，则表示部署成功
 
+## HAProxy 高可用（Keepalived）
+
+- 配置虚拟 IP
+	- 因为 Docker 内的虚拟 IP 不能被外网使用，所以需要借助宿主机 Keepalived 映射成外网可以访问的虚拟 IP
+- 进入 pxc-haproxy-1 容器安装 Keepalived：`docker exec -it pxc-haproxy-1 /bin/bash`
+	- `apt-get update`
+	- `apt-get install -y keepalived`
+	- `apt-get install -y vim`
+	- `vim /etc/keepalived/keepalived.conf`
+
+```
+vrrp_instance  VI_1 {
+    state  MASTER
+    interface  eth0
+    virtual_router_id  51
+    priority  100
+    advert_int  1
+    authentication {
+        auth_type  PASS
+        auth_pass  123456
+    }
+    virtual_ipaddress {
+        172.18.0.201
+    }
+}
+```
+
+- `service keepalived start`
+- 在宿主机测试：`ping 172.18.0.201`，如果能 ping 通表示没问题了
+
 ## 资料
 
 - <https://blog.csdn.net/leshami/article/details/72173732>
 - <https://zhangge.net/5125.html>
 - <https://blog.csdn.net/u012758088/article/details/78643704>
-- <>
-- <>
+- <https://coding.imooc.com/class/219.html>
 - <>
 - <>
 - <>
