@@ -39,7 +39,11 @@ docker run -d -p 3309:3306 -v /data/docker/pxc/node3:/var/lib/mysql -e MYSQL_ROO
 - 测试集群
 	- 用 SQLyog 连上 3 个节点，随便找一个节点创建库，其他几个节点会同时产生库。以此类推，创建表、插入数据，然后查看其他库情况。
 
-## 负载均衡
+## 负载均衡（HAProxy + Keepalived）
+
+### HAProxy-1
+
+#### 创建 HAProxy-1
 
 - 因为 PXC 是同步是双向的，都支持读写，所以就可以考虑使用负载均衡实现流量分发
 - 使用使用 HAProxy（支持 HTTP 协议、TCP/IP 协议，并且支持虚拟化，可以直接用 Docker 安装）
@@ -109,7 +113,7 @@ listen  proxy-mysql
 ```
 
 - 官网 Docker 镜像：<https://hub.docker.com/_/haproxy/>
-- 运行容器：`docker run -it -d -p 4001:8118 -p 4002:3316 -v /data/docker/haproxy/conf:/usr/local/etc/haproxy --name pxc-haproxy-1 --privileged --net=pxc-net haproxy -f /usr/local/etc/haproxy/haproxy.cfg`
+- 运行容器：`docker run -it -d -p 4001:8118 -p 4002:3316 -v /data/docker/haproxy/conf:/usr/local/etc/haproxy --name pxc-haproxy-1 --privileged --net=pxc-net --ip 172.18.0.7 haproxy -f /usr/local/etc/haproxy/haproxy.cfg`
 - 浏览器访问：<http://192.168.0.105:4001/dbs>
 	- 输入：`admin`
 	- 输入：`gitnavi123456`
@@ -121,15 +125,32 @@ listen  proxy-mysql
 	- 密码：`gitnavi123456`
 	- 然后在上面创建对应的数据，如果所有节点都有对应的数据，则表示部署成功
 
-## HAProxy 高可用（Keepalived）
+#### HAProxy-1 配置 Keepalived
 
 - 配置虚拟 IP
 	- 因为 Docker 内的虚拟 IP 不能被外网使用，所以需要借助宿主机 Keepalived 映射成外网可以访问的虚拟 IP
 - 进入 pxc-haproxy-1 容器安装 Keepalived：`docker exec -it pxc-haproxy-1 /bin/bash`
-	- `apt-get update`
-	- `apt-get install -y keepalived`
-	- `apt-get install -y vim`
-	- `vim /etc/keepalived/keepalived.conf`
+- 先更换下源，不然太慢了：
+
+```
+cat << EOF > /etc/apt/sources.list
+deb http://mirrors.163.com/ubuntu/ wily main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-security main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-updates main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-proposed main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-backports main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-security main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-updates main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-proposed main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-backports main restricted universe multiverse
+EOF
+```
+
+- `apt-get update`
+- `apt-get install -y vim`
+- `apt-get install -y keepalived`
+- `vim /etc/keepalived/keepalived.conf`
 
 ```
 vrrp_instance  VI_1 {
@@ -150,6 +171,124 @@ vrrp_instance  VI_1 {
 
 - `service keepalived start`
 - 在宿主机测试：`ping 172.18.0.201`，如果能 ping 通表示没问题了
+
+### HAProxy-2
+
+#### 创建 HAProxy-2
+
+- 运行容器：`docker run -it -d -p 4003:8118 -p 4004:3316 -v /data/docker/haproxy/conf:/usr/local/etc/haproxy --name pxc-haproxy-2 --privileged --net=pxc-net --ip 172.18.0.8 haproxy -f /usr/local/etc/haproxy/haproxy.cfg`
+- 浏览器访问：<http://192.168.0.105:4003/dbs>
+	- 输入：`admin`
+	- 输入：`gitnavi123456`
+	- 可以看到 HAProxy 监控界面
+- SQLyog 连接
+	- IP：`192.168.0.105`
+	- 端口：`4004`
+	- 用户：`root`
+	- 密码：`gitnavi123456`
+	- 然后在上面创建对应的数据，如果所有节点都有对应的数据，则表示部署成功
+
+#### HAProxy-2 配置 Keepalived
+
+- 配置虚拟 IP
+	- 因为 Docker 内的虚拟 IP 不能被外网使用，所以需要借助宿主机 Keepalived 映射成外网可以访问的虚拟 IP
+- 进入 pxc-haproxy-1 容器安装 Keepalived：`docker exec -it pxc-haproxy-2 /bin/bash`
+- 先更换下源，不然太慢了：
+
+```
+cat << EOF > /etc/apt/sources.list
+deb http://mirrors.163.com/ubuntu/ wily main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-security main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-updates main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-proposed main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu/ wily-backports main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-security main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-updates main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-proposed main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ wily-backports main restricted universe multiverse
+EOF
+```
+
+- `apt-get update`
+- `apt-get install -y vim`
+- `apt-get install -y keepalived`
+- `vim /etc/keepalived/keepalived.conf`
+
+```
+vrrp_instance  VI_1 {
+    state  MASTER
+    interface  eth0
+    virtual_router_id  51
+    priority  100
+    advert_int  1
+    authentication {
+        auth_type  PASS
+        auth_pass  123456
+    }
+    virtual_ipaddress {
+        172.18.0.201
+    }
+}
+```
+
+- `service keepalived start`
+- 在宿主机测试：`ping 172.18.0.201`，如果能 ping 通表示没问题了
+
+
+## 宿主机安装 Keepalived
+
+```
+
+yum install -y keepalived
+
+vi /etc/keepalived/keepalived.conf
+
+```
+
+```
+vrrp_instance VI_1 {
+    state MASTER
+    interface ens33
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 123456
+    }
+    virtual_ipaddress {
+        192.168.99.150
+    }
+}
+​
+virtual_server 192.168.99.150 8118 {
+    delay_loop 3
+    lb_algo rr 
+    lb_kind NAT
+    persistence_timeout 50
+    protocol TCP
+​
+    real_server 172.18.0.201 8118 {
+        weight 1
+    }
+}
+​
+virtual_server 192.168.99.150 3316 {
+    delay_loop 3
+    lb_algo rr 
+    lb_kind NAT
+    persistence_timeout 50
+    protocol TCP
+​
+    real_server 172.18.0.201 3316 {
+        weight 1
+    }
+}
+```
+
+- `systemctl start keepalived`
+
 
 ## 资料
 
