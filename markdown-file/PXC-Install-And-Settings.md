@@ -17,23 +17,24 @@
 
 - Docker 官方仓库：<https://hub.docker.com/r/percona/percona-xtradb-cluster/>
 - 下载镜像：`docker pull percona/percona-xtradb-cluster`
-- 创建需要挂载的目录：`mkdir -p /data/docker/pxc/node1 /data/docker/pxc/node2 /data/docker/pxc/node3`
+- 创建需要挂载的目录：`mkdir -p /data/docker/pxc/node1/mysql /data/docker/pxc/node2/mysql /data/docker/pxc/node3/mysql`
+- 创建需要挂载的目录：`mkdir -p /data/docker/pxc/node1/backup`
 - 赋权：`chmod 777 -R /data/docker/pxc`
 - 创建 Docker 网段：`docker network create --subnet=172.18.0.0/24 pxc-net`
 - 启动镜像：
 
 ```
-# 初次初始化比较慢，给个 2 分钟左右吧
-docker run -d -p 3307:3306 -v /data/docker/pxc/node1:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=gitnavi123456 -e CLUSTER_NAME=pxc-cluster -e XTRABACKUP_PASSWORD=gitnavi123456 --privileged --name=pxc-node-1 --net=pxc-net --ip 172.18.0.2 percona/percona-xtradb-cluster
+# 初次初始化比较慢，给个 2 分钟左右吧，同时这个节点也用来做全量备份
+docker run -d -p 3307:3306 -v /data/docker/pxc/node1/mysql:/var/lib/mysql -v /data/docker/pxc/node1/backup:/data/backup -e MYSQL_ROOT_PASSWORD=gitnavi123456 -e CLUSTER_NAME=pxc-cluster -e XTRABACKUP_PASSWORD=gitnavi123456 --privileged --name=pxc-node-1 --net=pxc-net --ip 172.18.0.2 percona/percona-xtradb-cluster
 ```
 
 - 使用 SQLyog 测试是否可以连上去，可以才能继续创建其他节点。
 	- 连接地址是宿主机 IP，端口是：3307
 
 ```
-docker run -d -p 3308:3306 -v /data/docker/pxc/node2:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=gitnavi123456 -e CLUSTER_NAME=pxc-cluster -e XTRABACKUP_PASSWORD=gitnavi123456 -e CLUSTER_JOIN=pxc-node-1 --privileged --name=pxc-node-2 --net=pxc-net --ip 172.18.0.3 percona/percona-xtradb-cluster
+docker run -d -p 3308:3306 -v /data/docker/pxc/node2/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=gitnavi123456 -e CLUSTER_NAME=pxc-cluster -e XTRABACKUP_PASSWORD=gitnavi123456 -e CLUSTER_JOIN=pxc-node-1 --privileged --name=pxc-node-2 --net=pxc-net --ip 172.18.0.3 percona/percona-xtradb-cluster
 
-docker run -d -p 3309:3306 -v /data/docker/pxc/node3:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=gitnavi123456 -e CLUSTER_NAME=pxc-cluster -e XTRABACKUP_PASSWORD=gitnavi123456 -e CLUSTER_JOIN=pxc-node-1 --privileged --name=pxc-node-3 --net=pxc-net --ip 172.18.0.4 percona/percona-xtradb-cluster
+docker run -d -p 3309:3306 -v /data/docker/pxc/node3/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=gitnavi123456 -e CLUSTER_NAME=pxc-cluster -e XTRABACKUP_PASSWORD=gitnavi123456 -e CLUSTER_JOIN=pxc-node-1 --privileged --name=pxc-node-3 --net=pxc-net --ip 172.18.0.4 percona/percona-xtradb-cluster
 ```
 
 - 测试集群
@@ -120,6 +121,35 @@ listen  proxy-mysql
 	- 用户：`root`
 	- 密码：`gitnavi123456`
 	- 然后在上面创建对应的数据，如果所有节点都有对应的数据，则表示部署成功
+
+## XtraBackup 热备份
+
+- XtraBackup 备份过程不锁表
+- XtraBackup 备份过程不会打断正在执行的事务
+- XtraBackup 备份资料经过压缩，磁盘空间占用低
+
+#### 全量备份
+
+- 容器内安装 XtraBackup，并执行备份语句
+
+```
+apt-get update
+apt-get install -y percona-xtrabackup-24
+
+# 全量备份，备份到 docker 容器的 /data 目录下：
+innobackupex --user=root --password=gitnavi123456 /data/backup/full/201806
+```
+
+#### 还原全量备份
+
+
+- PXC 还原数据的时候，必须解散集群，删除掉只剩下一个节点，同时删除节点中的数据
+    - 进入容器：`rm -rf /var/lib/mysql/*`
+- 回滚备份时没有提交的事务：`innobackupex --user=root --password=gitnavi123456 --apply-back /data/backup/full/2018-04-15_05-09-07/`
+- 还原数据：`innobackupex --user=root --password=gitnavi123456 --copy-back  /data/backup/full/2018-04-15_05-09-07/`
+
+
+#### 增量备份（未整理）
 
 
 ## 资料
