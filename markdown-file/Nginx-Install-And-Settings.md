@@ -688,8 +688,7 @@ location ~ .*$ {
 - 配置 cronolog（按天）：`nohup cat /data/nginx/log/access_log.log | /usr/sbin/cronolog /data/nginx/log/logs/access-%Y-%m-%d.log &`
 - 配置 cronolog（按月）：`nohup cat /data/nginx/log/access_log.log | /usr/sbin/cronolog /data/nginx/log/logs/access-%Y-%m.log &`
 - 编辑 nginx 配置文件，配置 log 位置：`access_log /data/nginx/log/access_log.log;`
-
-重启Nginx
+- 重启 nginx
 
 ### Nginx 处理跨域请求
 
