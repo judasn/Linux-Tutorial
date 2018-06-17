@@ -683,7 +683,12 @@ location ~ .*$ {
 
 ### Nginx 自动分割日志文件
 
-
+- 在 [Tomcat 安装和配置、优化](Tomcat-Install-And-Settings.md) 文章已经使用了 cronolog，这里也借用 cronolog 来实现分割。具体安装看文章。
+- 创建命名管道：`mkfifo /data/nginx/log/access_log.log`
+- 配置 cronolog（按天）：`nohup cat /data/nginx/log/access_log.log | /usr/sbin/cronolog /data/nginx/log/logs/access-%Y-%m-%d.log &`
+- 配置 cronolog（按月）：`nohup cat /data/nginx/log/access_log.log | /usr/sbin/cronolog /data/nginx/log/logs/access-%Y-%m.log &`
+- 编辑 nginx 配置文件，配置 log 位置：`access_log /data/nginx/log/access_log.log;`
+- 重启 nginx
 
 ### Nginx 处理跨域请求
 
