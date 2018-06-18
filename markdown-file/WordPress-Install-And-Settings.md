@@ -130,6 +130,8 @@ rm -rf wordpress-4.9.4-zh_CN.zip
 
 cd /var/www/html/wordpress && mv * ../
 
+rm -rf /var/www/html/wordpress/
+
 chmod -R 777 /var/www/html/
 ```
 
