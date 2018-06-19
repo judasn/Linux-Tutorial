@@ -83,7 +83,109 @@ aof-rewrite-incremental-fsync yes
 - 重新启动服务：`docker restart cloud-redis`
 
 
-## Redis 安装
+## RedisCluster 集群（Docker 方式）
+
+#### Redis 容器准备
+
+- 目标：3 主 3 从（一般都是推荐奇数个 master）
+- 拉取镜像：`docker pull registry.cn-shenzhen.aliyuncs.com/youmeek/redis-to-cluster:3.2.3`
+- 重新打个 tag（旧名字太长了）：`docker tag registry.cn-shenzhen.aliyuncs.com/youmeek/redis-to-cluster:3.2.3 redis-to-cluster:3.2.3`
+- 创建网段：`docker network create --subnet=172.19.0.0/16 net-redis-to-cluster`
+- 宿主机创建配置文件：`mkdir -p /data/docker/redis-to-cluster/config && vim /data/docker/redis-to-cluster/config/redis.conf`
+
+```
+bind 127.0.0.1
+protected-mode yes
+port 6379
+tcp-backlog 511
+timeout 0
+tcp-keepalive 300
+daemonize yes
+supervised no
+pidfile /var/run/redis_6379.pid
+loglevel notice
+logfile ""
+databases 16
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir ./
+slave-serve-stale-data yes
+slave-read-only yes
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+repl-disable-tcp-nodelay no
+slave-priority 100
+appendonly yes
+appendfilename "appendonly.aof"
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+lua-time-limit 5000
+cluster-enabled yes
+cluster-config-file nodes-6379.conf
+cluster-node-timeout 15000
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+latency-monitor-threshold 0
+notify-keyspace-events ""
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+list-max-ziplist-size -2
+list-compress-depth 0
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+hll-sparse-max-bytes 3000
+activerehashing yes
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
+hz 10
+aof-rewrite-incremental-fsync yes
+```
+
+- 赋权：`chmod 777 -R /data/docker/redis-to-cluster/`
+- 运行 6 个节点：
+	- `docker run -it -d --name redis-to-cluster-1 -p 5001:6379 -v /data/docker/redis-to-cluster/config/redis.conf:/usr/redis/redis.conf --net=net-redis-to-cluster --ip 172.19.0.2 redis-to-cluster:3.2.3 bash`
+	- `docker run -it -d --name redis-to-cluster-2 -p 5002:6379 -v /data/docker/redis-to-cluster/config/redis.conf:/usr/redis/redis.conf --net=net-redis-to-cluster --ip 172.19.0.3 redis-to-cluster:3.2.3 bash`
+	- `docker run -it -d --name redis-to-cluster-3 -p 5003:6379 -v /data/docker/redis-to-cluster/config/redis.conf:/usr/redis/redis.conf --net=net-redis-to-cluster --ip 172.19.0.4 redis-to-cluster:3.2.3 bash`
+	- `docker run -it -d --name redis-to-cluster-4 -p 5004:6379 -v /data/docker/redis-to-cluster/config/redis.conf:/usr/redis/redis.conf --net=net-redis-to-cluster --ip 172.19.0.5 redis-to-cluster:3.2.3 bash`
+	- `docker run -it -d --name redis-to-cluster-5 -p 5005:6379 -v /data/docker/redis-to-cluster/config/redis.conf:/usr/redis/redis.conf --net=net-redis-to-cluster --ip 172.19.0.6 redis-to-cluster:3.2.3 bash`
+	- `docker run -it -d --name redis-to-cluster-6 -p 5006:6379 -v /data/docker/redis-to-cluster/config/redis.conf:/usr/redis/redis.conf --net=net-redis-to-cluster --ip 172.19.0.7 redis-to-cluster:3.2.3 bash`
+- 配置 redis-to-cluster-1 节点：`docker exec -it redis-to-cluster-1 bash`
+	- 启动容器的 redis：`/usr/redis/src/redis-server /usr/redis/redis.conf`
+- 其他 5 个节点一样进行启动。
+
+#### 创建 Cluster 集群（通过 redis-trib.rb）
+
+- 配置 redis-to-cluster-1 节点（或者选择其他任意一个节点）：`docker exec -it redis-to-cluster-1 bash`
+- `mkdir -p /usr/redis/cluster`
+- `cp /usr/redis/src/redis-trib.rb /usr/redis/cluster/`
+- `cd /usr/redis/cluster/`
+- 创建 Cluster 集群（会有交互）（镜像中已经安装了 ruby 了）：`./redis-trib.rb create --replicas 1 172.19.0.2:6379 172.19.0.3:6379 172.19.0.4:6379 172.19.0.5:6379 172.19.0.6:6379 172.19.0.7:6379`
+	- `--replicas 1` 表示为每个主节点创建一个从节点
+- 连接集群测试：
+	- 进入随便一个节点：`docker exec -it redis-to-cluster-1 bash`
+	- `/usr/redis/src/redis-cli -c`
+	- 查看集群情况：`cluster nodes`
+	- 写入数据：`set myKey myValue`，如果成功会返回：``，可以推断它是 redis-to-cluster-3 容器
+	- 暂定掉 redis-to-cluster-3 容器：`docker pause redis-to-cluster-3`
+	- 重新连接：`/usr/redis/src/redis-cli -c`
+	- 查看集群情况：`cluster nodes`
+	- 获取值：`get myKey`
+	- 重新启动 redis-to-cluster-3：`docker unpause redis-to-cluster-3`
+	- 查看集群情况：`cluster nodes`
+
+
+
+## Redis 编译安装
 
 - Redis 安装
     - 官网：<http://redis.io/>
