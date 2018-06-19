@@ -135,6 +135,36 @@ rm -rf /var/www/html/wordpress/
 chmod -R 777 /var/www/html/
 ```
 
+- 修改 Apache 配置文件：`vim /etc/httpd/conf/httpd.conf`
+
+```
+旧值：
+#ServerName www.example.com:80
+
+改为：
+ServerName www.youmeek.com:80
+
+----------------------
+
+旧值：
+AllowOverride None
+
+改为：
+AllowOverride All
+
+----------------------
+
+旧值：
+<IfModule dir_module>
+   DirectoryIndex index.html
+</IfModule>
+
+改为：
+<IfModule dir_module>
+   DirectoryIndex index.html index.htm Default.html Default.htm index.php Default.php index.html.var
+</IfModule>
+```
+
 ## 创建数据库
 
 - SQL 语句：`CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
