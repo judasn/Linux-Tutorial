@@ -239,6 +239,42 @@ export PATH=$PATH:$MYCAT_HOME/bin
 </mycat:schema>
 ```
 
+#### 如果节点数据很多的情况，我们有一种简便写法
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+
+    <!--======================================================-->
+
+    <schema name="adg_system" checkSQLschema="false" sqlMaxLimit="100">
+        
+        <table name="adg_channel" primaryKey="channel_id" type="global" dataNode="dn$0-49"/>
+        
+        <table name="adg_ads_campaign" primaryKey="ads_campaign_id" dataNode="dn$0-49" rule="sharding-by-shop-id">
+            <childTable name="adg_ads_set" primaryKey="ads_set_id" joinKey="shop_id" parentKey="shop_id">
+                <childTable name="adg_ads" joinKey="ads_set_id" parentKey="ads_set_id"/>
+            </childTable>
+        </table>
+    </schema>
+
+    <!--======================================================-->
+
+    <dataNode name="dn$0-49" dataHost="mysql_host_0" database="adg_system_$0-49"/>
+
+    <!--======================================================-->
+
+    <dataHost name="mysql_host_0" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+        <heartbeat>select user()</heartbeat>
+        <writeHost host="hostM1" url="116.196.111.68:3316" user="root" password="root"/>
+    </dataHost>
+    
+    <!--======================================================-->
+
+</mycat:schema>
+```
+
 
 #### rule.xml 配置详解
 
