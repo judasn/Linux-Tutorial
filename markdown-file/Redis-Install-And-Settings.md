@@ -233,7 +233,9 @@ M: 5d0fe968559af3035d8d64ab598f2841e5f3a059 172.19.0.7:6379
 	- 获取值：`get myKey`
 	- 重新启动 redis-to-cluster-3：`docker unpause redis-to-cluster-3`
 	- 查看集群情况：`cluster nodes`
-
+- Spring Boot 项目 Docker 容器访问 RedisCluster
+	- application.yml 配置的 IP 地址：172.19.0.2 等
+	- docker 容器启动增加 `--net=host` 使用宿主机网络
 
 
 ## Redis 编译安装
