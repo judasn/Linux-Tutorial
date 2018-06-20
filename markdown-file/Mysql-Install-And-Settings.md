@@ -164,7 +164,26 @@ max_allowed_packet = 50M
 ## 连接报错："Host '192.168.1.133' is not allowed to connect to this MySQL server"
 
 - 不允许除了 localhost 之外去连接，解决办法，进入 MySQL 命令行，输入下面内容：
-- `GRANT ALL PRIVILEGES ON *.* TO '数据库用户名'@'%' IDENTIFIED BY '数据库用户名的密码' WITH GRANT OPTION;`
+- 开发机设置允许任何机子访问：
+	- `vim /etc/my.cnf` 中不能有：`bind-address = 127.0.0.1`
+	- 配置：`GRANT ALL PRIVILEGES ON *.* TO '数据库用户名'@'%' IDENTIFIED BY '数据库用户名的密码' WITH GRANT OPTION;`
+	- 更新配置：`flush privileges;`
+- 生产机设置只运行本机访问：
+	- `vim /etc/my.cnf` 中必须有：`bind-address = 127.0.0.1`
+	- 配置：`GRANT ALL PRIVILEGES ON *.* TO '数据库用户名'@'127.0.0.1' IDENTIFIED BY '数据库用户名的密码' WITH GRANT OPTION;`
+	- 更新配置：`flush privileges;`
+
+
+## 修改密码报错：Your password does not satisfy the current policy requirements
+
+- MySQL 5.7 安全性要求更高，需要这么做：
+
+```
+set global validate_password_policy=0; #密码强度设为最低等级
+set global validate_password_length=6; #密码允许最小长度为6
+set password = password('新密码');
+FLUSH PRIVILEGES;
+```
 
 ## MySQL 主从复制
 
