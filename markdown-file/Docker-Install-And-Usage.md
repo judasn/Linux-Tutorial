@@ -61,8 +61,8 @@ Docker CE has both stable and edge channels.
     Edge builds are released once per month, and are supported for that month only. If you subscribe to the Edge channel on Linux distributions, you should also subscribe to the Stable channel.
  
  
-- 官网总的安装手册：<https://docs.docker.com/engine/installation/#docker-editions>
-- 官网 CentOS 安装手册：<https://docs.docker.com/engine/installation/linux/centos/>
+- 官网总的安装手册：<https://docs.docker.com/install/>
+- 官网 CentOS 安装手册：<https://docs.docker.com/install/linux/docker-ce/centos/>
 - 目前也支持 Windows，特别是 Windows 10，直接官网一个安装包即可搞定。
 - Windows 10 的 Docker 安装说明：<https://store.docker.com/editions/community/docker-ce-desktop-windows>
 - 我这里选择 Docker CE 版本：
