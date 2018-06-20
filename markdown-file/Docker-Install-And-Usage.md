@@ -340,6 +340,18 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 - `docker export`，将容器整个文件系统导出为一个tar包，不带layers、tag等信息
 - `docker port`，显示容器的端口映射
 - `docker inspect 容器ID`：查看容器的全面信息，用 JSON 格式输出
+- `docker system df`：类似于 Linux 上的 df 命令，用于查看 Docker 的磁盘使用情况
+	- Images 镜像
+	- Containers 容器
+	- Local Volumes 数据卷
+
+```
+TYPE                TOTAL               ACTIVE              SIZE                RECLAIMABLE
+Images              6                   6                   1.049GB             0B (0%)
+Containers          7                   4                   10.25kB             0B (0%)
+Local Volumes       13                  5                   38.49GB             1.365MB (0%)
+Build Cache                                                 0B                  0B
+```
 
 ```
 获取容器中的 IP：docker inspect -f {{.NetworkSettings.IPAddress}} 容器ID
