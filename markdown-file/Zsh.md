@@ -37,7 +37,7 @@
 - oh-my-zsh 帮我们整理了一些常用的 Zsh 扩展功能和主题：<https://github.com/robbyrussell/oh-my-zsh>
 - 我们无需自己去捣搞 Zsh，直接用 oh-my-zsh 就足够了，如果你想继续深造的话那再去弄。
 - 先安装 git：`sudo yum install -y git`
-- 安装 oh-my-zsh（这个过程可能会有点慢，或者需要重试几次）：`wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh`
+- 安装 oh-my-zsh（这个过程可能会有点慢，或者需要重试几次）：`wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O - | sh`
 - 整个过程效果如下图：
     - ![oh-my-zsh 安装](../images/Zsh-a-1.jpg)
 - 在以 root 用户为前提下，oh-my-zsh 的安装目录：**/root/.oh-my-zsh**
