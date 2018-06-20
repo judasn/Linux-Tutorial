@@ -677,7 +677,7 @@ docker rmi $(docker images -f "dangling=true" -q)
 
 ``` bash
 FROM java:8-jre
-MAINTAINER skb-user zch <gitnavi@qq.com>
+MAINTAINER gitnavi <gitnavi@qq.com>
 
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
