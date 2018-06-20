@@ -94,7 +94,7 @@ aof-rewrite-incremental-fsync yes
 - 宿主机创建配置文件：`mkdir -p /data/docker/redis-to-cluster/config && vim /data/docker/redis-to-cluster/config/redis.conf`
 
 ```
-bind 127.0.0.1
+bind 0.0.0.0
 protected-mode yes
 port 6379
 tcp-backlog 511
@@ -171,11 +171,62 @@ aof-rewrite-incremental-fsync yes
 - `cd /usr/redis/cluster/`
 - 创建 Cluster 集群（会有交互）（镜像中已经安装了 ruby 了）：`./redis-trib.rb create --replicas 1 172.19.0.2:6379 172.19.0.3:6379 172.19.0.4:6379 172.19.0.5:6379 172.19.0.6:6379 172.19.0.7:6379`
 	- `--replicas 1` 表示为每个主节点创建一个从节点
+	- 如果正常的话，会出现下面内容：
+
+```
+>>> Creating cluster
+>>> Performing hash slots allocation on 6 nodes...
+Using 3 masters:
+172.19.0.2:6379
+172.19.0.3:6379
+172.19.0.4:6379
+Adding replica 172.19.0.5:6379 to 172.19.0.2:6379
+Adding replica 172.19.0.6:6379 to 172.19.0.3:6379
+Adding replica 172.19.0.7:6379 to 172.19.0.4:6379
+M: 9c1c64b18bfc2a0586be2089f13c330787c1f67b 172.19.0.2:6379
+   slots:0-5460 (5461 slots) master
+M: 35a633853329c9ff25bb93a7ce9192699c2ab6a8 172.19.0.3:6379
+   slots:5461-10922 (5462 slots) master
+M: 8ea2bfeeeda939abb43e96a95a990bcc55c10389 172.19.0.4:6379
+   slots:10923-16383 (5461 slots) master
+S: 9cb00acba065120ea96834f4352c72bb50aa37ac 172.19.0.5:6379
+   replicates 9c1c64b18bfc2a0586be2089f13c330787c1f67b
+S: 8e2a4bb11e97adf28427091a621dbbed66c61001 172.19.0.6:6379
+   replicates 35a633853329c9ff25bb93a7ce9192699c2ab6a8
+S: 5d0fe968559af3035d8d64ab598f2841e5f3a059 172.19.0.7:6379
+   replicates 8ea2bfeeeda939abb43e96a95a990bcc55c10389
+Can I set the above configuration? (type 'yes' to accept): yes
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join......
+>>> Performing Cluster Check (using node 172.19.0.2:6379)
+M: 9c1c64b18bfc2a0586be2089f13c330787c1f67b 172.19.0.2:6379
+   slots:0-5460 (5461 slots) master
+M: 35a633853329c9ff25bb93a7ce9192699c2ab6a8 172.19.0.3:6379
+   slots:5461-10922 (5462 slots) master
+M: 8ea2bfeeeda939abb43e96a95a990bcc55c10389 172.19.0.4:6379
+   slots:10923-16383 (5461 slots) master
+M: 9cb00acba065120ea96834f4352c72bb50aa37ac 172.19.0.5:6379
+   slots: (0 slots) master
+   replicates 9c1c64b18bfc2a0586be2089f13c330787c1f67b
+M: 8e2a4bb11e97adf28427091a621dbbed66c61001 172.19.0.6:6379
+   slots: (0 slots) master
+   replicates 35a633853329c9ff25bb93a7ce9192699c2ab6a8
+M: 5d0fe968559af3035d8d64ab598f2841e5f3a059 172.19.0.7:6379
+   slots: (0 slots) master
+   replicates 8ea2bfeeeda939abb43e96a95a990bcc55c10389
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+```
+
 - 连接集群测试：
 	- 进入随便一个节点：`docker exec -it redis-to-cluster-1 bash`
 	- `/usr/redis/src/redis-cli -c`
 	- 查看集群情况：`cluster nodes`
-	- 写入数据：`set myKey myValue`，如果成功会返回：``，可以推断它是 redis-to-cluster-3 容器
+	- 写入数据：`set myKey myValue`，如果成功会返回：`Redirected to slot [16281] located at 172.19.0.4:6379`，可以推断它是 redis-to-cluster-3 容器
 	- 暂定掉 redis-to-cluster-3 容器：`docker pause redis-to-cluster-3`
 	- 重新连接：`/usr/redis/src/redis-cli -c`
 	- 查看集群情况：`cluster nodes`
