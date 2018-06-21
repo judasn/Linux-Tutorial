@@ -374,9 +374,10 @@ tcp6       0      0 :::43107                :::*                    LISTEN      
 - ping 命令查看丢包、域名解析地址
 	- `ping 116.196.110.69`
 	- `ping www.GitNavi.com`
-- telnet 测试端口的连通性
+- telnet 测试端口的连通性（验证服务的可用性）
 	- `yum install -y telnet`
 	- `telnet 116.196.110.68 3306`
+	- `telnet www.youmeek.com 80`
 - tracert（跟踪路由）查看网络请求节点访问情况，用于确定 IP 数据报访问目标所采取的路径。
 	- `yum install -y traceroute`
 	- `traceroute gitnavi.com`
