@@ -306,11 +306,20 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 	- `docker run -it 镜像ID --link redis-name:myredis /bin/bash`
 		- `redis-name` 是容器名称
 		- `myredis` 是容器别名，其他容器连接它可以用这个别名来写入到自己的配置文件中
-- `--network` docker 网络模式：
+
+#### docker 网络模式
+
+- 查看也有网络：`docker network ls`
+- 创建网络：`docker network create --subnet=172.19.0.0/16 net-redis-to-cluster`
+- 已有容器连接到某个网络（一个容器可以同时连上多个网络）：`docker network connect net-redis-to-cluster my-redis-container`
+- 如果是内网提供服务的，可以直接创建一个网络，其服务使用该网络。然后另外一个需要调用该服务的，并且是对外网提供服务的可以使用 host 模式
+- `--network XXXXXX` 常见几种模式
 	- bridge 默认模式，在 docker0 的网桥上创建新网络栈，确保独立的网络环境，实现网络隔离：`docker run -it 镜像ID --network=bridge /bin/bash`
-	- none 不适用网卡，无法联网：`docker run -it 镜像ID --network=none /bin/bash`
-	- host 使用宿主机网络 IP、端口联网：`docker run -it 镜像ID --network=host /bin/bash`
+	- none 不适用网卡，不会有 IP，无法联网：`docker run -it 镜像ID --network=none /bin/bash`
+	- host 使用宿主机网络 IP、端口联网（在容器里面输入：ip a，看到的结果和在宿主机看到的一样）：`docker run -it 镜像ID --network=host /bin/bash`
 	- 自定义-使用自己命名的网络栈，但是需要手动配置网卡、IP 信息：`docker run -it 镜像ID --network=自定义名称 /bin/bash`
+
+
 
 #### 容器管理操作
  
@@ -340,6 +349,7 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 - `docker export`，将容器整个文件系统导出为一个tar包，不带layers、tag等信息
 - `docker port`，显示容器的端口映射
 - `docker inspect 容器ID`：查看容器的全面信息，用 JSON 格式输出
+- `docker inspect network名称`：查看 network 信息，用 JSON 格式输出，包含使用该网络的容器有哪些
 - `docker system df`：类似于 Linux 上的 df 命令，用于查看 Docker 的磁盘使用情况
 	- Images 镜像
 	- Containers 容器
