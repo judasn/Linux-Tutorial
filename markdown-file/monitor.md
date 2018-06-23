@@ -354,6 +354,9 @@ Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 
 ## 端口使用情况
 
+
+#### lsof
+
 - 安装 lsof：`yum install -y lsof`
 - 查看 3316 端口是否有被使用：`lsof -i:3316`，**有被使用会输出类似如下信息，如果没被使用会没有任何信息返回**
 
@@ -372,7 +375,9 @@ java      12011 root   87u  IPv6 4506851      0t0  TCP JDu4e00u53f7:58572->116.1
 docker-pr 13551 root    4u  IPv6 2116824      0t0  TCP *:aicc-cmi (LISTEN)
 ```
 
+#### netstat
 
+- 更多用法可以看：[netstat 的10个基本用法](https://linux.cn/article-2434-1.html)
 - 查看所有在用的端口：`netstat -ntlp`
 
 ```
@@ -395,6 +400,47 @@ tcp6       0      0 :::43107                :::*                    LISTEN      
 
 - 查看当前连接80端口的机子有多少：`netstat -an|grep 80|sort -r`
 - 查看已经连接的IP有多少连接数：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n`
+- 查看已经连接的IP有多少连接数，只显示前 5 个：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | head -5`
+- 统计当前连接的一些状态情况：`netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
+
+```
+8 TIME_WAIT
+8 ESTABLISHED
+7 LISTEN
+1 Foreign
+1 established)
+1 CLOSE_WAIT
+```
+
+- 查看网络接口接受、发送的数据包情况（每隔 3 秒统计一次）：`netstat -i 3`
+
+
+```
+Kernel Interface table
+Iface      MTU    RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg
+eth0      1500 10903298      0      0 0      10847741      0      0      0 BMRU
+lo       65536   453650      0      0 0        453650      0      0      0 LRU
+eth0      1500 10903335      0      0 0      10847777      0      0      0 BMRU
+lo       65536   453650      0      0 0        453650      0      0      0 LRU
+eth0      1500 10903363      0      0 0      10847798      0      0      0 BMRU
+lo       65536   453650      0      0 0        453650      0      0      0 LRU
+eth0      1500 10903393      0      0 0      10847836      0      0      0 BMRU
+lo       65536   453650      0      0 0        453650      0      0      0 LRU
+eth0      1500 10903437      0      0 0      10847867      0      0      0 BMRU
+lo       65536   453650      0      0 0        453650      0      0      0 LRU
+```
+
+- 接收：
+	- RX-OK 已接收字节数
+	- RX-ERR 已接收错误字节数（数据值大说明网络存在问题）
+	- RX-DRP 已丢失字节数（数据值大说明网络存在问题）
+	- RX-OVR 由于误差而遗失字节数（数据值大说明网络存在问题）
+- 发送：
+	- TX-OK 已发送字节数
+	- TX-ERR 已发送错误字节数（数据值大说明网络存在问题）
+	- TX-DRP 已丢失字节数（数据值大说明网络存在问题）
+	- TX-OVR 由于误差而遗失字节数（数据值大说明网络存在问题）
+
 
 #### 网络排查
 
