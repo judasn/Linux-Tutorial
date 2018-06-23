@@ -35,6 +35,14 @@
 - 更多例子可以看：<http://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/crontab.html>
 - 执行记录日志：`tail -f /var/log/cron`（如果发现任务不执行，可以来这里盯着日志看）
 
+
+## Crontab 权限问题
+
+- 一般默认只有 root 用户可以使用
+- 如果要指定某个用户可以使用，可以在 /etc/cron.allow 添加（不存在文件就创建一个）
+- 如果要指定某个用户不可以使用，可以在 /etc/cron.deny 添加（不存在文件就创建一个）
+- 如果一个用户同时在两个文件都存在，那则以 allow 为准
+
 ## Crontab 不执行
 
 - Crontab 不执行原因有很多，可以 Google 搜索：`Crontab 不执行`，这里不多说。

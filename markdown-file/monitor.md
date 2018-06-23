@@ -4,6 +4,17 @@
 
 - 查看 CentOS 版本号：`cat /etc/redhat-release` 
 
+---------------------------------------------------------------------
+
+## 综合监控
+
+- [nmon](Nmon.md)
+
+
+
+---------------------------------------------------------------------
+
+
 ## 系统负载
 
 #### 命令：w（判断整体瓶颈）
@@ -51,47 +62,6 @@ procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
 	- `bo` 表示从块设备写入数据的量（写磁盘）
 	- **如果bi和bo两个数字比较高，则说明，磁盘IO压力大。**
 	- `wa` 表示I/O等待所占用CPU的时间比
-
-
-#### 命令：iostat（判断 I/0 瓶颈）
-
-- 命令：`iostat -x -k 3 3`，每 3 秒采样一次，共 3 次。
-
-```
-avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-           0.55    0.00    0.52    0.00    0.00   98.93
-
-Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
-vda               0.00     0.04    0.02    0.62     0.44     6.49    21.65     0.00    1.42    1.17    1.42   0.25   0.02
-
-avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-           0.34    0.00    0.00    0.00    0.00   99.66
-
-Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
-vda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
-
-avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-           2.02    0.00    0.34    0.00    0.00   97.64
-
-Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
-vda               0.00     0.00    0.00    1.68     0.00    16.16    19.20     0.00    0.20    0.00    0.20   0.20   0.03
-```
-
-- 列说明：
-	- `rrqm/s`: 每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并
-	- `wrqm/s`: 每秒对该设备的写请求被合并次数
-	- `r/s`: 每秒完成的读次数
-	- `w/s`: 每秒完成的写次数
-	- `rkB/s`: 每秒读数据量(kB为单位)
-	- `wkB/s`: 每秒写数据量(kB为单位)
-	- `avgrq-sz`:平均每次IO操作的数据量(扇区数为单位)
-	- `avgqu-sz`: 平均等待处理的IO请求队列长度
-	- `await`: 平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)
-	- `svctm`: 平均每次IO请求的处理时间(毫秒为单位)
-	- `%util`: 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率
-- **总结**
-	- `iowait%` 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。
-	- `%util` 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态
 
 #### 命令：sar（综合）
 
@@ -208,8 +178,11 @@ Average:         0.50      0.00      0.50      0.00      8.94
 - `txcmp/s`：每秒钟发送出去的压缩包数目
 - `txmcst/s`：每秒钟接收到的多播包的包数目
 
+---------------------------------------------------------------------
 
-## CPU 的基本信息查看
+## CPU 监控
+
+#### CPU 的基本信息查看
 
 - Demo CPU 型号：[Intel® Xeon® Processor E5-2620 v2(15M Cache, 2.10 GHz)](http://ark.intel.com/products/75789/Intel-Xeon-Processor-E5-2620-v2-15M-Cache-2_10-GHz)
 - 该 CPU 显示的数据中有一项这个要注意：`Intel® Hyper-Threading Technology` 是 `Yes`。表示该 CPU 支持超线程
@@ -225,7 +198,7 @@ Average:         0.50      0.00      0.50      0.00      8.94
     - 线程数：线程数是一种逻辑的概念，简单地说，就是模拟出的 CPU 核心数。比如，可以通过一个 CPU 核心数模拟出 2 线程的 CPU，也就是说，这个单核心的 CPU 被模拟成了一个类似双核心 CPU 的功能。
 
 
-## CPU 监控
+#### CPU 监控
 
 - Linux 的 CPU 简单监控一般简单
 - 常用命令就是 `top`
@@ -236,7 +209,7 @@ Average:         0.50      0.00      0.50      0.00      8.94
 - 在 `top` 命令状态下按 <kbd>shfit</kbd> + <kbd>p</kbd> 可以按照 **CPU 使用** 大小排序
 - 展示数据上，%CPU 表示进程占用的 CPU 百分比，%MEM 表示进程占用的内存百分比
 
-#### 另外工具
+#### CPU 其他工具
 
 - htop 综合工具：`yum install -y htop`
 	- 这几篇文章讲得很好，我没必要再贴过来了，大家自己看：
@@ -262,6 +235,8 @@ Average:       0    0.20    0.00    0.20    0.00    0.00    0.00    0.00    0.00
 - %sys 系统进程消耗 CPU 情况
 - %iowait  表示 CPU 等待 IO 时间占整个 CPU 周期的百分比
 - %idle  显示 CPU 空闲时间占用 CPU 总时间的百分比
+
+---------------------------------------------------------------------
 
 
 ## 内存监控
@@ -297,15 +272,60 @@ Total:       16080      15919        160
 
 - 以上的结果重点关注是：`-/+ buffers/cache`，这一行代表实际使用情况。
 
+---------------------------------------------------------------------
 
-## 硬盘查看
+## 硬盘监控
+
+#### 硬盘容量相关查看
 
 - `df -h`：自动以合适的磁盘容量单位查看磁盘大小和使用空间
 - `df -m`：以磁盘容量单位 M 为数值结果查看磁盘使用情况
 - `du -sh /opt/tomcat6`：查看tomcat6这个文件夹大小 (h的意思human-readable用人类可读性较好方式显示，系统会自动调节单位，显示合适大小的单位)
 - `du /opt --max-depth=1 -h`：查看指定录入下包括子目录的各个文件大小情况
 
-## 硬盘 IO 监控
+
+#### 命令：iostat（判断 I/0 瓶颈）
+
+- 命令：`iostat -x -k 3 3`，每 3 秒采样一次，共 3 次。
+
+```
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.55    0.00    0.52    0.00    0.00   98.93
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+vda               0.00     0.04    0.02    0.62     0.44     6.49    21.65     0.00    1.42    1.17    1.42   0.25   0.02
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.34    0.00    0.00    0.00    0.00   99.66
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+vda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           2.02    0.00    0.34    0.00    0.00   97.64
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+vda               0.00     0.00    0.00    1.68     0.00    16.16    19.20     0.00    0.20    0.00    0.20   0.20   0.03
+```
+
+- 列说明：
+	- `rrqm/s`: 每秒对该设备的读请求被合并次数，文件系统会对读取同块(block)的请求进行合并
+	- `wrqm/s`: 每秒对该设备的写请求被合并次数
+	- `r/s`: 每秒完成的读次数
+	- `w/s`: 每秒完成的写次数
+	- `rkB/s`: 每秒读数据量(kB为单位)
+	- `wkB/s`: 每秒写数据量(kB为单位)
+	- `avgrq-sz`:平均每次IO操作的数据量(扇区数为单位)
+	- `avgqu-sz`: 平均等待处理的IO请求队列长度
+	- `await`: 平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)
+	- `svctm`: 平均每次IO请求的处理时间(毫秒为单位)
+	- `%util`: 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率（就是繁忙程度，值越高表示越繁忙）
+- **总结**
+	- `iowait%` 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。
+	- `%util` 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态
+
+
+#### 硬盘 IO 监控
 
 - 安装 iotop：`yum install -y iotop`
 - 查看命令：`iotop`
@@ -341,7 +361,12 @@ Timing cached reads:   3462 MB in  2.00 seconds = 1731.24 MB/sec
 Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 ```
 
+---------------------------------------------------------------------
+
+
 ## 网络监控
+
+#### 网络监控常用
 
 - 安装 iftop（需要有 EPEL 源）：`yum install -y iftop`
 	- 如果没有 EPEL 源：`yum install -y epel-release`
@@ -352,8 +377,7 @@ Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 	- `iftop -N`：直接显示连接埠编号, 不显示服务名称
 	- `iftop -F 192.168.1.0/24 or 192.168.1.0/255.255.255.0`：显示某个网段进出封包流量
 
-## 端口使用情况
-
+### 端口使用情况
 
 #### lsof
 
@@ -487,6 +511,7 @@ Address: 180.97.33.107
 
 - 以上表明，不同的 DNS 情况下，我们获取到的域名所属 IP 是不同的。
 
+---------------------------------------------------------------------
 
 ## 参考资料
 
