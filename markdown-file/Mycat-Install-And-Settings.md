@@ -838,7 +838,386 @@ INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,
 
 ------------------------------------------------------------------------------
 
+## 高可用方案（MySQL + MyCAT + Zookeeper + HAProxy + Keepalived）
 
+#### MySQL（3 节点）
+
+- 端口使用：
+	- 3406
+	- 3407
+	- 3408
+
+```
+docker run -p 3406:3306 --name mycat-mysql-1 -e MYSQL_ROOT_PASSWORD=adgADG123456 -d mysql:5.7
+
+docker run -p 3407:3306 --name mycat-mysql-2 -e MYSQL_ROOT_PASSWORD=adgADG123456 -d mysql:5.7
+
+docker run -p 3408:3306 --name mycat-mysql-3 -e MYSQL_ROOT_PASSWORD=adgADG123456 -d mysql:5.7
+```
+
+
+
+#### MyCAT + Zookeeper
+
+###### Zookeeper 单机多个实例（集群）
+
+- 端口使用：
+	- 2281
+	- 2282
+	- 2283
+
+- 创建 docker compose 文件：`vim zookeeper.yml`
+- 下面内容来自官网仓库：<https://hub.docker.com/r/library/zookeeper/>
+
+```
+version: '3.1'
+
+services:
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    ports:
+      - 2281:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
+
+  zoo2:
+    image: zookeeper
+    restart: always
+    hostname: zoo2
+    ports:
+      - 2282:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
+
+  zoo3:
+    image: zookeeper
+    restart: always
+    hostname: zoo3
+    ports:
+      - 2283:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
+```
+
+- 启动：`docker-compose -f zookeeper.yml -p zk_test up -d`
+	- 参数 -p zk_test 表示这个 compose project 的名字，等价于：`COMPOSE_PROJECT_NAME=zk_test docker-compose -f zookeeper.yml up -d`
+	- 不指定项目名称，Docker-Compose 默认以当前文件目录名作为应用的项目名
+	- 报错是正常情况的。
+- 停止：`docker-compose -f zookeeper.yml -p zk_test stop`
+
+
+###### MyCAT 单机多个实例
+
+- 必须有 JDK 环境（我这里使用的是：1.8.0_171）
+
+```
+tar -zxvf Mycat-server-1.6.5-release-20180503154132-linux.tar.gz
+
+mv mycat mycat-1
+```
+
+- `cd /usr/local/mycat-1/conf`
+- `vim server.xml`
+
+```
+<!-- 定义登录mycat对的用户权限 -->  
+<user name="adg_system_user">  
+    <property name="password">123456</property>  
+    <!-- 可访问数据库配置，多个数据库用英文逗号隔开-->  
+    <property name="schemas">adg_system</property>  
+    <!-- 配置是否允许只读，true 只读 -->  
+    <property name="readOnly">false</property>  
+    <!-- 定义限制前端整体的连接数，如果其值为0，或者不设置，则表示不限制连接数量 -->  
+    <property name="benchmark">0</property>  
+    <!-- 设置是否开启密码加密功能，默认为0不开启加密，为1则表示开启加密 -->  
+    <property name="usingDecrypt">0</property>
+</user>
+```
+
+- `cd /usr/local/mycat-1/conf`
+- `vim schema.xml`
+
+```
+<?xml version="1.0"?>
+<!DOCTYPE mycat:schema SYSTEM "schema.dtd">
+<mycat:schema xmlns:mycat="http://io.mycat/">
+
+    <!--======================================================-->
+
+    <schema name="adg_system" checkSQLschema="false" sqlMaxLimit="100">
+        
+        <!--全局表 start-->
+        <table name="adg_channel" primaryKey="channel_id" type="global" dataNode="dn0,dn1,dn2"/>
+        <table name="adg_shop_channel" primaryKey="shop_channel_id" type="global" dataNode="dn0,dn1,dn2"/>
+        <table name="adg_shop" primaryKey="shop_id" type="global" dataNode="dn0,dn1,dn2"/>
+        <!--全局表 end-->
+
+        <table name="adg_ads_campaign" primaryKey="ads_campaign_id" dataNode="dn0,dn1,dn2" rule="sharding-by-shop-id">
+            <childTable name="adg_ads_set" primaryKey="ads_set_id" joinKey="shop_id" parentKey="shop_id">
+                <childTable name="adg_ads" joinKey="ads_set_id" parentKey="ads_set_id"/>
+            </childTable>
+        </table>
+    </schema>
+
+    <!--======================================================-->
+
+    <dataNode name="dn0" dataHost="mysql_host_0" database="adg_system_0000"/>
+    <dataNode name="dn1" dataHost="mysql_host_1" database="adg_system_0001"/>
+    <dataNode name="dn2" dataHost="mysql_host_2" database="adg_system_0002"/>
+
+    <!--======================================================-->
+
+    <dataHost name="mysql_host_0" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+        <heartbeat>select user()</heartbeat>
+        <writeHost host="hostM1" url="192.168.0.105:3406" user="root" password="adgADG123456"/>
+    </dataHost>
+    
+    <dataHost name="mysql_host_1" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+        <heartbeat>select user()</heartbeat>
+        <writeHost host="hostM1" url="192.168.0.105:3407" user="root" password="adgADG123456"/>
+    </dataHost>
+    
+    <dataHost name="mysql_host_2" maxCon="1000" minCon="10" balance="0" writeType="0" dbType="mysql" dbDriver="native" switchType="1" slaveThreshold="100">
+        <heartbeat>select user()</heartbeat>
+        <writeHost host="hostM1" url="192.168.0.105:3408" user="root" password="adgADG123456"/>
+    </dataHost>
+    
+    <!--======================================================-->
+
+</mycat:schema>
+```
+
+- `cd /usr/local/mycat-1/conf`
+- `vim rule.xml`
+
+```
+<tableRule name="sharding-by-shop-id">
+    <rule>
+        <columns>shop_id</columns>
+        <algorithm>by-shop-id</algorithm>
+    </rule>
+</tableRule>
+
+
+<function name="by-shop-id" class="io.mycat.route.function.PartitionByFileMap">
+    <property name="mapFile">sharding-by-shop-id.txt</property>
+    <property name="type">1</property><!-- 默认是0，表示 Integer，非零表示 String。因为我们这里是根据 shop_id 来分，而 shop_id 在表设计的时候是 bigint 类型，值是 18 位，所以这里必须填写非零值才行。-->
+    <property name="defaultNode">0</property>
+</function>
+```
+
+
+
+```
+还需要在 conf 新增文件 sharding-by-shop-id.txt 文件，内容是：
+需要注意的是：
+417454619141211000=0
+417454619141211001=1
+417454619141211002=2
+```
+
+```
+CREATE DATABASE adg_system_0000 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE adg_system_0001 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE adg_system_0002 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+
+- 使用 Zookeeper 配置
+
+- `vim /usr/local/mycat-1/conf/myid.properties`
+
+```
+loadZk=true                                                                                                  
+zkURL=192.168.0.105:2281,192.168.0.105:2282,192.168.0.105:2283
+clusterId=mycat-cluster
+myid=mycat_fz_01
+clusterSize=2
+clusterNodes=mycat_fz_01,mycat_fz_02
+#server  booster  ;   booster install on db same server,will reset all minCon to 2
+type=server
+boosterDataHosts=dataHost1
+```
+
+
+- 同步节点配置到 Zookeeper
+
+```
+cd /usr/local/mycat-1/conf
+cp -f schema.xml server.xml rule.xml sharding-by-shop-id.txt zkconf/
+
+sh /usr/local/mycat-1/bin/init_zk_data.sh
+
+```
+
+- 重要参数：
+
+```
+clusterSize=2 表示有几个 MyCAT 节点数量
+```
+
+- 解压另外一个节点：
+
+```
+tar -zxvf Mycat-server-1.6.5-release-20180503154132-linux.tar.gz
+
+mv mycat mycat-2
+
+因为是单机多节点，所以这里需要修改几个端口参数
+vim /usr/local/mycat-2/conf/server.xml
+
+旧值：
+<property name="serverPort">8066</property>
+<property name="managerPort">9066</property> 
+
+新值：
+<property name="serverPort">8067</property>
+<property name="managerPort">9067</property> 
+
+
+vim /usr/local/mycat-2/conf/wrapper.conf
+
+旧值：
+wrapper.java.additional.7=-Dcom.sun.management.jmxremote.port=1984
+
+新值：
+wrapper.java.additional.7=-Dcom.sun.management.jmxremote.port=1985
+```
+
+- 修改另外一个节点配置：
+
+- `vim /usr/local/mycat-2/conf/myid.properties`
+
+```
+loadZk=true                                                                                                  
+zkURL=192.168.0.105:2281,192.168.0.105:2282,192.168.0.105:2283
+clusterId=mycat-cluster
+myid=mycat_fz_02
+clusterSize=2
+clusterNodes=mycat_fz_01,mycat_fz_02
+#server  booster  ;   booster install on db same server,will reset all minCon to 2
+type=server
+boosterDataHosts=dataHost1
+```
+
+- 启动节点：
+
+```
+cd /usr/local/mycat-1/bin
+后台启动：./mycat start && tail -300f /usr/local/mycat-1/logs/mycat.log
+控制台启动：./mycat console
+控制台启动：cd /usr/local/mycat-1/bin && ./mycat console
+重启：./mycat restart
+停止：./mycat stop
+
+cd /usr/local/mycat-2/bin
+后台启动：./mycat start && tail -300f /usr/local/mycat-2/logs/mycat.log
+控制台启动：./mycat console
+控制台启动：cd /usr/local/mycat-2/bin && ./mycat console
+重启：./mycat restart
+停止：./mycat stop
+```
+
+- 创建数据结构：
+
+```
+CREATE TABLE `adg_ads` (
+  `ads_id` BIGINT(20) NOT NULL COMMENT '广告表ID',
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_title` VARCHAR(32) NOT NULL COMMENT '广告标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='广告表';
+
+
+CREATE TABLE `adg_ads_set` (
+  `ads_set_id` BIGINT(20) NOT NULL COMMENT '广告组表ID',
+  `ads_set_title` VARCHAR(32) NOT NULL COMMENT '广告组标题',
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_set_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='广告组表';
+
+
+CREATE TABLE `adg_ads_campaign` (
+  `ads_campaign_id` BIGINT(20) NOT NULL COMMENT '广告系列表ID',
+  `ads_campaign_title` VARCHAR(32) NOT NULL COMMENT '广告系列标题',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`ads_campaign_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='广告系列表';
+
+
+CREATE TABLE `adg_channel` (
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='渠道表';
+
+
+CREATE TABLE `adg_shop` (
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  PRIMARY KEY (`shop_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='商品表';
+
+
+CREATE TABLE `adg_shop_channel` (
+  `shop_channel_id` BIGINT(20) NOT NULL COMMENT '店铺渠道中间表ID',
+  `shop_id` BIGINT(20) NOT NULL COMMENT '店铺ID',
+  `channel_id` BIGINT(20) NOT NULL COMMENT '渠道ID',
+  `shop_name` VARCHAR(32) NOT NULL COMMENT '店铺名称',
+  `channel_name` VARCHAR(32) NOT NULL COMMENT '渠道名称',
+  PRIMARY KEY (`shop_channel_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4 COMMENT='店铺渠道中间表';
+```
+
+
+
+```
+INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (417454619141211000,'NC站');
+INSERT  INTO `adg_shop`(`shop_id`,`shop_name`) VALUES (417454619141211001,'BG站');
+
+INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (1,'Facebook');
+INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (2,'Google');
+INSERT  INTO `adg_channel`(`channel_id`,`channel_name`) VALUES (3,'Twitter');
+
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,417454619141211000,2,'NC站','Google');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (3,417454619141211001,1,'BG站','Facebook');
+INSERT  INTO `adg_shop_channel`(`shop_channel_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (4,417454619141211001,2,'BG站','Google');
+
+INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告系列',417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_ads_campaign`(`ads_campaign_id`,`ads_campaign_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告系列',417454619141211001,2,'BG站','Google');
+
+INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,'第1个广告集',1,417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_ads_set`(`ads_set_id`,`ads_set_title`,`ads_campaign_id`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,'第2个广告集',2,417454619141211001,2,'BG站','Google');
+
+INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (1,1,'第1个广告',417454619141211000,1,'NC站','Facebook');
+INSERT  INTO `adg_ads`(`ads_id`,`ads_set_id`,`ads_title`,`shop_id`,`channel_id`,`shop_name`,`channel_name`) VALUES (2,2,'第2个广告',417454619141211001,2,'BG站','Google');
+```
+
+
+#### HAProxy + Keepalived
+
+```
+
+```
+
+------------------------------------------------------------------------------
 
 
 ## 资料
