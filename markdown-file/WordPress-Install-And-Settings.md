@@ -162,6 +162,14 @@ AllowOverride All
 </IfModule>
 ```
 
+- 重启 Apache
+
+```
+systemctl restart  httpd.service
+systemctl enable httpd.service
+```
+
+
 ## 创建数据库
 
 - SQL 语句：`CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`

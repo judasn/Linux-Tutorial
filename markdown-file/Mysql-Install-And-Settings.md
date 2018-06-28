@@ -142,6 +142,13 @@ max_allowed_packet = 50M
 - 保留 **/etc/my.cnf** 和 **/usr/program/mysql/mysql-test/** 目录下配置文件，其他删除掉。
 - 我整理的一个单机版配置说明（MySQL 5.6，适用于 1G 内存的服务器）：
 	- [my.cnf](MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my-for-comprehensive.cnf)
+- 其中我测试的结果，在不适用任何配置修改的情况下，1G 内存安装 MySQL 5.6 默认就会占用 400M 左右的内存，要降下来的核心配置要补上这几个参数：
+
+```
+performance_schema_max_table_instances=400
+table_definition_cache=400
+table_open_cache=256
+```
 
 ## 修改 root 账号密码
 
