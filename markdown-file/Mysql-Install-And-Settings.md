@@ -92,7 +92,7 @@ max_allowed_packet = 50M
         - 进入下载目录：`cd /opt/setups`
         - 解压压缩包：`tar zxvf mysql-5.6.35.tar.gz`
         - 移到解压包：`mv /opt/setups/mysql-5.6.35 /usr/program/`
-        - 安装依赖包、编译包：`yum install -y make gcc-c++ cmake bison-devel  ncurses-devel`
+        - 安装依赖包、编译包：`yum install -y make gcc-c++ cmake bison-devel ncurses-devel autoconf`
         - 进入解压目录：`cd /usr/program/mysql-5.6.35/`
         - 生成安装目录：`mkdir -p /usr/program/mysql/data`
         - 生成配置（使用 InnoDB）：`cmake -DCMAKE_INSTALL_PREFIX=/usr/program/mysql -DMYSQL_DATADIR=/usr/program/mysql/data -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_unicode_ci -DWITH_EXTRA_CHARSETS:STRING=utf8mb4 -DWITH_MYISAM_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1 -DENABLED_LOCAL_INFILE=1`
@@ -145,7 +145,8 @@ max_allowed_packet = 50M
 
 ## 修改 root 账号密码
 
-- 启动 Mysql 服务器：`service mysql start`
+- 启动 Mysql 服务器（CentOS 6）：`service mysql start`
+- 启动 Mysql 服务器（CentOS 7）：`systemctl start mysql`
 - 查看是否已经启动了：`ps aux | grep mysql`
 - 默认安装情况下，root 的密码是空，所以为了方便我们可以设置一个密码，假设我设置为：123456
 - 终端下执行：`mysql -uroot`

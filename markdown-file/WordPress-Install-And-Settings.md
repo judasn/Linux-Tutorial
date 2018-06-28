@@ -28,12 +28,9 @@ systemctl enable httpd.service
 
 ## 安装 MySQL
 
-#### MySQL 5.6（尽可能不用旧版本）
+#### MySQL 5.6 安装和配置（如果就 1G 内存那就不要用 5.7）
 
-```
-sudo rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
-yum install mysql mysql-server mysql-libs mysql-server
-```
+- [MySQL 5.6](Mysql-Install-And-Settings.md)
 
 #### MySQL 5.7（推荐）
 
