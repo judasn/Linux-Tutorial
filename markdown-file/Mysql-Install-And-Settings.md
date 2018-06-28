@@ -151,16 +151,19 @@ max_allowed_packet = 50M
 - 默认安装情况下，root 的密码是空，所以为了方便我们可以设置一个密码，假设我设置为：123456
 - 终端下执行：`mysql -uroot`
     - 现在进入了 mysql 命令行管理界面，输入：`SET PASSWORD = PASSWORD('123456');FLUSH PRIVILEGES;`
+    - 现在进入了 mysql 命令行管理界面，输入：`UPDATE user SET authentication_string=PASSWORD('123456') where USER='root';FLUSH PRIVILEGES;`
 - 修改密码后，终端下执行：`mysql -uroot -p`
     - 根据提示，输入密码进度 mysql 命令行状态。
 - 如果你在其他机子上连接该数据库机子报：**Access denied for user 'root'@'localhost' (using password: YES)**
 	- 解决办法：
-	- 在终端中执行：`service mysql stop`
+	- 在终端中执行（CentOS 6）：`service mysql stop`
+	- 在终端中执行（CentOS 7）：`systemctl stop mysql`
 	- 在终端中执行（前面添加的 Linux 用户 mysql 必须有存在）：`/usr/program/mysql/bin/mysqld --skip-grant-tables --user=mysql`
 		- 此时 MySQL 服务会一直处于监听状态，你需要另起一个终端窗口来执行接下来的操作
 		- 在终端中执行：`mysql -u root mysql`
 		- 把密码改为：123456，进入 MySQL 命令后执行：`UPDATE user SET Password=PASSWORD('123456') where USER='root';FLUSH PRIVILEGES;`
-		- 然后重启 MySQL 服务：`service mysql restart`
+		- 然后重启 MySQL 服务（CentOS 6）：`service mysql restart`
+		- 然后重启 MySQL 服务（CentOS 7）：`systemctl restart mysql`
 
 ## 连接报错："Host '192.168.1.133' is not allowed to connect to this MySQL server"
 
