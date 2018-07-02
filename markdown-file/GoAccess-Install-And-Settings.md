@@ -11,7 +11,9 @@
 
 ## 安装（CentOS 7.4）
 
-1. 安装依赖包
+- 注意，如果是在 CentOS 6 下安装会碰到一些问题，可以参考：<https://www.jianshu.com/p/7cacc1d20588>
+
+- 1. 安装依赖包
 
 ```
 yum install -y ncurses-devel
@@ -22,7 +24,7 @@ cd GeoIP-1.4.8/
 make && make install
 ```
 
-2. 安装 GoAccess
+- 2. 安装 GoAccess
 
 ```
 wget http://tar.goaccess.io/goaccess-1.2.tar.gz
