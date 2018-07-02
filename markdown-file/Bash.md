@@ -173,7 +173,10 @@ drwxr-xr-x. 5 root root 4096 3月 26 10:57，其中最前面的 d 表示这是�
 - `exit`，注销当前用户（常用）
 - `sudo 某个命令`，使用管理员权限使用命令，使用 sudo 回车之后需要输入当前登录账号的密码。（常用）
 - `passwd`，修改当前用户密码（常用）
-
+- 添加临时账号，并指定用户根目录，并只有可读权限方法
+	- 添加账号并指定根目录（用户名 tempuser）：`useradd -d /data/logs -m tempuser`
+	- 设置密码：`passwd tempuser` 回车设置密码
+	- 删除用户（该用户必须退出 SSH 才能删除成功），也会同时删除组：`userdel tempuser`
 
 
 ## 磁盘管理
