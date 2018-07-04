@@ -68,6 +68,13 @@ log_format %h - %^ [%d:%t %^] "%r" %s %b "%R" "%u" "%^" %^ %^ %^ %T
 
 ## 使用
 
+#### 在终端上展示数据
+
+```
+goaccess -a -d -f /var/log/nginx/access.log -p /etc/goaccess_log_conf_nginx.conf
+```
+
+
 #### 手动生成当前统计页面
 
 ```
