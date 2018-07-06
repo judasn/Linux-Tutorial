@@ -26,7 +26,7 @@ services:
 ```
 
 - 启动：`docker-compose up -d`
-
+- 该容器占用内存非常非常小，只有 5 M 左右。
 
 ## 对本地监控配置
 
