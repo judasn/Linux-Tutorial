@@ -8,13 +8,20 @@
  - Ubuntu：`dpkg -l | grep cron`
 
 - 安装（一般系统是集成的）：
- - CentOS 6：`sudo yum install -y vixie-cron crontabs`
+ - CentOS 6 / 7：`sudo yum install -y vixie-cron crontabs`
  - Ubuntu：`sudo apt-get install -y cron`
 
 - 服务常用命令
-	- service crond start //启动服务
-	- service crond stop //关闭服务
-	- service crond restart //重启服务
+	- CentOS 6
+		- `service crond start` 启动服务
+		- `service crond stop` 关闭服务
+		- `service crond restart` 重启服务
+	- CentOS 7
+		- `systemctl start crond` 启动服务
+		- `systemctl restart crond` 重新启动服务
+		- `systemctl status crond` 加入自启动
+		- `systemctl stop crond` 关闭服务
+
 
 ## Crontab 服务器配置文件常用参数
 
@@ -28,6 +35,7 @@
     - `45 4 1-10 * * service httpd restart`       #每月的 1 到 10 日的 4:45 重启 apache
     - `*/2 * * * * service httpd restart`         #每隔两分钟重启 apache
     - `1-59/2 * * * * service httpd restart`      #每隔两分钟重启 apache（这个比较特殊：1-59/2 这个表示过掉0分，从 1 分开始算，每隔两分执行，所以 1 分执行了，3 分执行了，5 分执行了....都是奇数进行执行。默认的 */2 都是偶数执行。）
+    - `* */2 * * * service httpd restart`         #每隔两小时重启 apache
     - `0 23-7/2 * * * service httpd restart`      #晚上 11 点到早上 7 点之间，每隔 2 个小时重启 apache
     - `0-59/30 18-23 * * * service httpd restart` #每天 18:00 到 23：00 之间，每隔 30 分钟重启 apache（方法一）
     - `0,30 18-23 * * * service httpd restart`    #每天 18:00 到 23：00 之间，每隔 30 分钟重启 apache（方法二）
