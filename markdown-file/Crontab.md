@@ -31,6 +31,7 @@
     - ![Crontab 服务器配置文件常用参数](../images/Crontab-a-1.jpg)
  - 常用例子介绍：
     - `30 21 * * * service httpd restart`         #每晚的 21:30 重启 apache
+    - `30 21 * * 6,0 service httpd restart`       #每周六、周日的 21:30 重启 apache
     - `45 4 1,10,22 * * service httpd restart`    #每月的 1、10、22 日的 4:45 重启 apache
     - `45 4 1-10 * * service httpd restart`       #每月的 1 到 10 日的 4:45 重启 apache
     - `*/2 * * * * service httpd restart`         #每隔两分钟重启 apache
