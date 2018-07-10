@@ -196,6 +196,39 @@ set password = password('新密码');
 FLUSH PRIVILEGES;
 ```
 
+## 小内存机子，MySQL 频繁挂掉解决办法（1G + CentOS 7.4）
+
+- 保存系统日志到本地进行查看：`cd  /var/log/ && sz messages`
+- 其中可以看到这样的几句话（可以知道内存不够了）：
+
+```
+Jul  6 21:49:14 VM_123_201_centos kernel: Out of memory: Kill process 19452 (httpd) score 36 or sacrifice child
+Jul  6 21:49:14 VM_123_201_centos kernel: Killed process 19452 (httpd) total-vm:516404kB, anon-rss:36088kB, file-rss:168kB, shmem-rss:12kB
+```
+
+- 对于 1G 的内存 MySQL（5.6.35），建议重点下面配置：
+
+```
+[mysqld]
+table_definition_cache=400
+table_open_cache=256
+innodb_buffer_pool_size = 64M
+max_connections = 100 
+```
+
+- 增加 swap（云服务基本都是没 swap 的）
+- 分别执行下面 shell 命令：
+
+```
+dd if=/dev/zero of=/swapfile bs=1M count=1024
+mkswap /swapfile
+swapon /swapfile
+```
+
+- 修改配置文件：`vim /etc/fstab`
+	- 添加这句在文件最后一行：`/swapfile swap swap defauluts 0 0`
+- 重启机子：`reboot`
+
 ## MySQL 主从复制
 
 ### 环境说明和注意点
