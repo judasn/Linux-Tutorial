@@ -36,7 +36,20 @@ services:
 
 ## 远程监控配置
 
-- 待完善
+- **以下方法为了方便，没有做任何安全措施，请用于内网**
+- 关掉防火墙
+- 修改远程 Docker 配置：`vim /usr/lib/systemd/system/docker.service`
+
+```
+旧值：
+ExecStart=/usr/bin/dockerd
+
+新值：
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix://var/run/docker.sock
+```
+
+- 重启 Docker：`systemctl daemon-reload && systemctl reload docker && systemctl restart docker`
+- Portainer 启动选择 Remote，填写远程 IP 和端口，比如：`192.168.1.3:2375`
 
 ## 资料
 
