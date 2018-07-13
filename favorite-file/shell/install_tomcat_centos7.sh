@@ -6,10 +6,6 @@ if [ ! -d "/opt/setups" ]; then
 	mkdir /opt/setups
 fi
 
-if [ ! -d "/usr/program" ]; then
-	mkdir /usr/program
-fi
-
 echo "下载 Tomcat"
 
 cd /opt/setups
@@ -28,13 +24,13 @@ if [ ! -d "/opt/setups/apache-tomcat-8.0.46" ]; then
 	exit 1
 fi
 
-echo "Tomcat 解压包移到 /usr/program/ 目录下"
-mv apache-tomcat-8.0.46/ /usr/program/
-mv /usr/program/apache-tomcat-8.0.46/ /usr/program/tomcat8/
+echo "Tomcat 解压包移到 /usr/local/ 目录下"
+mv apache-tomcat-8.0.46/ /usr/local/
+mv /usr/local/apache-tomcat-8.0.46/ /usr/local/tomcat8/
 
 echo "防火墙放行 8080 端口"
 firewall-cmd --zone=public --add-port=8080/tcp --permanent
 firewall-cmd --reload
 
 echo "运行 Tomcat"
-sh /usr/program/tomcat8/bin/startup.sh ; tail -200f /usr/program/tomcat8/logs/catalina.out
+sh /usr/local/tomcat8/bin/startup.sh ; tail -200f /usr/local/tomcat8/logs/catalina.out
