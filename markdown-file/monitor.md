@@ -183,6 +183,59 @@ Average:         0.50      0.00      0.50      0.00      8.94
 - `txcmp/s`：每秒钟发送出去的压缩包数目
 - `txmcst/s`：每秒钟接收到的多播包的包数目
 
+- 查看 TCP 相关的一些数据（每隔 1 秒采样一次，一共 5 次）：`sar -n TCP,ETCP 1 5`
+
+```
+Linux 3.10.0-693.2.2.el7.x86_64 (youmeek) 	07/17/2018 	_x86_64_	(2 CPU)
+
+12:05:47 PM  active/s passive/s    iseg/s    oseg/s
+12:05:48 PM      0.00      0.00      1.00      0.00
+
+12:05:47 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+12:05:48 PM      0.00      0.00      0.00      0.00      0.00
+
+12:05:48 PM  active/s passive/s    iseg/s    oseg/s
+12:05:49 PM      0.00      0.00      1.00      1.00
+
+12:05:48 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+12:05:49 PM      0.00      0.00      0.00      0.00      0.00
+
+12:05:49 PM  active/s passive/s    iseg/s    oseg/s
+12:05:50 PM      0.00      0.00      1.00      1.00
+
+12:05:49 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+12:05:50 PM      0.00      0.00      0.00      0.00      0.00
+
+12:05:50 PM  active/s passive/s    iseg/s    oseg/s
+12:05:51 PM      0.00      0.00      3.00      3.00
+
+12:05:50 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+12:05:51 PM      0.00      0.00      0.00      0.00      0.00
+
+12:05:51 PM  active/s passive/s    iseg/s    oseg/s
+12:05:52 PM      0.00      0.00      1.00      1.00
+
+12:05:51 PM  atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+12:05:52 PM      0.00      0.00      0.00      0.00      0.00
+
+Average:     active/s passive/s    iseg/s    oseg/s
+Average:         0.00      0.00      1.40      1.20
+
+Average:     atmptf/s  estres/s retrans/s isegerr/s   orsts/s
+Average:         0.00      0.00      0.00      0.00      0.00
+```
+
+
+```
+- active/s：每秒钟本地主动开启的 tcp 连接，也就是本地程序使用 connect() 系统调用
+- passive/s：每秒钟从源端发起的 tcp 连接，也就是本地程序使用 accept() 所接受的连接
+- retrans/s: 每秒钟的 tcp 重传次数
+
+atctive 和 passive 的数目通常可以用来衡量服务器的负载：接受连接的个数（passive），下游连接的个数（active）。可以简单认为 active 为出主机的连接，passive 为入主机的连接；但这个不是很严格的说法，比如 loalhost 和 localhost 之间的连接。
+
+来自：https://zhuanlan.zhihu.com/p/39893236
+```
+
 ---------------------------------------------------------------------
 
 ## CPU 监控
@@ -222,6 +275,7 @@ Average:         0.50      0.00      0.50      0.00      8.94
 	- [htop 命令详解](https://blog.csdn.net/freeking101/article/details/79173903)
 - mpstat 实时监控 CPU 状态：`yum install -y sysstat`
 	- 可以具体到某个核心，比如我有 2 核的 CPU，因为 CPU 核心下标是从 0 开始，所以我要查看 0 的状况（间隔 3 秒获取一次指标，一共获取 5 次）：`mpstat -P 0 3 5`
+	- 打印总 CPU 和各个核心指标：`mpstat -P ALL 1`
 	- 获取所有核心的平均值：`mpstat 3 5`
 
 ```
@@ -240,6 +294,50 @@ Average:       0    0.20    0.00    0.20    0.00    0.00    0.00    0.00    0.00
 - %sys 系统进程消耗 CPU 情况
 - %iowait  表示 CPU 等待 IO 时间占整个 CPU 周期的百分比
 - %idle  显示 CPU 空闲时间占用 CPU 总时间的百分比
+
+#### 类似 top 的 pidstat
+
+- 安装：`yum install -y sysstat`
+- 每隔 2 秒采样一次，一共 5 次：`pidstat 2 5`
+
+```
+Linux 3.10.0-693.el7.x86_64 (youmeek) 	07/17/2018 	_x86_64_	(8 CPU)
+
+11:52:58 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+11:53:00 AM     0     16813    0.50    0.99    0.00    1.49     1  pidstat
+11:53:00 AM     0     24757   50.99   12.87    0.00   63.86     0  java
+11:53:00 AM     0     24799   60.40    3.47    0.00   63.86     5  java
+11:53:00 AM     0     24841   99.50    7.43    0.00  100.00     0  java
+
+11:53:00 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+11:53:02 AM     0     24757   56.50    0.50    0.00   57.00     0  java
+11:53:02 AM     0     24799  100.00    6.50    0.00  100.00     5  java
+11:53:02 AM     0     24841   58.00    2.50    0.00   60.50     0  java
+
+11:53:02 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+11:53:04 AM     0     16813    0.00    1.00    0.00    1.00     2  pidstat
+11:53:04 AM     0     24757   62.00    5.50    0.00   67.50     0  java
+11:53:04 AM     0     24799   54.00   14.00    0.00   68.00     5  java
+11:53:04 AM     0     24841   39.50    9.00    0.00   48.50     0  java
+
+11:53:04 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+11:53:06 AM     0     16813    0.50    0.50    0.00    1.00     2  pidstat
+11:53:06 AM     0     24757   80.00   13.50    0.00   93.50     0  java
+11:53:06 AM     0     24799   56.50    0.50    0.00   57.00     5  java
+11:53:06 AM     0     24841    1.00    0.50    0.00    1.50     0  java
+
+11:53:06 AM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+11:53:08 AM     0     16813    0.00    0.50    0.00    0.50     2  pidstat
+11:53:08 AM     0     24757   58.50    1.00    0.00   59.50     0  java
+11:53:08 AM     0     24799   60.00    1.50    0.00   61.50     5  java
+11:53:08 AM     0     24841    1.00    0.50    0.00    1.50     0  java
+
+Average:      UID       PID    %usr %system  %guest    %CPU   CPU  Command
+Average:        0     16813    0.20    0.60    0.00    0.80     -  pidstat
+Average:        0     24757   61.58    6.69    0.00   68.26     -  java
+Average:        0     24799   66.47    5.19    0.00   71.66     -  java
+Average:        0     24841   39.92    3.99    0.00   43.91     -  java
+```
 
 ---------------------------------------------------------------------
 
@@ -276,6 +374,41 @@ Total:       16080      15919        160
 ```
 
 - 以上的结果重点关注是：`-/+ buffers/cache`，这一行代表实际使用情况。
+
+
+##### pidstat 采样内存使用情况
+
+- 安装：`yum install -y sysstat`
+- 每隔 2 秒采样一次，一共 3 次：`pidstat -r 2 3`
+
+```
+Linux 3.10.0-693.el7.x86_64 (youmeek) 	07/17/2018 	_x86_64_	(8 CPU)
+
+11:56:34 AM   UID       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
+11:56:36 AM     0     23960    168.81      0.00  108312   1124   0.01  pidstat
+11:56:36 AM     0     24757      8.42      0.00 9360696 3862788  23.75  java
+11:56:36 AM     0     24799      8.91      0.00 10424088 4988468  30.67  java
+11:56:36 AM     0     24841     11.39      0.00 10423576 4968428  30.54  java
+
+11:56:36 AM   UID       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
+11:56:38 AM     0     23960    169.50      0.00  108312   1200   0.01  pidstat
+11:56:38 AM     0     24757      6.00      0.00 9360696 3862788  23.75  java
+11:56:38 AM     0     24799      5.50      0.00 10424088 4988468  30.67  java
+11:56:38 AM     0     24841      7.00      0.00 10423576 4968428  30.54  java
+
+11:56:38 AM   UID       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
+11:56:40 AM     0     23960    160.00      0.00  108312   1200   0.01  pidstat
+11:56:40 AM     0     24757      6.50      0.00 9360696 3862788  23.75  java
+11:56:40 AM     0     24799      6.00      0.00 10424088 4988468  30.67  java
+11:56:40 AM     0     24841      8.00      0.00 10423576 4968428  30.54  java
+
+Average:      UID       PID  minflt/s  majflt/s     VSZ    RSS   %MEM  Command
+Average:        0     23960    166.11      0.00  108312   1175   0.01  pidstat
+Average:        0     24757      6.98      0.00 9360696 3862788  23.75  java
+Average:        0     24799      6.81      0.00 10424088 4988468  30.67  java
+Average:        0     24841      8.80      0.00 10423576 4968428  30.54  java
+```
+
 
 ---------------------------------------------------------------------
 
@@ -321,8 +454,8 @@ vda               0.00     0.00    0.00    1.68     0.00    16.16    19.20     0
 	- `rkB/s`: 每秒读数据量(kB为单位)
 	- `wkB/s`: 每秒写数据量(kB为单位)
 	- `avgrq-sz`:平均每次IO操作的数据量(扇区数为单位)
-	- `avgqu-sz`: 平均等待处理的IO请求队列长度
-	- `await`: 平均每次IO请求等待时间(包括等待时间和处理时间，毫秒为单位)
+	- `avgqu-sz`: 平均等待处理的IO请求队列长度（队列长度大于 1 表示设备处于饱和状态。）
+	- `await`: 系统发往 IO 设备的请求的平均响应时间(毫秒为单位)。这包括请求排队的时间，以及请求处理的时间。超过经验值的平均响应时间表明设备处于饱和状态，或者设备有问题。
 	- `svctm`: 平均每次IO请求的处理时间(毫秒为单位)
 	- `%util`: 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率（就是繁忙程度，值越高表示越繁忙）
 - **总结**
@@ -365,6 +498,39 @@ vda               0.00     0.00    0.00    1.68     0.00    16.16    19.20     0
 Timing cached reads:   3462 MB in  2.00 seconds = 1731.24 MB/sec
 Timing buffered disk reads: 806 MB in  3.00 seconds = 268.52 MB/sec
 ```
+
+
+##### pidstat 采样硬盘使用情况
+
+- 安装：`yum install -y sysstat`
+- 每隔 2 秒采样一次，一共 3 次：`pidstat -d 2 3`
+
+```
+Linux 3.10.0-693.el7.x86_64 (youmeek) 	07/17/2018 	_x86_64_	(8 CPU)
+
+11:57:29 AM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+
+11:57:31 AM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+11:57:33 AM     0     24757      0.00      2.00      0.00  java
+11:57:33 AM     0     24799      0.00     14.00      0.00  java
+
+11:57:33 AM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+11:57:35 AM     0     24841      0.00      8.00      0.00  java
+
+Average:      UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s  Command
+Average:        0     24757      0.00      0.66      0.00  java
+Average:        0     24799      0.00      4.65      0.00  java
+Average:        0     24841      0.00      2.66      0.00  java
+```
+
+- 输出指标含义：
+
+```
+kB_rd/s: 每秒进程从磁盘读取的数据量(以 kB 为单位)
+kB_wr/s: 每秒进程向磁盘写的数据量(以 kB 为单位)
+kB_ccwr/s：任务取消的写入磁盘的 KB。当任务截断脏的 pagecache 的时候会发生。
+```
+
 
 ---------------------------------------------------------------------
 
@@ -533,6 +699,13 @@ Address: 180.97.33.107
 - 查看尾部信息：`dmesg -T | tail`
 	- 参数 `-T` 表示显示时间
 - 只显示 error 和 warning 信息：`dmesg --level=err,warn -T`
+- 有些 OOM 的错误会在这里显示，比如：
+
+```
+[1880957.563400] Out of memory: Kill process 18694 (perl) score 246 or sacrifice child
+[1880957.563408] Killed process 18694 (perl) total-vm:1972392kB, anon-rss:1953348kB, file-rss:0kB
+```
+
 
 ---------------------------------------------------------------------
 
@@ -544,6 +717,7 @@ Address: 180.97.33.107
 - <http://coolnull.com/3649.html>
 - <http://www.rfyy.net/archives/2456.html>
 - <http://programmerfamily.com/blog/linux/sav.html>
+- <https://www.jianshu.com/p/3991c0dba094>
 
 
 
