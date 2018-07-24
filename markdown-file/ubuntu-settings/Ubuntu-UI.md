@@ -1,6 +1,6 @@
 
 
-## Linux 常见桌面环境方案
+## Ubuntu 常见桌面环境方案
 
 - [GNOME](https://www.gnome.org/)
 - [KDE](https://www.kde.org/)

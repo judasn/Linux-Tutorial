@@ -2,7 +2,7 @@
 - [Ubuntu 源设置](Ubuntu-Extra-Packages.md)
 - [Ubuntu 给 Dash 添加程序图标](Ubuntu-Create-Desktop.md)
 - [Ubuntu 常用设置](Ubuntu-Popular-Settings.md)
-- [Ubuntu UI 基础](Ubuntu-UI.md)
+- [Ubuntu 常见桌面环境方案](Ubuntu-UI.md)
 
 
 
