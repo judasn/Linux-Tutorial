@@ -1,6 +1,6 @@
 # Sed 常用命令
 
-－ 轻量级流编辑器，一般用来处理文本类文件
+- 轻量级流编辑器，一般用来处理文本类文件
 - **sed 是非交互式的编辑器。它不会修改文件，除非使用 shell 重定向来保存结果。默认情况下，所有的输出行都被打印到屏幕上**
 - **用 sed -i 会实际写入**，下面为了演示，都没加该参数，有需要可以自行添加。
 
@@ -53,16 +53,6 @@ rootLogger.appenderRef.rolling.ref = rolling
 	- `sed 's/^[0-9][0-9]*//g' /opt/log4j2.properties`：将文件中每一行以数字开头，都替换掉空字符并展示
 	- `sed '4,6s/^/#/g' /opt/log4j2.properties`：将文件中 4 ~ 6 行添加 # 开头
 	- `sed '4,6s/^#//g' /opt/log4j2.properties`：将文件中 4 ~ 6 行 # 开头去掉
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
 
 
 ## 实用例子
@@ -70,14 +60,7 @@ rootLogger.appenderRef.rolling.ref = rolling
 - `ifconfig eth0 |grep 'inet addr' |sed 's/^.*addr://g' |sed 's/Bcast.*$//g'`：CentOS 6 只显示 IP
 - `ifconfig ens33 |grep 'inet' |sed 's/^.*inet//g' |sed 's/netmask.*$//g' |sed -n '1p'`：CentOS 7.3 只显示 IP。先用 grep 筛选中包含 inet 的数据。
 	- `s` 参数开头表示的是搜索替换，`/^.*inet` 表示从开头到 inet 之间，`//` 为空内容，`/g`，表示处理这一行所有匹配的内容。`/netmask.*$` 表示从 netmask 到这一行结束的内容
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
-- ``：
+
 
 
 
