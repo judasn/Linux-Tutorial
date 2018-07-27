@@ -17,6 +17,7 @@
 - `jobs`，查看后台运行的程序列表
 - `ifconfig`，查看内网 IP 等信息（常用）
 - `curl ifconfig.me`，查看外网 IP 信息
+- `curl ip.cn`，查看外网 IP 信息
 - `locate 搜索关键字`，快速搜索系统文件/文件夹（类似 Windows 上的 everything 索引式搜索）（常用）
 	- `updatedb`，配合上面的 locate，给 locate 的索引更新（locate 默认是一天更新一次索引）（常用）
 - `date`，查看系统时间（常用）
