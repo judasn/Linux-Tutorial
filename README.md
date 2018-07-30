@@ -9,6 +9,10 @@
 - Gitbook 在线阅读地址：<https://youmeek.gitbooks.io/linux-tutorial/content/>
 - **学得越多越是明白一个人的力量是不够的，我只是起了一个引子，希望你能一起参与，真心希望！！！（鞠躬）**
 
+## 优秀同行推荐
+
+- [Linux工具快速教程](http://linuxtools-rst.readthedocs.io/zh_CN/latest/base/index.html)
+
 ## 目录(Contents)
 
 - [Linux 介绍](markdown-file/Linux.md)

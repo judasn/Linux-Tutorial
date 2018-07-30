@@ -195,8 +195,20 @@ drwxr-xr-x. 5 root root 4096 3月 26 10:57，其中最前面的 d 表示这是�
 - `umount /dev/sdb5`，卸载挂载，用分区名
 
 
+## wget 下载文件
+
+- 常规下载：`wget http://www.gitnavi.com/index.html`
+- 自动断点下载：`wget -c http://www.gitnavi.com/index.html`
+- 后台下载：`wget -b http://www.gitnavi.com/index.html`
+- 伪装代理名称下载：`wget --user-agent="Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.204 Safari/534.16" http://www.gitnavi.com/index.html`
+- 限速下载：`wget --limit-rate=300k http://www.gitnavi.com/index.html`
+- 批量下载：`wget -i /opt/download.txt`，一个下载地址一行
+- 后台批量下载：`wget -b -c -i /opt/download.txt`，一个下载地址一行
+
+
 
 ## 资料
 
 - <http://wenku.baidu.com/view/1ad19bd226fff705cc170af3.html>
 - <http://blog.csdn.net/nzing/article/details/9166057>
+- <http://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/wget.html>
