@@ -3,6 +3,8 @@
 ## 安装软件基础
 
 - 取回更新的软件包列表信息：`sudo apt-get update`，如果安装某个软件报：`Unable to locate package`，就得这样 update 下。
+- 安装本地 deb 文件：`sudo dpkg -i 文件名`
+	- 安装过程提示缺依赖：`sudo apt-get --fix-broken install`
 - 查看已经安装了哪些包：`sudo dpkg -l`
 - 查看已安装列表中是否有 Vim 软件，没有安装则没有数据显示：`sudo dpkg -l | grep vim`
 - 查看 Vim 软件安装位置：`sudo dpkg -L vim`
