@@ -76,12 +76,14 @@ sudo dpkg -i peek-*-Linux.deb
 wget http://packages.linuxdeepin.com/deepin/pool/main/d/deepin-scrot/deepin-scrot_2.0-0deepin_all.deb
 sudo dpkg -i deepin-scrot_2.0-0deepin_all.deb
  
-//可能提示缺少python依赖
-sudo apt-get install python-xlib
+apt-get --fix-broken install
 
 //终端下启动
 deepin scort
 ```
+
+- 配置快捷键来截图方法（思路一样）：<https://www.jianshu.com/p/6f9eee3e3d2e>
+	- Kali 的快捷键设置在：设置 - 设备 - Keyboard 下
 
 
 ## 升级 firefox
