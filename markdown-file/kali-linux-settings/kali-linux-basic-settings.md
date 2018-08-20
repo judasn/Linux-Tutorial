@@ -40,7 +40,7 @@ curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.v
 - 安装 deb 文件：`dpkg -i 文件名`
 	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install`
 - 安装完成后：
-	- 终端输入：`im-config`，一路确定，选择：`fcitx`，重启电脑，在设置中新增输入法 
+	- 终端输入：`im-config`，一路确定，在有一个提示选项中选择：`fcitx`，重启电脑，按 Ctrl + Space 就可以切换输入法 
 
 ## 安装 Chrome 浏览器
 
