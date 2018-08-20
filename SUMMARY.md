@@ -4,6 +4,7 @@
 * [Ubuntu 介绍](markdown-file/Ubuntu.md)
 * [Ubuntu 安装](markdown-file/Ubuntu-Install.md)
 * [Ubuntu 设置（目录）](markdown-file/ubuntu-settings/ubuntu-settings-toc.md)
+* [Kali Linux 介绍和设置（目录）](markdown-file/kali-linux-settings/kali-linux-toc.md)
 * [CentOS 介绍](markdown-file/CentOS.md)
 * [CentOS 6 安装](markdown-file/CentOS-Install.md)
 * [CentOS 7 安装](markdown-file/CentOS-7-Install.md)
