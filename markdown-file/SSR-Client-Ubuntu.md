@@ -40,6 +40,7 @@ ssr install
 	- `ssr stop`
 	- `ssr help`
 - 然后就可以用 Chrome 的 SwitchyOmega
+- AutoProxy：https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 
 ## 配置终端代理 polipo
 
