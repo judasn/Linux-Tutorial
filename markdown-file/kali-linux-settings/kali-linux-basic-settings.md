@@ -70,11 +70,17 @@ make package
 sudo dpkg -i peek-*-Linux.deb
 ```
 
-## 安装 shutter（截图软件）
+## 安装截图软
 
 ```
-sudo add-apt-repository ppa:shutter/ppa
-sudo apt-get update && sudo apt-get install shutter
+wget http://packages.linuxdeepin.com/deepin/pool/main/d/deepin-scrot/deepin-scrot_2.0-0deepin_all.deb
+sudo dpkg -i deepin-scrot_2.0-0deepin_all.deb
+ 
+//可能提示缺少python依赖
+sudo apt-get install python-xlib
+
+//终端下启动
+deepin scort
 ```
 
 
