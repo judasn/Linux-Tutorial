@@ -9,10 +9,10 @@
 - 支持 x86 和 ARM 架构
 - 官网下载：<https://www.kali.org/downloads/>
 	- 镜像名：Kali Linux 64 Bit，默认是用 GNOME 桌面，比较华丽，相对较卡（好点电脑推荐，习惯 Ubuntu 的基本都会用）
-	- 镜像名：Kali Linux Kde 64 Bit，默认是用 Kde 桌面，比较华丽，相对较卡
-	- 镜像名：Kali Linux Mate 64 Bit，默认是用 Mate 桌面，比较华丽，相对较卡
-	- 镜像名：Kali Linux Lxde 64 Bit，默认是用 Lxde 桌面，比较简洁，相对不卡（类似 Windows 风格的桌面，不卡，只是比较难用）
-	- 镜像名：Kali Linux Xfce 64 Bit，默认是用 Xfce 桌面，比较简洁，相对不卡
+	- 镜像名：Kali Linux Xfce 64 Bit，默认是用 Xfce 桌面，比较简洁，相对不卡（配置较差的推荐）
+	- 镜像名：Kali Linux Kde 64 Bit，默认是用 Kde 桌面，比较华丽，相对较卡（不推荐）
+	- 镜像名：Kali Linux Mate 64 Bit，默认是用 Mate 桌面，比较华丽，相对较卡（不推荐）
+	- 镜像名：Kali Linux Lxde 64 Bit，默认是用 Lxde 桌面，比较简洁，相对不卡（类似 Windows 风格的桌面，不推荐）
 
 ## 学习过程
 
