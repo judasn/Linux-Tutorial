@@ -73,3 +73,7 @@ sudo dpkg -i peek-*-Linux.deb
 ## 安装 shutter（截图软件）
 
 - `apt-get install shutter`
+
+## 安装 SSR 客户端
+
+- 查看：<https://github.com/judasn/Linux-Tutorial/blob/master/markdown-file/SSR-Client-Ubuntu.md>
