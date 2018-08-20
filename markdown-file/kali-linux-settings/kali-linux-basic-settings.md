@@ -72,7 +72,10 @@ sudo dpkg -i peek-*-Linux.deb
 
 ## 安装 shutter（截图软件）
 
-- `apt-get install shutter`
+```
+sudo add-apt-repository ppa:shutter/ppa
+sudo apt-get update && sudo apt-get install shutter
+```
 
 
 ## 升级 firefox
