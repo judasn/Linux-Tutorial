@@ -61,7 +61,7 @@ curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.v
 ```
 sudo apt install cmake valac libgtk-3-dev libkeybinder-3.0-dev libxml2-utils gettext txt2man
 
-git clone https://github.com/phw/peek.git
+git clone https://github.com/phw/peek.git --depth=1
 mkdir peek/build
 cd peek/build
 cmake -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF ..
