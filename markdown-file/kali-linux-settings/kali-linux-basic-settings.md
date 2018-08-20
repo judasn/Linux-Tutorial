@@ -74,6 +74,29 @@ sudo dpkg -i peek-*-Linux.deb
 
 - `apt-get install shutter`
 
+
+## 升级 firefox
+
+- 官网下载：<https://www.mozilla.org/en-US/firefox/new/>
+- 假设放在 /opt 目录下，进行解压：`tar xjf firefox-*.tar.bz2`
+- 进入图标存放目录|：`cd /usr/share/applications`
+- 创建文件并编辑：`sudo vim firefoxnew.desktop`
+
+``` ini
+[Desktop Entry]
+Name=firefoxnew
+Name[zh_CN]=firefoxnew
+Comment=firefox new
+Exec=/opt/firefox/firefox
+Icon=/opt/firefox/firefox/icons/updater.png
+Terminal=false
+Type=Application
+Categories=Application;
+Encoding=UTF-8
+StartupNotify=true
+```
+
+
 ## 安装 SSR 客户端
 
 - 查看：<https://github.com/judasn/Linux-Tutorial/blob/master/markdown-file/SSR-Client-Ubuntu.md>
