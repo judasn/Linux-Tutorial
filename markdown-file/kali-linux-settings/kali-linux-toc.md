@@ -18,6 +18,7 @@
 
 - [Kali Linux 系统安装](kali-linux-install.md)
 - [Kali Linux 基础设置](kali-linux-basic-settings.md)
+- [Kali Linux 渗透测试思路](kali-linux-penetration-test.md)
 
 
 ## 其他资料
