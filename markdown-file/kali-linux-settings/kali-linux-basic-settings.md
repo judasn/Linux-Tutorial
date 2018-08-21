@@ -38,7 +38,7 @@ curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.v
 - 下载 deb 文件：<http://pinyin.sogou.com/linux/>
 - 安装依赖：`apt-get install -y fcitx`
 - 安装 deb 文件：`dpkg -i 文件名`
-	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install`
+	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install -y`
 - 安装完成后：
 	- 终端输入：`im-config`，一路确定，在有一个提示选项中选择：`fcitx`，重启电脑，按 Ctrl + Space 就可以切换输入法 
 
@@ -46,13 +46,13 @@ curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.v
 
 - 下载 deb 文件：<https://www.chrome64bit.com/index.php/google-chrome-64-bit-for-linux>
 - 安装 deb 文件：`dpkg -i 文件名`
-	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install`
+	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install -y`
 
 ## 安装 Visual Studio Code
 
 - 下载 deb 文件：<https://code.visualstudio.com/>
 - 安装 deb 文件：`dpkg -i 文件名`
-	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install`
+	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install -y`
 
 ## 安装 Peek（Gif 录制）
 
@@ -76,7 +76,7 @@ sudo dpkg -i peek-*-Linux.deb
 wget http://packages.linuxdeepin.com/deepin/pool/main/d/deepin-scrot/deepin-scrot_2.0-0deepin_all.deb
 sudo dpkg -i deepin-scrot_2.0-0deepin_all.deb
  
-apt-get --fix-broken install
+apt-get --fix-broken install -y
 
 //终端下启动
 deepin scort
