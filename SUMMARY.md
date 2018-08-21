@@ -21,6 +21,7 @@
 * [Linux 下常用压缩文件的解压、压缩](markdown-file/File-Extract-Compress.md)
 * [Yum 下载安装包及对应依赖包](markdown-file/Off-line-Yum-Install.md)
 * [Zsh 入门](markdown-file/Zsh.md)
+* [终端测速](markdown-file/speedtest.md)
 * [日常维护](markdown-file/maintenance.md)
 * [日常监控](markdown-file/monitor.md)
 * [nmon 系统性能监控工具](markdown-file/Nmon.md)
