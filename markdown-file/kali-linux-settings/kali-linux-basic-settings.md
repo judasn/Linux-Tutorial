@@ -42,17 +42,17 @@ curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.v
 - 安装完成后：
 	- 终端输入：`im-config`，一路确定，在有一个提示选项中选择：`fcitx`，重启电脑，按 Ctrl + Space 就可以切换输入法 
 
-## 安装 Chrome 浏览器
-
-- 下载 deb 文件：<https://www.chrome64bit.com/index.php/google-chrome-64-bit-for-linux>
-- 安装 deb 文件：`dpkg -i 文件名`
-	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install -y`
-
 ## 安装 Visual Studio Code
 
 - 下载 deb 文件：<https://code.visualstudio.com/>
 - 安装 deb 文件：`dpkg -i 文件名`
 	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install -y`
+- 安装 Markdown 扩展，中文语言包
+
+## 安装剪切板
+
+- 命令：`sudo apt-get install parcellite`
+	- 修改快捷键：`右键软件 | 首选项 | Hotkeys | 历史记录按键组合`
 
 ## 安装 Peek（Gif 录制）
 
