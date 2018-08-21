@@ -79,7 +79,7 @@ sudo dpkg -i deepin-scrot_2.0-0deepin_all.deb
 apt-get --fix-broken install -y
 
 //终端下启动
-deepin scort
+deepin-scrot
 ```
 
 - 配置快捷键来截图方法（思路一样）：<https://www.jianshu.com/p/6f9eee3e3d2e>
