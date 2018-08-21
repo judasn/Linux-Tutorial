@@ -4,14 +4,20 @@
 
 - 取回更新的软件包列表信息：`sudo apt-get update`，如果安装某个软件报：`Unable to locate package`，就得这样 update 下。
 - 安装本地 deb 文件：`sudo dpkg -i 文件名`
-	- 安装过程提示缺依赖：`sudo apt-get --fix-broken install`
+	- 安装过程提示缺依赖：`sudo apt-get --fix-broken install -y`
 - 查看已经安装了哪些包：`sudo dpkg -l`
 - 查看已安装列表中是否有 Vim 软件，没有安装则没有数据显示：`sudo dpkg -l | grep vim`
 - 查看 Vim 软件安装位置：`sudo dpkg -L vim`
 - 安装名为 Vim 的软件：`sudo apt-get install vim`
-- 卸载名为 Vim 的软件（保留配置文档）：`sudo apt-get remove vim`
-- 卸载名为 Vim 的软件（删除配置文档）：`sudo apt-get –purge remove vim`
 - 升级系统所有有新版本的软件：`sudo apt-get upgrade`
+
+## 卸载
+
+- 卸载名为 Vim 的软件（保留配置文档）：`sudo apt-get remove vim`（在输入软件的名的时候，可以输入部分，按 Tab 进行提示）
+- 卸载名为 Vim 的软件（并删除配置文档）：`sudo apt-get –purge remove vim`
+- 卸载名为 Vim 的软件（并删除包及其依赖的软件包、配置文件）：`sudo apt-get autoremove --purge vim`
+- 卸载名为 Vim 的软件（dpkg 方式）：`sudo dpkg -r vim`（在输入软件的名的时候，可以输入部分，按 Tab 进行提示）
+- 卸载名为 Vim 的软件（dpkg 方式，并删除配置文档）：`sudo dpkg -P vim`
 - 删除已下载的旧包文件：`sudo apt-get autoclean`
 - 删除所有已下载的包文件：`sudo apt-get clean`
 - 卸载所有自动安装且不再使用的软件包：`sudo apt-get autoremove`
