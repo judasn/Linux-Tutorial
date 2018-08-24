@@ -48,7 +48,8 @@ db.createUser(
 - 然后删除容器：`docker rm cloud-mongo`
 - 重新运行镜像，这次增加需要授权才能访问的配置：`docker run -d -p 27017:27017 -v /data/docker/mongo/db:/data/db --restart always --name cloud-mongo mongo:3.4 --auth`
 - 重新启动服务：`docker restart cloud-mongo`
-- 导入：`docker exec -it cloud-mongo mongoimport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 --file /data/db/mongodb20180824.json --type json`
+- 导出：`docker exec -it cloud-mongo mongoexport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 -o /data/db/mongodb.json --type json`
+- 导入：`docker exec -it cloud-mongo mongoimport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 --file /data/db/mongodb.json --type json`
 
 ## 安装环境
 
