@@ -47,7 +47,13 @@ curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.v
 - 下载 deb 文件：<https://code.visualstudio.com/>
 - 安装 deb 文件：`dpkg -i 文件名`
 	- 应该会提示有部分依赖不存在，则执行：`apt-get --fix-broken install -y`
-- 安装 Markdown 扩展，中文语言包
+- 安装扩展
+	- 扩展仓库：<https://marketplace.visualstudio.com/>
+	- 中文语言包
+	- Markdown
+	- GitLens 
+	- REST Client 
+	- Atom One Dark Theme
 
 ## 安装剪切板
 
