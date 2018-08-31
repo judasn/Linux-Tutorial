@@ -89,7 +89,6 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 	- Pre SCM BuildStep Plugin 在拉代码之前插入一些步骤
 	- GitHub Pull Request Builder Github Pull Request时自动构建
 	- GitHub API Plugin Github API插件
-	- SonarQube Scanner for Jenkins ：代码质量管理插件。
 	- AnsiColor（可选）：这个插件可以让Jenkins的控制台输出的log带有颜色
 	- NodeJS Plugin
 
