@@ -9,6 +9,7 @@
 
 ## Docker 下安装 Jenkins
 
+- 配置：至少需要 2G 内存
 - 先禁用 selinux
 	- 编辑配置文件：`vim /etc/selinux/config`
 	- 把 `SELINUX=enforcing` 改为 `SELINUX=disabled`
