@@ -49,8 +49,7 @@ python setup.py  install
 ```
 
 
-- 生成配置文件：
-	- `echo_supervisord_conf > /etc/supervisord.conf`
+- 生成配置文件：`echo_supervisord_conf > /etc/supervisord.conf`
 - 创建专门的程序配置文件目录、日志目录：
 	- `mkdir -p /var/log/supervisor`
 	- `mkdir -p /etc/supervisor/conf.d/`
