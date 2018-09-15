@@ -460,13 +460,17 @@ vda               0.00     0.00    0.00    1.68     0.00    16.16    19.20     0
 	- `%util`: 采用周期内用于IO操作的时间比率，即IO队列非空的时间比率（就是繁忙程度，值越高表示越繁忙）
 - **总结**
 	- `iowait%` 表示CPU等待IO时间占整个CPU周期的百分比，如果iowait值超过50%，或者明显大于%system、%user以及%idle，表示IO可能存在问题。
-	- `%util` 表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态
+	- `%util` （重点参数）表示磁盘忙碌情况，一般该值超过80%表示该磁盘可能处于繁忙状态
 
 
 #### 硬盘 IO 监控
 
 - 安装 iotop：`yum install -y iotop`
-- 查看命令：`iotop`
+- 查看所有进程 I/O 情况命令：`iotop`
+- 只查看当前正在处理 I/O 的进程：`iotop -o`
+- 只查看当前正在处理 I/O 的线程，每隔 5 秒刷新一次：`iotop -o -d 5`
+- 只查看当前正在处理 I/O 的进程（-P 参数决定），每隔 5 秒刷新一次：`iotop -o -P -d 5`
+- 只查看当前正在处理 I/O 的进程（-P 参数决定），每隔 5 秒刷新一次，使用 KB/s 单位（默认是 B/s）：`iotop -o -P -k -d 5`
 - 使用 dd 命令测量服务器延迟：`dd if=/dev/zero of=/opt/ioTest2.txt bs=512 count=1000 oflag=dsync`
 - 使用 dd 命令来测量服务器的吞吐率（写速度)：`dd if=/dev/zero of=/opt/ioTest1.txt bs=1G count=1 oflag=dsync`
 	- 该命令创建了一个 10M 大小的文件 ioTest1.txt，其中参数解释：
@@ -543,10 +547,27 @@ kB_ccwr/s：任务取消的写入磁盘的 KB。当任务截断脏的 pagecache 
 	- 如果没有 EPEL 源：`yum install -y epel-release`
 - 常用命令：
 	- `iftop`：默认是监控第一块网卡的流量
-	- `iftop -i eth1`：监控eth1
+	- `iftop -i eth0`：监控 eth0
 	- `iftop -n`：直接显示IP, 不进行DNS反解析
 	- `iftop -N`：直接显示连接埠编号, 不显示服务名称
 	- `iftop -F 192.168.1.0/24 or 192.168.1.0/255.255.255.0`：显示某个网段进出封包流量
+    - `iftop -nP`：显示端口与 IP 信息
+
+``` nginx
+中间部分：外部连接列表，即记录了哪些ip正在和本机的网络连接
+
+右边部分：实时参数分别是该访问 ip 连接到本机 2 秒，10 秒和 40 秒的平均流量
+
+=> 代表发送数据，<= 代表接收数据
+
+底部会显示一些全局的统计数据，peek 是指峰值情况，cumm 是从 iftop 运行至今的累计情况，而 rates 表示最近 2 秒、10 秒、40 秒内总共接收或者发送的平均网络流量。
+
+TX:（发送流量）  cumm:   143MB   peak:   10.5Mb    rates:   1.03Mb  1.54Mb  2.10Mb
+RX:（接收流量）          12.7GB          228Mb              189Mb   191Mb   183Mb
+TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb   185MbW
+
+```
+
 
 ### 端口使用情况
 
@@ -742,13 +763,17 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 
 ## 服务器故障排查顺序
 
-#### 负载高，访问慢（没有数据库）
+#### CPU 负载高，访问慢（没有数据库）
 
 - 系统层面
-	- 查看负载、CPU 和内存使用、服务器上线时间：`htop`
+	- 查看负载、CPU、内存、上线时间、高资源进程 PID：`htop`
+	- 查看磁盘使用情况：`df -h`
+	- 查看磁盘当前情况：`iostat -x -k 3 3`。如果发现当前磁盘忙碌，则查看是哪个 PID 在忙碌：`iotop -o -P -k -d 5`
+	- 查看 PID 具体在写什么东西：`lsof -p PID`
 	- 查看系统日志：`tail -400f /var/log/messages`
 	- 查看简化线程树：`pstree -a >> /opt/pstree-20180915.txt`
-	- ping（多个地区 ping），看下解析 IP 与网络丢包
+	- 其他机子 ping（多个地区 ping），看下解析 IP 与网络丢包
+	- `ifconfig` 查看 dropped 和 error 是否在不断增加，判断网卡是否出现问题
 	- nslookup 命令查看 DNS 是否可用
 	- 查看 TCP 和 UDP 应用
 		- `netstat -ntlp`
@@ -757,7 +782,8 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
 	- 看下谁在线：`w`，`last`
 	- 看下执行了哪些命令：`history`
-- JVM 层面
+- 程序、JVM 层面
+	- 查看程序 log
 	- 使用 `ps -ef | grep java`，查看 PID
 	- 使用 `jstat -gc PID 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
 	- 使用 `jstat -gccause`：额外输出上次GC原因
@@ -765,6 +791,13 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 	- 结合代码解决内存溢出或泄露问题。
 
+#### CPU 负载高，访问慢（带数据库）
+
+- 基于上面
+- mysql 下查看当前的连接数与执行的sql 语句：`show full processlist;`
+- 检查慢查询日志，可能是慢查询引起负载高，根据配置文件查看存放位置：`log_slow_queries`
+- 查看 MySQL 设置的最大连接数：`show variables like 'max_connections';`
+	- 重新设置最大连接数：`set GLOBAL max_connections=300`
 
 #### 访问不了
 
