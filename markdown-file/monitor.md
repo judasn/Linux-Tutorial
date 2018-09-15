@@ -596,16 +596,38 @@ tcp6       0      0 :::43107                :::*                    LISTEN      
 - 查看当前连接80端口的机子有多少：`netstat -an|grep 80|sort -r`
 - 查看已经连接的IP有多少连接数：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n`
 - 查看已经连接的IP有多少连接数，只显示前 5 个：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | head -5`
-- 统计当前连接的一些状态情况：`netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
+- 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
 
 ```
-8 TIME_WAIT
-8 ESTABLISHED
-7 LISTEN
-1 Foreign
-1 established)
-1 CLOSE_WAIT
+262 127.0.0.1
+118
+103 172.22.100.141
+ 12 172.22.100.29
+  7 172.22.100.183
+  6 116.21.17.144
+  6 0.0.0.0
+  5 192.168.1.109
+  4 172.22.100.32
+  4 172.22.100.121
+  4 172.22.100.108
+  4 172.18.1.39
+  3 172.22.100.2
+  3 172.22.100.190
 ```
+
+
+- 统计当前连接的一些状态情况：`netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'` 或者 `netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
+
+```
+TIME_WAIT 96（是表示系统在等待客户端响应，以便再次连接时候能快速响应，如果积压很多，要开始注意了，准备阻塞了。这篇文章可以看下：http://blog.51cto.com/jschu/1728001）
+CLOSE_WAIT 11
+FIN_WAIT2 17
+ESTABLISHED 102（表示正常数据传输状态）
+```
+
+- Linux 系统下，TCP连接断开后，会以TIME_WAIT状态保留一定的时间，然后才会释放端口。当并发请求过多的时候，就会产生大量的TIME_WAIT状态 的连接，无法及时断开的话，会占用大量的端口资源和服务器资源。这个时候我们可以优化TCP的内核参数，来及时将TIME_WAIT状态的端口清理掉。[来源](http://zhangbin.junxilinux.com/?p=219)
+
+
 
 - 查看网络接口接受、发送的数据包情况（每隔 3 秒统计一次）：`netstat -i 3`
 
@@ -706,8 +728,51 @@ Address: 180.97.33.107
 [1880957.563408] Killed process 18694 (perl) total-vm:1972392kB, anon-rss:1953348kB, file-rss:0kB
 ```
 
+## 查看系统日志
+
+- 查看系统日志：`tail -400f /var/log/messages`
+- 可能会看到类似以下异常：
+
+```
+Out of memory: Kill process 19452 (java) score 264 or sacrifice child
+```
+
 
 ---------------------------------------------------------------------
+
+## 服务器故障排查顺序
+
+#### 负载高，访问慢（没有数据库）
+
+- 系统层面
+	- 查看负载、CPU 和内存使用、服务器上线时间：`htop`
+	- 查看系统日志：`tail -400f /var/log/messages`
+	- 查看简化线程树：`pstree -a >> /opt/pstree-20180915.txt`
+	- ping（多个地区 ping），看下解析 IP 与网络丢包
+	- nslookup 命令查看 DNS 是否可用
+	- 查看 TCP 和 UDP 应用
+		- `netstat -ntlp`
+		- `netstat -nulp`
+	- 统计当前连接的一些状态情况：`netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
+	- 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
+	- 看下谁在线：`w`，`last`
+	- 看下执行了哪些命令：`history`
+- JVM 层面
+	- 使用 `ps -ef | grep java`，查看 PID
+	- 使用 `jstat -gc PID 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
+	- 使用 `jstat -gccause`：额外输出上次GC原因
+	- 使用 `jmap -dump:format=b,file=/opt/myHeapDumpFileName PID`，生成堆转储文件
+	- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
+	- 结合代码解决内存溢出或泄露问题。
+
+
+#### 访问不了
+
+- ping（多个地区 ping），看下解析 IP 与网络丢包
+- nslookup 命令查看 DNS 是否可用
+- telnet 端口：`telnet 192.1.1.1 80`
+
+
 
 ## 参考资料
 
