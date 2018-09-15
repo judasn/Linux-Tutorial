@@ -763,7 +763,7 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 
 ## 服务器故障排查顺序
 
-#### CPU 负载高，访问慢（没有数据库）
+#### CPU 高，负载高，访问慢（没有数据库）
 
 - 系统层面
 	- 查看负载、CPU、内存、上线时间、高资源进程 PID：`htop`
@@ -771,8 +771,9 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 查看磁盘当前情况：`iostat -x -k 3 3`。如果发现当前磁盘忙碌，则查看是哪个 PID 在忙碌：`iotop -o -P -k -d 5`
 	- 查看 PID 具体在写什么东西：`lsof -p PID`
 	- 查看系统日志：`tail -400f /var/log/messages`
-	- 查看简化线程树：`pstree -a >> /opt/pstree-20180915.txt`
+	- 查看简化线程树：`pstree -a >> /opt/pstree-20180915.log`
 	- 其他机子 ping（多个地区 ping），看下解析 IP 与网络丢包
+	- 查看网络节点情况：`traceroute www.youmeek.com`
 	- `ifconfig` 查看 dropped 和 error 是否在不断增加，判断网卡是否出现问题
 	- nslookup 命令查看 DNS 是否可用
 	- 查看 TCP 和 UDP 应用
@@ -780,20 +781,23 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 		- `netstat -nulp`
 	- 统计当前连接的一些状态情况：`netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
 	- 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
+	- 跟踪程序：`strace -tt -T -v -f -e trace=file -o /opt/strace-20180915.log -s 1024 -p PID`
 	- 看下谁在线：`w`，`last`
 	- 看下执行了哪些命令：`history`
 - 程序、JVM 层面
-	- 查看程序 log
+	- 查看 Nginx 程序 log
+	- 查看 JAVA 程序 log
 	- 使用 `ps -ef | grep java`，查看 PID
+	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-20180915.log`
 	- 使用 `jstat -gc PID 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
 	- 使用 `jstat -gccause`：额外输出上次GC原因
 	- 使用 `jmap -dump:format=b,file=/opt/myHeapDumpFileName PID`，生成堆转储文件
 	- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 	- 结合代码解决内存溢出或泄露问题。
 
-#### CPU 负载高，访问慢（带数据库）
+#### CPU 低，负载高，访问慢（带数据库）
 
-- 基于上面
+- 基于上面，但是侧重点在于 I/O 读写，以及是否有 MySQL 死锁，或者挂载了 NFS，而 NFS Server 出现问题
 - mysql 下查看当前的连接数与执行的sql 语句：`show full processlist;`
 - 检查慢查询日志，可能是慢查询引起负载高，根据配置文件查看存放位置：`log_slow_queries`
 - 查看 MySQL 设置的最大连接数：`show variables like 'max_connections';`
