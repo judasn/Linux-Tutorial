@@ -110,16 +110,15 @@
            port="8080" 
            protocol="org.apache.coyote.http11.Http11Nio2Protocol" 
            connectionTimeout="20000" 
-           maxConnections="10000" 
+           maxConnections="1000" 
            redirectPort="8443" 
            enableLookups="false" 
-           acceptCount="100" 
+           acceptCount="1000" 
            maxPostSize="10485760" 
            maxHttpHeaderSize="8192" 
            compression="on" 
            disableUploadTimeout="true" 
            compressionMinSize="2048" 
-           acceptorThreadCount="2" 
            compressableMimeType="text/html,text/xml,text/plain,text/css,text/javascript,application/javascript" 
            URIEncoding="utf-8"
         />
@@ -145,7 +144,7 @@
 - 模型资料来源：<http://xmuzyq.iteye.com/blog/599750>
 - 配比资料：<http://www.jianshu.com/p/d45e12241af4>
 - JDK8 配比：[关键系统的JVM参数推荐(2018仲夏版)](https://mp.weixin.qq.com/s/FHY0MelBfmgdRpT4zWF9dQ)
-- JDK8 常用配比总结 8G 内存：`CATALINA_OPTS="-Dfile.encoding=UTF-8 -Xms4g -Xmx4g -XX:NewRatio=1 -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m"`
+- JDK8 常用配比总结 8G 内存：`CATALINA_OPTS="-Dfile.encoding=UTF-8 -Xms4g -Xmx4g"`
 - Java 的内存模型分为：
 	- Young，年轻代（易被 GC）。Young 区被划分为三部分，Eden 区和两个大小严格相同的 Survivor 区，其中 Survivor 区间中，某一时刻只有其中一个是被使用的，另外一个留做垃圾收集时复制对象用，在 Young 区间变满的时候，minor GC 就会将存活的对象移到空闲的Survivor 区间中，根据 JVM 的策略，在经过几次垃圾收集后，任然存活于 Survivor 的对象将被移动到 Tenured  区间。
 	- Tenured，终身代。Tenured 区主要保存生命周期长的对象，一般是一些老的对象，当一些对象在 Young 复制转移一定的次数以后，对象就会被转移到 Tenured 区，一般如果系统中用了 application 级别的缓存，缓存中的对象往往会被转移到这一区间。
@@ -153,17 +152,17 @@
 - Linux 修改 /usr/program/tomcat7/bin/catalina.sh 文件，把下面信息添加到文件第一行。
 	- 如果服务器只运行一个 Tomcat
 		- 机子内存如果是 4G：
-			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms2048m -Xmx2048m -Xmn1024m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:SurvivorRatio=10 -XX:MaxTenuringThreshold=15 -XX:NewRatio=2 -XX:+DisableExplicitGC"`
+			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms2g -Xmx2g"`
 		- 机子内存如果是 8G：
-			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms4096m -Xmx4096m -Xmn2048m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:SurvivorRatio=10 -XX:MaxTenuringThreshold=15 -XX:NewRatio=2 -XX:+DisableExplicitGC"`
+			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms4g -Xmx4g"`
 		- 机子内存如果是 16G：
-			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms8192m -Xmx8192m -Xmn4096m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:SurvivorRatio=10 -XX:MaxTenuringThreshold=15 -XX:NewRatio=2 -XX:+DisableExplicitGC"`
+			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms8g -Xmx8g"`
 		- 机子内存如果是 32G：
-			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms16384m -Xmx16384m -Xmn8192m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:SurvivorRatio=10 -XX:MaxTenuringThreshold=15 -XX:NewRatio=2 -XX:+DisableExplicitGC"`
+			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms16g -Xmx16g"`
 	- 如果是 8G 开发机
-		- `-Xms2048m -Xmx2048m -XX:NewSize=512m -XX:MaxNewSize=1024m -XX:PermSize=256m -XX:MaxPermSize=512m`
+		- `-Xms2g -Xmx2g`
 	- 如果是 16G 开发机
-		- `-Xms4096m -Xmx4096m -XX:NewSize=1024m -XX:MaxNewSize=2048m -XX:PermSize=256m -XX:MaxPermSize=512m`
+		- `-Xms4g -Xmx4g`
 	- 参数说明：
 	``` nginx 
 	-Dfile.encoding：默认文件编码
@@ -182,8 +181,64 @@
 - Windows 修改 /tomcat7/bin/catalina.bat 文件，找到这一行：`echo Using CATALINA_BASE:   "%CATALINA_BASE%"`，然后在其上面添加如下内容，此方法只对解压版的 Tomcat 有效果，对于安装版本的需要点击安装后任务栏上的那个 Tomcat 图标，打开配置中有一个 `Java` Tab 的进行编辑。
 ``` nginx
 set JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF8" -Ddefault.client.encoding="UTF-8" -Duser.language=Zh
-set JAVA_OPTS=%JAVA_OPTS% -server -Xms4096m -Xmx4096m -Xmn2048m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:SurvivorRatio=10 -XX:MaxTenuringThreshold=15 -XX:NewRatio=2 -XX:+DisableExplicitGC
+set JAVA_OPTS=%JAVA_OPTS% -server -Xms4g -Xmx4g
 ```
+
+## tomcat-manager 监控配置（tomcat 8.0.53）
+
+####  开启步骤
+
+- 不同的 Tomcat 版本会有差异。
+- 官网文档：<https://tomcat.apache.org/tomcat-8.0-doc/manager-howto.html>
+- **先确保解压的 tomcat/webapps 下有 manager 项目**
+- 在配置文件里面添加可访问用户：`vim /usr/local/tomcat8/conf/tomcat-users.xml`，比如：
+
+```
+<role rolename="tomcat"/>
+<role rolename="manager-gui"/>
+<role rolename="manager-status"/>
+
+<user username="tomcat" password="123456" roles="tomcat,manager-gui,manager-status"/>
+```
+
+- 正常情况下，manager ui 界面只运行内网：127.0.0.1 访问，这里我们要关闭这个限制。
+- 修改 webapps 下 manager 项目下的配置：`vim /usr/local/tomcat8/webapps/manager/META-INF/context.xml`
+- 旧值：
+
+```
+<Context antiResourceLocking="false" privileged="true" >
+  <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|jav
+</Context>
+```
+
+- 新值：
+
+```
+<Context antiResourceLocking="false" privileged="true" >
+  <!--
+  <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+  -->
+  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|jav
+</Context>
+```
+
+- 浏览器访问：<http://120.78.72.28:8080/manager/status>
+
+#### 可以看到 JVM 堆栈信息
+
+![image.png](https://upload-images.jianshu.io/upload_images/12159-e86a32e685f91dde.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 可以看到 HTTP 连接数情况
+
+![image.png](https://upload-images.jianshu.io/upload_images/12159-99d9fffee0c3c17f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+- 配置文件里面限制的最大线程数：`Max threads: 200`
+- 当前线程数：`Current thread count: 10`
+- 当前繁忙的线程数：`Current thread busy: 1`
+	- 如果当前繁忙线程已经是接近最大线程数，那基本可以表示负载到了
+- 保持连接数：`Keep alive sockets count: 1`
+
 
 ## Tomcat 8 的 Log 分割
 

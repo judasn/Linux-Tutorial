@@ -787,6 +787,7 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 - 程序、JVM 层面
 	- 查看 Nginx 程序 log
 	- 查看 JAVA 程序 log
+	- 开启 tomcat-manager 监控配置
 	- 使用 `ps -ef | grep java`，查看 PID
 	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-20180915.log`
 	- 使用 `jstat -gc PID 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
