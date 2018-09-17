@@ -641,7 +641,7 @@ tcp6       0      0 :::43107                :::*                    LISTEN      
 
 ```
 TIME_WAIT 96（是表示系统在等待客户端响应，以便再次连接时候能快速响应，如果积压很多，要开始注意了，准备阻塞了。这篇文章可以看下：http://blog.51cto.com/jschu/1728001）
-CLOSE_WAIT 11
+CLOSE_WAIT 11（如果积压很多，要开始注意了，准备阻塞了。可以看这篇文章：http://blog.51cto.com/net881004/2164020）
 FIN_WAIT2 17
 ESTABLISHED 102（表示正常数据传输状态）
 ```
