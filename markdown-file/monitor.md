@@ -568,7 +568,6 @@ TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb 
 
 ```
 
-
 ### 端口使用情况
 
 #### lsof
@@ -614,7 +613,7 @@ tcp6       0      0 :::8066                 :::*                    LISTEN      
 tcp6       0      0 :::43107                :::*                    LISTEN      12011/java 
 ```
 
-- 查看当前连接80端口的机子有多少：`netstat -an|grep 80|sort -r`
+- 查看当前连接80端口的机子有多少，并且是属于什么状态：`netstat -an|grep 80|sort -r`
 - 查看已经连接的IP有多少连接数：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n`
 - 查看已经连接的IP有多少连接数，只显示前 5 个：`netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | head -5`
 - 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
@@ -646,9 +645,24 @@ FIN_WAIT2 17
 ESTABLISHED 102（表示正常数据传输状态）
 ```
 
-- Linux 系统下，TCP连接断开后，会以TIME_WAIT状态保留一定的时间，然后才会释放端口。当并发请求过多的时候，就会产生大量的TIME_WAIT状态 的连接，无法及时断开的话，会占用大量的端口资源和服务器资源。这个时候我们可以优化TCP的内核参数，来及时将TIME_WAIT状态的端口清理掉。[来源](http://zhangbin.junxilinux.com/?p=219)
+- TIME_WAIT 和 CLOSE_WAIT 说明：
 
+```
+Linux 系统下，TCP连接断开后，会以TIME_WAIT状态保留一定的时间，然后才会释放端口。当并发请求过多的时候，就会产生大量的TIME_WAIT状态 的连接，无法及时断开的话，会占用大量的端口资源和服务器资源。这个时候我们可以优化TCP的内核参数，来及时将TIME_WAIT状态的端口清理掉。
 
+来源：http://zhangbin.junxilinux.com/?p=219
+
+=================================
+
+出现大量close_wait的现象，主要原因是某种情况下对方关闭了socket链接，但是另一端由于正在读写，没有关闭连接。代码需要判断socket，一旦读到0，断开连接，read返回负，检查一下errno，如果不是AGAIN，就断开连接。
+Linux分配给一个用户的文件句柄是有限的，而TIME_WAIT和CLOSE_WAIT两种状态如果一直被保持，那么意味着对应数目的通道就一直被占着，一旦达到句柄数上限，新的请求就无法被处理了，接着就是大量Too Many Open Files异常，导致tomcat崩溃。关于TIME_WAIT过多的解决方案参见TIME_WAIT数量太多。
+
+常见错误原因：
+1.代码层面上未对连接进行关闭，比如关闭代码未写在 finally 块关闭，如果程序中发生异常就会跳过关闭代码，自然未发出指令关闭，连接一直由程序托管，内核也无权处理，自然不会发出 FIN 请求，导致连接一直在 CLOSE_WAIT 。
+2.程序响应过慢，比如双方进行通讯，当客户端请求服务端迟迟得不到响应，就断开连接，重新发起请求，导致服务端一直忙于业务处理，没空去关闭连接。这种情况也会导致这个问题。一般如果有多个节点，nginx 进行负载，其中某个节点很高，其他节点不高，那可能就是负载算法不正常，都落在一台机子上了，以至于它忙不过来。
+
+来源：https://juejin.im/post/5b59e61ae51d4519634fe257
+```
 
 - 查看网络接口接受、发送的数据包情况（每隔 3 秒统计一次）：`netstat -i 3`
 
@@ -819,33 +833,6 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 - <http://www.rfyy.net/archives/2456.html>
 - <http://programmerfamily.com/blog/linux/sav.html>
 - <https://www.jianshu.com/p/3991c0dba094>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
