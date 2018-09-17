@@ -1,10 +1,55 @@
 # Java bin 目录下的工具
 
+## JVM 内存结构
+
+- 参考资料：[JVM内存结构（基于JDK8）](https://blog.csdn.net/qq_34457118/article/details/81712293)
+
+#### 运行时数据区（JVM 规范）
+
+![image.png](https://upload-images.jianshu.io/upload_images/12159-f8cdb04243ea36e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+- VM 栈（JVM 虚拟机栈）
+	- 是线程私有的，它的生命周期和线程相同。它描述的是 Java 方法执行的内存模式。
+- Java 堆区（Heap）
+	- 是 Java 虚拟机所管理的内存中最大的一块。是被所有线程共享的一块内存区域，在虚拟机启动时候创建。用于存放对象实例。
+- 方法区（Method Area）
+	- 也是各个线程共享的内存区域，用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。
+	- 虽然在 JVM 规范上是描述为堆的一个逻辑部分，但是它有一个别名：Non-Heap（非堆），独立于堆区之外的。JDK8 它是：Metaspace 区
+		- Metaspace：主要存放：Class、Package、Method、Field、字节码、常量池、符号引用等等
+	- 方法区里面有一个：运行时常量池（Run-Time Constant Pool），用于存放编译期生成的各种字面量和符号应用，在类加载后进入该池存放。
+- 本地方法栈（Native Method Stacks）
+	- 与虚拟机栈所发挥的作用类似，之间的区别：
+		- 虚拟机栈是为虚拟机执行 Java 方法（也就是字节码）服务
+		- 本地方法栈是为了虚拟机使用到 Native 方法服务。
+
+#### JDK8 真实内存结构（HotSpot）
+
+- HotSpot--Java HotSpot Performance Engine，是 Java 虚拟机的一个实现，目前是 Oracle 在维护和发布。
+
+![image.png](https://upload-images.jianshu.io/upload_images/12159-045ea5a11000e8df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### JDK8 HotSpot 的堆内存区域结构
+
+![image.png](https://upload-images.jianshu.io/upload_images/12159-6a94044da388bb0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+- 对象生命周期：Eden > Surviver（S0 + S1） > Old
+- Eden:该区域是最主要的刚创建的对象的内存分配区域，绝大多数对象都会被创建到这里（除了部分大对象通过内存担保机制创建到Old区域，默认大对象都是能够存活较长时间的），该区域的对象大部分都是短时间都会死亡的，故垃圾回收器针对该部分主要采用标记整理算法了回收该区域。
+- Surviver:该区域也是属于新生代的区域，该区域是将在Eden中未被清理的对象存放到该区域中，该区域分为两块区域，采用的是复制算法，每次只使用一块，Eden与Surviver区域的比例是8:1，是根据大量的业务运行总结出来的规律。
+- Old:该区域是属于老年代，一般能够在Surviver中没有被清除出去的对象才会进入到这块区域，该区域主要是采用标记清除算法。
+- 总结：java堆的垃圾回收是垃圾回收器最主要的光顾对象，整体采用分代收集的策略，对不同区域结合其特点采用不同的垃圾收集算法。我们在编程中也应该关注这一块区域，尽量不适用大对象，尽可能的创建局部对象，使用过后确定废弃不用的对象及时断开引用，尽量避免使用循环的对象引用（可达性分析也是比较消耗资源的）等等。
+
+#### JVM内存区域的详解图
+
+![image.png](https://upload-images.jianshu.io/upload_images/12159-deafd9588b74a2cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+-------------------------------------------------------------
+
 ## 频繁GC问题或内存溢出排查流程
 
 - 使用 `jps`，查看线程ID，假设 PID 为 12011
-- 使用 `jstat -gc 12011 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
-- 使用 `jstat -gccause`：额外输出上次GC原因
+- 使用 `jstat -gc PID 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
+- 使用 `jstat -gccause PID`：额外输出上次GC原因
 - 使用 `jmap -dump:format=b,file=/opt/myHeapDumpFileName 12011`，生成堆转储文件
 - 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 - 结合代码解决内存溢出或泄露问题。
@@ -13,6 +58,9 @@
 
 - 使用 `jps`查看线程ID，假设 PID 为 12011
 - 使用 `jstack 12011` 查看线程情况
+
+-------------------------------------------------------------------
+
 
 ## jps
 
@@ -26,10 +74,16 @@
 - `jps -v` 跟：`ps -ef|grep java` 主要输出内容一样
 - `12011` 是我这边的一个 java 应用的 pid，下面的其他命令都是自己与此应用进行分析的
 
-## jstat
+-------------------------------------------------------------------
+
+## jstat（重要）
 
 - 显示进程中的类装载、内存、垃圾收集、JIT编译等运行数据。
-- `jstat -gc 12011 250 10`，查询进程 12011 的垃圾收集情况，每250毫秒查询一次，一共查询10次。
+- 查看类加载信息：`jstat -class PID`
+
+#### 垃圾回收统计
+
+- `jstat -gc PID 250 10`，每250毫秒查询一次，一共查询10次。
 
 ```
  S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT   
@@ -46,21 +100,30 @@
 ```
 
 - 列含义说明：
-	-S0C 年轻代中第一个survivor（幸存区）的容量 (字节) 
-	-S1C 年轻代中第二个survivor（幸存区）的容量 (字节) 
-	-S0U 年轻代中第一个survivor（幸存区）目前已使用空间 (字节) 
-	-S1U 年轻代中第二个survivor（幸存区）目前已使用空间 (字节) 
-	-EC 年轻代中Eden（伊甸园）的容量 (字节) 
-	-EU 年轻代中Eden（伊甸园）目前已使用空间 (字节) 
-	-OC Old代的容量 (字节) 
-	-OU Old代目前已使用空间 (字节) 
-	-PC Perm(持久代)的容量 (字节) 
-	-PUPerm(持久代)目前已使用空间 (字节) 
-	-YGC 从应用程序启动到采样时年轻代中gc次数 
-	-YGCT 从应用程序启动到采样时年轻代中gc所用时间(s) 
-	-FGC 从应用程序启动到采样时old代(全gc)gc次数 
-	-FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s) 
-	-GCT 从应用程序启动到采样时gc用的总时间(s)
+	- **34944.0 表示 34M 大小，235729.8 表示 235M **
+	- **SO + S1 + Eden = young 区**
+		-S0C 年轻代中第一个survivor（幸存区）的容量 (字节) 
+		-S1C 年轻代中第二个survivor（幸存区）的容量 (字节) 
+		-S0U 年轻代中第一个survivor（幸存区）目前已使用空间 (字节) （字母 U 表示 used）
+		-S1U 年轻代中第二个survivor（幸存区）目前已使用空间 (字节) （字母 U 表示 used）
+		-EC 年轻代中Eden（伊甸园）的容量 (字节) 
+		-EU 年轻代中Eden（伊甸园）目前已使用空间 (字节) 
+	- **OC + OU = old 区**
+		-OC Old代的容量 (字节) 
+		-OU Old代目前已使用空间 (字节) 
+	- **MC + MU = Metaspace 区**
+		- MC 方法区大小
+		- MU 方法区使用大小
+	- 其他
+		- CCSC 压缩类空间大小
+		- CCSU 压缩类空间使用大小
+		- YGC 年轻代垃圾回收次数
+		- YGCT 年轻代垃圾回收消耗时间
+		- FGC 老年代垃圾回收次数
+		- FGCT 老年代垃圾回收消耗时间
+		- GCT 垃圾回收消耗总时间
+
+#### 堆内存统计
 
 - `jstat -gccapacity 12011 250 10`，查询进程 12011 VM内存中三代（young,old,perm）对象的使用和占用大小，每250毫秒查询一次，一共查询10次。
 
@@ -89,13 +152,20 @@
 	- OGCMX old代的最大容量(字节) 
 	- OGC old代当前新生成的容量 (字节) 
 	- OC Old代的容量 (字节) 
-	- PGCMN perm代中初始化(最小)的大小 (字节) 
-	- PGCMX perm代的最大容量 (字节)
-	- PGC perm代当前新生成的容量 (字节) 
-	- PC Perm(持久代)的容量 (字节) 
-	- YGC 从应用程序启动到采样时年轻代中gc次数 
-	- FGC 从应用程序启动到采样时old代(全gc)gc次数
-- 更多其他参数的使用可以看：[Java命令学习系列（四）——jstat](https://mp.weixin.qq.com/s?__biz=MzI3NzE0NjcwMg==&mid=402330276&idx=2&sn=58117de92512f83090d0a9de738eeacd&scene=21#wechat_redirect)
+	- MCMN 最小元数据容量
+	- MCMX 最大元数据容量
+	- MC 当前元数据空间大小
+	- CCSMN 最小压缩类空间大小
+	- CCSMX 最大压缩类空间大小
+	- CCSC 当前压缩类空间大小
+	- YGC 年轻代gc次数，从应用程序启动到采样时年轻代中gc次数 
+	- FGC 老年代GC次数，从应用程序启动到采样时old代(全gc)gc次数
+- 更多其他参数的使用可以看：
+	- [Java命令学习系列（四）——jstat](https://mp.weixin.qq.com/s?__biz=MzI3NzE0NjcwMg==&mid=402330276&idx=2&sn=58117de92512f83090d0a9de738eeacd&scene=21#wechat_redirect)
+	- [java高分局之jstat命令使用](https://blog.csdn.net/maosijunzi/article/details/46049117)
+
+-------------------------------------------------------------------
+
 
 ## jmap
 
@@ -198,6 +268,9 @@ tenured generation:
  535:             1            168  [[Ljava.math.BigInteger;
 ```
 
+-------------------------------------------------------------------
+
+
 ## jstack
 
 - jstack命令主要用来查看Java线程的调用堆栈的，可以用来分析线程问题（如死锁）
@@ -273,6 +346,7 @@ Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.151-b12 mixed mode):
 
 JNI global references: 281
 ```
+
 
 
 ## 资料

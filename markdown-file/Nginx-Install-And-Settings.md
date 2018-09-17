@@ -81,7 +81,7 @@ http {
 - 重新启动服务：`docker restart youmeek-nginx`
 
 
-## Nginx 源码编译安装
+## Nginx 源码编译安装（带监控模块）
 
 - 官网下载最新稳定版本 **1.8.1**，大小：814K
 - 官网安装说明：<https://www.nginx.com/resources/wiki/start/topics/tutorials/install/>
@@ -110,33 +110,35 @@ http {
 --http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
 --http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
 --with-http_ssl_module \
+--with-http_stub_status_module \
 --http-scgi-temp-path=/var/temp/nginx/scgi
 ```
 
-    - 编译：`make`
-    - 安装：`make install`
+- 编译：`make`
+- 安装：`make install`
 - 启动 Nginx
-    - 先检查是否在 /usr/local 目录下生成了 Nginx 等相关文件：`cd /usr/local/nginx;ll`，正常的效果应该是显示这样的：
-    
-    ``` nginx
-    drwxr-xr-x. 2 root root 4096 3月  22 16:21 conf
-    drwxr-xr-x. 2 root root 4096 3月  22 16:21 html
-    drwxr-xr-x. 2 root root 4096 3月  22 16:21 sbin
-    ```
+	- 先检查是否在 /usr/local 目录下生成了 Nginx 等相关文件：`cd /usr/local/nginx;ll`，正常的效果应该是显示这样的：
 
-    - 停止防火墙：`service iptables stop`
-        - 或是把 80 端口加入到的排除列表：
-        - `sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
-        - `sudo service iptables save`
-        - `sudo service iptables restart`
-    - 启动：`/usr/local/nginx/sbin/nginx`，启动完成 shell 是不会有输出的
-    - 检查 时候有 Nginx 进程：`ps aux | grep nginx`，正常是显示 3 个结果出来 
-    - 检查 Nginx 是否启动并监听了 80 端口：`netstat -ntulp | grep 80` 
-    - 访问：`192.168.1.114`，如果能看到：`Welcome to nginx!`，即可表示安装成功
-    - 检查 Nginx 启用的配置文件是哪个：`/usr/local/nginx/sbin/nginx -t`
-    - 刷新 Nginx 配置后重启：`/usr/local/nginx/sbin/nginx -s reload`
-    - 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
-    - 如果访问不了，或是出现其他信息看下错误立即：`vim /var/log/nginx/error.log`
+``` nginx
+drwxr-xr-x. 2 root root 4096 3月  22 16:21 conf
+drwxr-xr-x. 2 root root 4096 3月  22 16:21 html
+drwxr-xr-x. 2 root root 4096 3月  22 16:21 sbin
+```
+
+- 如果要检查刚刚编译的哪些模块，可以：`nginx -V`
+- 停止防火墙：`service iptables stop`
+    - 或是把 80 端口加入到的排除列表：
+    - `sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
+    - `sudo service iptables save`
+    - `sudo service iptables restart`
+- 启动：`/usr/local/nginx/sbin/nginx`，启动完成 shell 是不会有输出的
+- 检查 时候有 Nginx 进程：`ps aux | grep nginx`，正常是显示 3 个结果出来 
+- 检查 Nginx 是否启动并监听了 80 端口：`netstat -ntulp | grep 80` 
+- 访问：`192.168.1.114`，如果能看到：`Welcome to nginx!`，即可表示安装成功
+- 检查 Nginx 启用的配置文件是哪个：`/usr/local/nginx/sbin/nginx -t`
+- 刷新 Nginx 配置后重启：`/usr/local/nginx/sbin/nginx -s reload`
+- 停止 Nginx：`/usr/local/nginx/sbin/nginx -s stop`
+- 如果访问不了，或是出现其他信息看下错误立即：`vim /var/log/nginx/error.log`
 
 
 ## 把 Nginx 添加到系统服务中
@@ -544,6 +546,89 @@ http {
 
 ```
 
+----------------------------------------------------------------------
+
+
+## Nginx 常规优化
+
+#### 增加工作线程数和并发连接数
+
+- 修改参数：`worker_processes 1;`
+- 该参数是指：nginx 要开启的工作进程数（worker process），默认是 1，一把你不需要修改。（除了工作进程，还有一种 master process 的概念）
+- 但是如果请求数比较多，一般推荐最大是修改成 CPU 的内核数等同的值，以增加能力。
+- 修改 events 参数
+
+```
+events {
+	# 每一个进程可以打开的最大连接数（这个参数是受限制于系统参数的，默认是 1024）（进程数是上面 worker_processes 决定的）
+    worker_connections  1024;
+    # 可以一次建立多个连接
+    multi_accept on;
+    # epoll 模式效率最高
+    use epoll;
+}
+```
+
+#### 启动长连接
+
+```
+http {
+  sendfile on; # 减少文件在应用和内核之间的拷贝
+  tcp_nopush on; # 当数据包达到一定大小再发送
+  
+  keepalive_timeout   65;
+  
+  upstream tomcatCluster {
+      server 192.168.1.114:8080;
+      server 192.168.1.114:8081;
+      keepalive 300; # 300 个长连接
+  }
+  
+}
+```
+
+#### 启用缓存和压缩
+
+```
+http {
+    gzip on;
+    gzip_buffers 8 16k; # 这个限制了nginx不能压缩大于128k的文件
+    gzip_min_length 512; # 单位byte
+    gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+    gzip_http_version 1.1; # 1.0 的版本可能会有问题
+    gzip_types   text/plain text/css application/javascript application/x-javascript application/json application/xml;
+}
+```
+
+#### 操作系统优化（机器好点的时候）
+
+###### 修改 sysctl 参数
+
+- 修改配置文件：`vim /etc/sysctl.conf`
+
+```
+net.ipv4.tcp_fin_timeout = 10           #保持在FIN-WAIT-2状态的时间，使系统可以处理更多的连接。此参数值为整数，单位为秒。
+net.ipv4.tcp_tw_reuse = 1              #开启重用，允许将TIME_WAIT socket用于新的TCP连接。默认为0，表示关闭。
+net.ipv4.tcp_tw_recycle = 0            #开启TCP连接中TIME_WAIT socket的快速回收。默认值为0，表示关闭。
+net.ipv4.tcp_syncookies = 1            #开启SYN cookie，出现SYN等待队列溢出时启用cookie处理，防范少量的SYN攻击。默认为0，表示关闭。
+net.core.somaxconn = 1024             #定义了系统中每一个端口最大的监听队列的长度, 对于一个经常处理新连接的高负载 web服务环境来说，默认值为128，偏小。
+```
+
+- 刷新 sysctl 配置：`sysctl -p`
+
+###### 修改 limits 参数
+
+- ElasticSearch 一般也是要修改该参数
+- 修改配置文件：`vim /etc/security/limits.conf`
+
+```
+* soft nofile 262144
+* hard nofile 262144
+* soft core unlimited
+* soft stack 262144
+```
+
+----------------------------------------------------------------------
 
 ## Nginx 监控模块
 
@@ -571,15 +656,16 @@ http {
 
 ```ini
 location /nginx_status {
-    #allow 192.168.1.100;
-    #deny all;
+    allow 127.0.0.1;
+    deny all;
     stub_status on;
     access_log   off;
 }
 ```
 
 - 当你访问：http://127.0.0.1/nginx_status，会得到类似下面的结果
-- 其中配置的 `allow 192.168.1.100;` 表示只允许客户端 IP 为这个才能访问这个地址
+- 其中配置的 `allow 127.0.0.1;` 表示只允许本机访问：http://127.0.0.1/nginx_status 才能看到
+	- 所以我们也可以通过 curl 访问本机看到结果，不一定要对外开放。
 - `deny all;` 除了被允许的，其他所有人都不可以访问
 
 ```
@@ -589,12 +675,12 @@ server accepts handled requests
 Reading: 0 Writing: 5 Waiting: 0   
 ```
 
-- Active connections: 对后端发起的活动连接数（最常需要看的就是这个参数）
+- Active connections: 当前活动连接数，包含 waiting 的连接（最常需要看的就是这个参数）
 - Server accepts handled requests: Nginx总共处理了 3 个连接,成功创建 6 次握手(证明中间没有失败的),总共处理了 9 个请求.
-- Reading: Nginx 读取到客户端的 Header 信息数.
-- Writing: Nginx 返回给客户端的 Header 信息数.
+- Reading: Nginx 读取到客户端的 Header 信息数，如果很大，说明现在很多请求正在过来
+- Writing: Nginx 返回给客户端的 Header 信息数，如果很大，说明现在又很多请求正在响应
 - Waiting: 开启keep-alive的情况下,这个值等于 active – (reading + writing),意思就是 Nginx 已经处理完成,正在等候下一次请求指令的驻留连接.
-- 所以,在访问效率高,请求很快被处理完毕的情况下,Waiting数比较多是正常的.如果reading +writing数较多,则说明并发访问量非常大,正在处理过程中.
+- 所以,在访问效率高,请求很快被处理完毕的情况下,Waiting数比较多是正常的。**如果reading + writing数较多,则说明并发访问量非常大,正在处理过程中**
 
 ## Nginx 配置文件常用配置积累
 

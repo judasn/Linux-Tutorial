@@ -765,6 +765,7 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 
 #### CPU 高，负载高，访问慢（没有数据库）
 
+- **记录负载开始升高的时间**
 - 系统层面
 	- 查看负载、CPU、内存、上线时间、高资源进程 PID：`htop`
 	- 查看磁盘使用情况：`df -h`
@@ -775,25 +776,27 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 其他机子 ping（多个地区 ping），看下解析 IP 与网络丢包
 	- 查看网络节点情况：`traceroute www.youmeek.com`
 	- `ifconfig` 查看 dropped 和 error 是否在不断增加，判断网卡是否出现问题
-	- nslookup 命令查看 DNS 是否可用
+	- `nslookup` 命令查看 DNS 是否可用
+	- 如果 nginx 有安装：http_stub_status_module 模块，则查看当前统计
 	- 查看 TCP 和 UDP 应用
 		- `netstat -ntlp`
 		- `netstat -nulp`
 	- 统计当前连接的一些状态情况：`netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
 	- 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
-	- 跟踪程序：`strace -tt -T -v -f -e trace=file -o /opt/strace-20180915.log -s 1024 -p PID`
+	- 跟踪程序（按 `Ctrl + C` 停止跟踪）：`strace -tt -T -v -f -e trace=file -o /opt/strace-20180915.log -s 1024 -p PID`
 	- 看下谁在线：`w`，`last`
 	- 看下执行了哪些命令：`history`
 - 程序、JVM 层面
-	- 查看 Nginx 程序 log
-	- 查看 JAVA 程序 log
-	- 使用内置 tomcat-manager 监控配置，或者使用：psi-probe
+	- 保存、查看 Nginx 程序 log
+		- 通过 GoAccess 分析 log
+	- 保存、查看 Java 程序 log
+	- 使用内置 tomcat-manager 监控配置，或者使用类似工具：psi-probe
 	- 使用 `ps -ef | grep java`，查看 PID
 	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-20180915.log`
-	- 使用 `jstat -gc PID 250 20`，查看gc情况，一般比较关注PERM区的情况，查看GC的增长情况。
-	- 使用 `jstat -gccause`：额外输出上次GC原因
+	- 使用 `jstat -gc PID 250 10`，查看gc情况（截图）
+	- 使用 `jstat -gccause PID`：额外输出上次GC原因（截图）
 	- 使用 `jmap -dump:format=b,file=/opt/myHeapDumpFileName PID`，生成堆转储文件
-	- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
+		- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 	- 结合代码解决内存溢出或泄露问题。
 
 #### CPU 低，负载高，访问慢（带数据库）
@@ -804,11 +807,6 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 - 查看 MySQL 设置的最大连接数：`show variables like 'max_connections';`
 	- 重新设置最大连接数：`set GLOBAL max_connections=300`
 
-#### 访问不了
-
-- ping（多个地区 ping），看下解析 IP 与网络丢包
-- nslookup 命令查看 DNS 是否可用
-- telnet 端口：`telnet 192.1.1.1 80`
 
 
 

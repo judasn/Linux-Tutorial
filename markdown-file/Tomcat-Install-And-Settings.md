@@ -128,10 +128,7 @@
    acceptCount="100" 
    maxPostSize="10485760" 
    maxHttpHeaderSize="8192" 
-   compression="on" 
    disableUploadTimeout="true" 
-   compressionMinSize="2048" 
-   compressableMimeType="text/html,text/xml,text/plain,text/css,text/javascript,application/javascript" 
    URIEncoding="utf-8"
 />
 ```
