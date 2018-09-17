@@ -792,10 +792,10 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 保存、查看 Java 程序 log
 	- 使用内置 tomcat-manager 监控配置，或者使用类似工具：psi-probe
 	- 使用 `ps -ef | grep java`，查看 PID
-	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-20180915.log`
+	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-tomcat1-20180917.log`
 	- 使用 `jstat -gc PID 250 10`，查看gc情况（截图）
 	- 使用 `jstat -gccause PID`：额外输出上次GC原因（截图）
-	- 使用 `jmap -dump:format=b,file=/opt/myHeapDumpFileName PID`，生成堆转储文件
+	- 使用 `jmap -dump:format=b,file=/opt/dumpfile-tomcat1-20180917 PID`，生成堆转储文件
 		- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 	- 结合代码解决内存溢出或泄露问题。
 
