@@ -32,6 +32,7 @@
 
 ![image.png](https://upload-images.jianshu.io/upload_images/12159-6a94044da388bb0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+- 组成：Eden + Surviver（S0 + S1） + Old
 - 对象生命周期：Eden > Surviver（S0 + S1） > Old
 - Eden:该区域是最主要的刚创建的对象的内存分配区域，绝大多数对象都会被创建到这里（除了部分大对象通过内存担保机制创建到Old区域，默认大对象都是能够存活较长时间的），该区域的对象大部分都是短时间都会死亡的，故垃圾回收器针对该部分主要采用标记整理算法了回收该区域。
 - Surviver:该区域也是属于新生代的区域，该区域是将在Eden中未被清理的对象存放到该区域中，该区域分为两块区域，采用的是复制算法，每次只使用一块，Eden与Surviver区域的比例是8:1，是根据大量的业务运行总结出来的规律。
@@ -41,6 +42,10 @@
 #### JVM内存区域的详解图
 
 ![image.png](https://upload-images.jianshu.io/upload_images/12159-deafd9588b74a2cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 更多这类文章
+
+- [从实际案例聊聊Java应用的GC优化](https://tech.meituan.com/jvm_optimize.html)
 
 
 -------------------------------------------------------------
@@ -271,7 +276,7 @@ tenured generation:
 -------------------------------------------------------------------
 
 
-## jstack
+## jstack（CPU 负载高）
 
 - jstack命令主要用来查看Java线程的调用堆栈的，可以用来分析线程问题（如死锁）
 - jstack用于生成java虚拟机当前时刻的线程快照。

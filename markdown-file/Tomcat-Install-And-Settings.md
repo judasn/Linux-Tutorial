@@ -165,11 +165,8 @@
 - 配比资料：<http://www.jianshu.com/p/d45e12241af4>
 - JDK8 配比：[关键系统的JVM参数推荐(2018仲夏版)](https://mp.weixin.qq.com/s/FHY0MelBfmgdRpT4zWF9dQ)
 - JDK8 常用配比总结 8G 内存：`CATALINA_OPTS="-Dfile.encoding=UTF-8 -Xms4g -Xmx4g"`
-- Java 的内存模型分为：
-	- Young，年轻代（易被 GC）。Young 区被划分为三部分，Eden 区和两个大小严格相同的 Survivor 区，其中 Survivor 区间中，某一时刻只有其中一个是被使用的，另外一个留做垃圾收集时复制对象用，在 Young 区间变满的时候，minor GC 就会将存活的对象移到空闲的Survivor 区间中，根据 JVM 的策略，在经过几次垃圾收集后，任然存活于 Survivor 的对象将被移动到 Tenured  区间。
-	- Tenured，终身代。Tenured 区主要保存生命周期长的对象，一般是一些老的对象，当一些对象在 Young 复制转移一定的次数以后，对象就会被转移到 Tenured 区，一般如果系统中用了 application 级别的缓存，缓存中的对象往往会被转移到这一区间。
-	- Perm，永久代。主要保存 class,method,filed 对象，这部门的空间一般不会溢出，除非一次性加载了很多的类，不过在涉及到热部署的应用服务器的时候，有时候会遇到 java.lang.OutOfMemoryError : PermGen space 的错误，造成这个错误的很大原因就有可能是每次都重新部署，但是重新部署后，类的 class 没有被卸载掉，这样就造成了大量的 class 对象保存在了 perm 中，这种情况下，一般重新启动应用服务器可以解决问题。
-- Linux 修改 /usr/program/tomcat7/bin/catalina.sh 文件，把下面信息添加到文件第一行。
+- Java 的内存模型看：[这篇文章](Java-bin.md)
+- Linux 修改 /usr/program/tomcat8/bin/catalina.sh 文件，把下面信息添加到文件第一行。
 	- 如果服务器只运行一个 Tomcat，堆栈信息可以这样配置：
 		- 机子内存如果是 4G：
 			- `CATALINA_OPTS="-Dfile.encoding=UTF-8 -server -Xms2g -Xmx2g"`
@@ -183,8 +180,10 @@
 		- `-Xms2g -Xmx2g`
 	- 如果是 16G 开发机
 		- `-Xms4g -Xmx4g`
-	- 还有一个参数：`-XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=1024M`
-		- 这个调试来确认什么值合适。
+	- 还有一个参数：`-XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=512M`
+		- 这个可以通过调试来确认什么值合适，一般通过使用 `jstat -gc PID 250 20`，查看 gc 情况下的 MC、MU 情况。
+		- 默认 MaxMetaspaceSize 是 -1，无上限，所以如果硬件还行，不配置也没啥问题。
+		- 自己也了解 JVM 实际情况，那就根据实际情况调整。一般项目可以推荐：`-XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=512M`
 - Windows 修改 /tomcat7/bin/catalina.bat 文件，找到这一行：`echo Using CATALINA_BASE:   "%CATALINA_BASE%"`，然后在其上面添加如下内容，此方法只对解压版的 Tomcat 有效果，对于安装版本的需要点击安装后任务栏上的那个 Tomcat 图标，打开配置中有一个 `Java` Tab 的进行编辑。
 ``` nginx
 set JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF8" -Ddefault.client.encoding="UTF-8" -Duser.language=Zh
