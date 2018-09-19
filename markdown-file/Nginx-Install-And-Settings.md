@@ -126,6 +126,16 @@ drwxr-xr-x. 2 root root 4096 3月  22 16:21 sbin
 ```
 
 - 如果要检查刚刚编译的哪些模块，可以：`nginx -V`
+
+```
+nginx version: nginx/1.8.0
+built by gcc 4.4.7 20120313 (Red Hat 4.4.7-18) (GCC)
+built with OpenSSL 1.0.1e-fips 11 Feb 2013
+TLS SNI support enabled
+configure arguments: --user=nginx --group=nginx --prefix=/usr/local/nginx --pid-path=/usr/local/nginx/run/nginx.pid --lock-path=/usr/local/nginx/lock/nginx.lock --with-http_ssl_module --with-http_dav_module --with-http_flv_module --with-http_gzip_static_module --with-http_stub_status_module
+```
+
+
 - 停止防火墙：`service iptables stop`
     - 或是把 80 端口加入到的排除列表：
     - `sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
