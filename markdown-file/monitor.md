@@ -780,6 +780,12 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 #### CPU 高，负载高，访问慢（没有数据库）
 
 - **记录负载开始升高的时间**
+- 常见场景
+	- 虚拟机所在的宿主机资源瓶颈，多个虚拟机竞争资源
+	- 定时任务大量的任务并发
+	- 消息、请求堆积后恢复时的瞬时流量引起
+	- 持久化任务引起
+	- 更多可以看这篇：[线上异常排查总结](https://blog.csdn.net/freeiceflame/article/details/78006812)
 - 系统层面
 	- 查看负载、CPU、内存、上线时间、高资源进程 PID：`htop`
 	- 查看磁盘使用情况：`df -h`
