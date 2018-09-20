@@ -61,6 +61,20 @@
 - 命令：`7za a test1.7z /opt/test1/`
 
 
+## 分卷压缩
+
+- 分卷压缩：`zip -s 100M myFile.zip --out newFile.zip`
+- 最终效果：
+
+```
+newFile.z01
+newFile.z02
+newFile.z03
+newFile.z04
+newFile.zip
+```
+
+
 ## 特殊格式
 
 - 7z
