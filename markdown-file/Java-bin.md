@@ -286,7 +286,11 @@ tenured generation:
 	- 另外，jstack工具还可以附属到正在运行的java程序中，看到当时运行的java程序的java stack和native stack的信息, 如果现在运行的java程序呈现hung的状态，jstack是非常有用的。
 - `jstack 12011`，查看线程情况
 - `jstack -l 12011`，除堆栈外，显示关于锁的附件信息
-- 下面 demo 内容太多，所以选取其中一部分
+- 导出文件：`jstack -l PID >> /opt/jstack-tomcat1-20180917.log`
+	- 把占用 CPU 资源高的线程十进制的 PID 转换成 16 进制：`printf "%x\n" PID`，比如：`printf "%x\n" 12401` 得到结果是：`3071`
+	- 在刚刚输出的那个 log 文件中搜索：`3071`，可以找到：`nid=0x3071`
+- 在线看某个线程 PID 的情况：`jstack 进程ID | grep 十六进制线程ID -A 10`
+- 下面 demo 内容太多，所以选取其中一部分结构：
 
 ```
 2018-03-08 14:28:13
