@@ -82,7 +82,15 @@
  - 看到显示的结果中包括 rpmforge 和 epel 的列表表示成功。
  - `sudo yum install -y htop`（htop 官方源是没有的，所以如果能下载下来就表示已经使用了第三方源）
 
-
+##安装yum4(注意：切记最好不要在公司的生产环境，具体"what all has changed"可以参看文末wiki链接)
+ - $ sudo yum install centos-release-yum4
+ - $ sudo yum install yum4
+ - $ sudo yum4 install dnf-plugins-core
+ 
+ ##如果已经安装并使用了一段时间，可以进行更新操作
+ - $ sudo yum4 update centos-release-yum4
+ - $ sudo yum4 update yum4
+##
 > 资料：
 
 - <https://wiki.centos.org/zh/PackageManagement/Yum/Priorities>
@@ -91,3 +99,4 @@
 - <http://www.centoscn.com/CentOS/config/2014/0920/3793.html>  
 - <http://www.cnblogs.com/mchina/archive/2013/01/04/2842275.html>
 - <http://www.ha97.com/2626.html>
+- <https://wiki.centos.org/SpecialInterestGroup/ConfigManagementSIG/YUM4?highlight=%28yum4%29>
