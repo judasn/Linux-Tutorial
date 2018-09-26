@@ -28,7 +28,16 @@ systemctl enable httpd.service
 
 ## 安装 MySQL
 
-#### MySQL 5.6 安装和配置（如果就 1G 内存那就不要用 5.7）
+#### 先检查是否已经安装了 Mariadb
+
+- 检查：`rpm -qa | grep mariadb`
+- 卸载：`rpm -e --nodeps mariadb-libs-5.5.56-2.el7.x86_64`
+
+#### MySQL 5.5 安装和配置（内存 1G 推荐）
+
+- [MySQL 5.5](Mysql-Install-And-Settings.md)
+
+#### MySQL 5.6 安装和配置（如果内存没有大于 2G，请不要使用）
 
 - [MySQL 5.6](Mysql-Install-And-Settings.md)
 
@@ -173,6 +182,7 @@ systemctl enable httpd.service
 ## 创建数据库
 
 - SQL 语句：`CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+	- 如果有数据则直接导入：`/usr/bin/mysql -u root --password=123456 DATABASE_Name < /opt/backup.sql`
 
 ## WordPress 在线配置引导
 
