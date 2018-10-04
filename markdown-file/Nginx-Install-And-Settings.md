@@ -81,6 +81,27 @@ http {
 - 重新启动服务：`docker restart youmeek-nginx`
 
 
+-------------------------------------------------------------------
+
+
+## YUM 安装（版本一般滞后半年左右）
+
+- 安装：`yum install -y nginx`，同时增加了一个 nginx 用户组和用户
+- 默认配置文件位置：`vim /etc/nginx/nginx.conf`
+- 其他配置文件位置：`cd /etc/nginx/conf.d/`
+- 模块配置文件位置：`cd /usr/share/nginx/modules/`
+- 默认 HTML 静态文件位置：`cd /usr/share/nginx/html`
+- log 存放目录：`cd /var/log/nginx/`
+- 状态：`systemctl status nginx`
+- 启动：`systemctl start nginx`
+- 启动：`systemctl stop nginx`
+- 刷新配置：`nginx -s reload`
+- 查看版本和 YUM 自带的模块：`nginx -V`
+
+
+-------------------------------------------------------------------
+
+
 ## Nginx 源码编译安装（带监控模块）
 
 - 官网下载最新稳定版本 **1.8.1**，大小：814K
@@ -555,6 +576,83 @@ http {
 }
 
 ```
+
+----------------------------------------------------------------------
+
+## Nginx 压力测试
+
+- AB 测试工具安装：`yum install -y httpd-tools`
+- 使用：
+
+```
+ab -n 1000 -c 100 http://www.baidu.com/
+
+-n  总的请求数
+-c  单个时刻并发数
+```
+
+
+- 压测结果：
+
+
+```
+This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking juejin.im (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        nginx
+Server Hostname:        juejin.im
+Server Port:            443
+SSL/TLS Protocol:       TLSv1.2,ECDHE-RSA-AES256-GCM-SHA384,2048,256
+
+Document Path:          /
+Document Length:        271405 bytes
+
+Concurrency Level:      100（并发数：100）
+Time taken for tests:   120.042 seconds（一共用了 120 秒）
+Complete requests:      1000（总的请求数：1000）
+Failed requests:        0（失败的请求次数）
+Write errors:           0
+Total transferred:      271948000 bytes
+HTML transferred:       271405000 bytes
+Requests per second:    8.33 [#/sec] (mean)（QPS 系统吞吐量，平均每秒请求数，计算公式 = 总请求数 / 总时间数）
+Time per request:       12004.215 [ms] (mean)（毫秒，平均每次并发 100 个请求的处理时间）
+Time per request:       120.042 [ms] (mean, across all concurrent requests)（毫秒，并发 100 下，平均每个请求处理时间）
+Transfer rate:          2212.34 [Kbytes/sec] received（平均每秒网络流量）
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       57  159 253.6     77    1002
+Processing:  1139 11570 2348.2  11199   36198
+Waiting:      156 1398 959.4   1279   22698
+Total:       1232 11730 2374.1  11300   36274
+
+Percentage of the requests served within a certain time (ms)
+  50%  11300
+  66%  11562
+  75%  11863
+  80%  12159
+  90%  13148
+  95%  15814
+  98%  18882
+  99%  22255
+ 100%  36274 (longest request)
+```
+
 
 ----------------------------------------------------------------------
 
