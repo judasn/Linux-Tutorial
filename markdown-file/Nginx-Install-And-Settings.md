@@ -843,8 +843,30 @@ location ~ .*$ {
 }
 ```
 
+### 链接 aa 下，查询参数包含 bb
+
+- 这里必须使用：IF，但是 IF 是不被推荐的：[If Is Evil](https://www.nginx.com/resources/wiki/start/topics/depth/ifisevil/)
 
 
+```
+location /aa/ {
+	if ( $args ~* '(.*bb.*)' ) {
+		return 601;
+	}
+}
+```
+
+```
+location /aa/ {
+	if ($args ~ tag=bb){
+		return 601;
+	}
+}
+```
+
+
+
+-------------------------------------------------------------------
 
 
 ### HTTP 服务，绑定多个域名
