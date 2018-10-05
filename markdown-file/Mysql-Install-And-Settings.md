@@ -83,10 +83,14 @@ rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 rpm -Uvh https://mirror.webtatic.com/yum/el6/latest.rpm
 ```
 
-- 安装：`yum install mysql55w mysql55w-server`
+- 安装：`yum install mysql55w mysql55w-server`，用同时生产 mysql 的组和用户
 - 启动：`service mysqld start`
 - 重置密码：`mysqladmin -u root password '123456'`
-
+- 默认配置文件：`vim /etc/my.cnf`
+- log 目录：`cd /var/log/mysqld.log`
+- 查看服务 log：`tail -300 /var/log/mysqld.log`
+- 给指定目录增加 mysql 用户组权限：`chown mysql.mysql /var/run/mysqld/`
+- 官网 MySQL 启动失败，这篇文章经验值得推荐：[CentOS 7下MySQL服务启动失败的解决思路](https://www.cnblogs.com/ivictor/p/5146247.html)
 
 -------------------------------------------------------------------
 

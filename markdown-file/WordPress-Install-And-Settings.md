@@ -107,10 +107,11 @@ pid-file=/var/run/mysqld/mysqld.pid
 ```
 
 
-## 安装 PHP
+## 安装 PHP 7（默认是 PHP 5.4）
 
-- 安装命令：`yum install php php-mysql php-gd php-imap php-ldap php-odbc php-pear php-xml php-xmlrpc`
+- 安装过程：<https://www.tecmint.com/install-php-7-in-centos-7/>
 - 测试 PHP 安装结果，新建文件：`vim /var/www/html/info.php`
+- 默认配置文件位置：`vim /etc/php.ini`
 
 ```
 <?php
