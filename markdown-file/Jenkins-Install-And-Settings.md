@@ -99,39 +99,70 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 	- 比上面多了一步：`-v /var/run/docker.sock:/var/run/docker.sock`
 - 这样，在 jenkins 里面写 shell 脚本调用 docker 程序，就可以直接调用宿主机的 docker 了。
 
+-------------------------------------------------------------------
 
-## Jenkins 安装
+## Jenkins 安装（YUM）
 
-- Jenkins 安装
-    - 官网使用 Tomcat 部署方式指导：<https://wiki.jenkins-ci.org/display/JENKINS/Tomcat>
-    - 此时（20160207） Jenkins 最新版本为：**1.647**
-    - JDK 最低要求是 JDK 7，官网推荐是 JDK 8
-    - 我个人习惯 `/opt` 目录下创建一个目录 `setups` 用来存放各种软件安装包；在 `/usr` 目录下创建一个 `program` 用来存放各种解压后的软件包，下面的讲解也都是基于此习惯
-    - 我个人已经使用了第三方源：`EPEL、RepoForge`，如果你出现 `yum install XXXXX` 安装不成功的话，很有可能就是你没有相关源，请查看我对源设置的文章
-    - Jenkins 下载：`wget http://mirrors.jenkins-ci.org/war/latest/jenkins.war` （大小：61 M）
-        - 我们假设这个 Tomcat 就是为了 Jenkins 专用的
-        - 把下载下来的 jenkins.war 移到 Tomcat 的 webapps 目录下，比如我的是：`/usr/program/tomcat8/webapps`
-        - 把 Jenkins.war 改名为 ROOT.war：`mv jenkins.war ROOT.war`
-        - 删除 Tomcat 下 webapps 目录下多余的一些目录
-        - 首次启动 Tomcat，让 Tomcat 解压 war
-        - 设置 JENKINS_HOME：
-            - 寻找 jenkins home 目录地址：`find / -name .jenkins`，我这边得到的结果是：`/root/.jenkins`
-            - 对在 Tomcat 文章中讲解的系统变量 `CATALINA_OPTS` 进行设置：
-                - 旧值：
-                ```
-                CATALINA_OPTS="-server -Xms528m -Xmx528m -XX:PermSize=256m -XX:MaxPermSize=358m"
-                export CATALINA_OPTS
-                ```
-                - 改为：
-                ```
-                CATALINA_OPTS="-server -DJENKINS_HOME=/root/.jenkins -Xms528m -Xmx528m -XX:PermSize=256m -XX:MaxPermSize=358m"
-                export CATALINA_OPTS
-                ```
+- **需要 JDK8 环境**
+- 官网安装说明 RedHat Linux RPM packages：<https://pkg.jenkins.io/redhat-stable/>
+- 官网在线安装（72M）：
 
-- Jenkins 各个组件配置：
-    - 访问：<http://192.168.0.110:8080/configure>
-- 其他问题
-    - 如果访问的时候报这个异常：`java.net.UnknownHostException`，可以查看这篇文章：<http://stackoverflow.com/questions/4969156/java-net-unknownhostexception>
+```
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+yum install jenkins
+```
+
+- 查看安装后的情况：`rpm -ql jenkins`
+
+```
+/etc/init.d/jenkins
+/etc/logrotate.d/jenkins
+/etc/sysconfig/jenkins
+/usr/lib/jenkins
+/usr/lib/jenkins/jenkins.war
+/usr/sbin/rcjenkins
+/var/cache/jenkins
+/var/lib/jenkins
+/var/log/jenkins
+```
+
+- jenkins 相关目录释义：
+
+```
+/usr/lib/jenkins/：jenkins安装目录，war 包会放在这里。
+/etc/sysconfig/jenkins：jenkins配置文件，“端口”，“JENKINS_HOME” 等都可以在这里配置。
+/var/lib/jenkins/：默认的 JENKINS_HOME。
+/var/log/jenkins/jenkins.log：jenkins 日志文件。
+```
+
+- 配置 jenkins 端口，默认是：8080
+
+```
+vim /etc/sysconfig/jenkins
+
+56 行：JENKINS_PORT="8080"
+```
+
+- 控制台输出方式启动：`java -jar /usr/lib/jenkins/jenkins.war`
+- 可以看到有一个这个重点内容，这是你的初始化密码，等下会用到的：
+
+
+```
+Jenkins initial setup is required. An admin user has been created and a password generated.
+Please use the following password to proceed to installation:
+
+daacc724767640a29ddc99d159a80cf8
+
+This may also be found at: /root/.jenkins/secrets/initialAdminPassword
+```
+
+- 守护进程启动：`nohup java -jar /usr/lib/jenkins/jenkins.war > /opt/jenkins-nohup.log 2>&1 &`
+- 浏览器访问 Jenkins 首页开始配置：<http://192.168.0.105:8080/>
+
+
+-------------------------------------------------------------------
 
 
 ## 资料

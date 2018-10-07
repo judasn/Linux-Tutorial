@@ -10,6 +10,7 @@
 		- `rpm -ivh example.rpm`，安装 example.rpm 包并在安装过程中显示正在安装的文件信息及安装进度
 	- 查询
 		- `rpm -qa | grep jdk`，查看 jdk 是否被安装
+		- `rpm -ql jdk`，查看 jdk 是否被安装
 	- 卸载
 		- `rpm -e jdk`，卸载 jdk（一般卸载的时候都要先用 rpm -qa 看下整个软件的全名）
 - YUM 软件管理：
@@ -26,4 +27,5 @@
 
 ## 资料
 
+- <https://www.jianshu.com/p/180fb11a5b96>
 
