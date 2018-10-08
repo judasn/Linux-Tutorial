@@ -112,7 +112,7 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 
-yum install -y jenkins
+sudo yum install -y jenkins
 ```
 
 - 查看安装后的情况：`rpm -ql jenkins`
@@ -147,6 +147,7 @@ vim /etc/sysconfig/jenkins
 ```
 
 - 控制台输出方式启动：`java -jar /usr/lib/jenkins/jenkins.war`
+- 内置 Jetty
 - 可以看到有一个这个重点内容，这是你的初始化密码，等下会用到的：
 
 
@@ -161,9 +162,23 @@ This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 
 - 守护进程启动：`nohup java -jar /usr/lib/jenkins/jenkins.war > /opt/jenkins-nohup.log 2>&1 &`
 - 浏览器访问 Jenkins 首页开始配置：<http://192.168.0.105:8080/>
+- 特殊情况：
+	- 如果配置插件过程遇到这个错误：`No valid crumb was included in the request`，则多重试几次。
+	- 登录后把：<http://192.168.0.105:8080/configureSecurity/> 下面的 `防止跨站点请求伪造` 勾选去掉。遇到问题多试几次。
+
 
 
 -------------------------------------------------------------------
+
+## Jenkins 前端 React 项目构建
+
+
+
+
+
+
+-------------------------------------------------------------------
+
 
 
 ## 资料

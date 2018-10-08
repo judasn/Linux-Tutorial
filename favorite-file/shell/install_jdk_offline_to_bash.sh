@@ -24,9 +24,9 @@ fi
 echo "JDK 解压包移到 /usr/local/ 目录下"
 mv jdk1.8.0_181/ /usr/local/
 
-echo "JDK 写入系统变量到 bash_profile"
+echo "JDK 写入系统变量到 profile"
 
-cat << EOF >> ~/.bash_profile
+cat << EOF >> /etc/profile
 
 # JDK
 JAVA_HOME=/usr/local/jdk1.8.0_181
@@ -40,4 +40,4 @@ export CLASSPATH
 EOF
 
 
-echo "JDK 设置完成，需要你手动设置：source ~/.bash_profile"
+echo "JDK 设置完成，需要你手动设置：source /etc/profile"
