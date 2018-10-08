@@ -104,6 +104,7 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 ## Jenkins 安装（YUM）
 
 - **需要 JDK8 环境**
+- 当前最新版本：`2.138.1-1.1`（201810）
 - 官网安装说明 RedHat Linux RPM packages：<https://pkg.jenkins.io/redhat-stable/>
 - 官网在线安装（72M），该安装方式会自己生成一个 jenkins 用户组和用户：
 
@@ -111,7 +112,7 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 
-yum install jenkins
+yum install -y jenkins
 ```
 
 - 查看安装后的情况：`rpm -ql jenkins`
