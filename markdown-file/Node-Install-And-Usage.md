@@ -24,4 +24,9 @@ sudo yum -y install nodejs
 - 注意:因为网络原因，最好先把脚本下载到本地，再用代理进行安装
 
 
+## nrm 快速切换 NPM 源
 
+- 安装：`npm install -g nrm`
+- 列表源：`nrm ls`
+- 使用源：`nrm use taobao`
+- 更多使用方法：<https://segmentfault.com/a/1190000000473869>

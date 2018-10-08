@@ -166,12 +166,113 @@ This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 	- 如果配置插件过程遇到这个错误：`No valid crumb was included in the request`，则多重试几次。
 	- 登录后把：<http://192.168.0.105:8080/configureSecurity/> 下面的 `防止跨站点请求伪造` 勾选去掉。遇到问题多试几次。
 
+-------------------------------------------------------------------
+
+## pipeline 语法
+
+- 全局 pipeline 语法说明：<http://192.168.0.105:8080/job/react/pipeline-syntax/globals>
+
+```
+BUILD_NUMBER = ${env.BUILD_NUMBER}"
+BUILD_ID = ${env.BUILD_ID}"
+BUILD_DISPLAY_NAME = ${env.BUILD_DISPLAY_NAME}"
+JOB_NAME = ${env.JOB_NAME}"
+JOB_BASE_NAME = ${env.JOB_BASE_NAME}"
+WORKSPACE = ${env.WORKSPACE}"
+JENKINS_HOME = ${env.JENKINS_HOME}"
+JENKINS_URL = ${env.JENKINS_URL}"
+BUILD_URL = ${env.BUILD_URL}"
+JOB_URL = ${env.JOB_URL}"
+```
+
+- 输出结果：
+
+```
+BUILD_NUMBER = 21
+BUILD_ID = 21
+BUILD_DISPLAY_NAME = #21
+JOB_NAME = react
+JOB_BASE_NAME = react
+WORKSPACE = /root/.jenkins/workspace/react
+JENKINS_HOME = /root/.jenkins
+JENKINS_URL = http://192.168.0.105:8080/
+BUILD_URL = http://192.168.0.105:8080/job/react/21/
+JOB_URL = http://192.168.0.105:8080/job/react/
+```
 
 
 -------------------------------------------------------------------
 
 ## Jenkins 前端 React 项目构建
 
+#### 简单的 pipeline 写法
+
+```
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+  /*=======================================常修改变量-start=======================================*/
+
+  environment {
+    gitUrl = "https://github.com/satan31415/heh_umi_template.git"
+    branchName = "master"
+    projectBuildPath = "${env.WORKSPACE}/dist/"
+    nginxHtmlRoot = "/usr/share/nginx/react/"
+  }
+  
+  /*=======================================常修改变量-end=======================================*/
+  
+  stages {
+    
+    stage('Pre Env') {
+      steps {
+         echo "======================================项目名称 = ${env.JOB_NAME}"
+         echo "======================================项目 URL = ${gitUrl}"
+         echo "======================================项目分支 = ${branchName}"
+         echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+         echo "======================================项目 Build 文件夹路径 = ${projectBuildPath}"
+         echo "======================================项目 Nginx 的 ROOT 路径 = ${nginxHtmlRoot}"
+      }
+    }
+    
+    stage('Git Clone'){
+      steps {
+          git branch: "${branchName}", url: "${gitUrl}"
+      }
+    }
+
+    stage('NPM Install') {
+      steps {
+        sh "npm install"
+      }
+    }
+
+    stage('NPM Build') {
+      steps {
+        sh "npm run build"
+      }
+    }
+
+    stage('Nginx Deploy') {
+      steps {
+        sh "rm -rf ${nginxHtmlRoot}"
+        sh "cp -r ${projectBuildPath} ${nginxHtmlRoot}"
+      }
+    }
+
+
+  }
+}
+```
 
 
 
