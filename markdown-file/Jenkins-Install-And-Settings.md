@@ -171,6 +171,8 @@ This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 ## pipeline 语法
 
 - 全局 pipeline 语法说明：<http://192.168.0.105:8080/job/react/pipeline-syntax/globals>
+- 其他资料
+	- <http://www.cnblogs.com/fengjian2016/p/8227532.html>
 
 ```
 BUILD_NUMBER = ${env.BUILD_NUMBER}"
@@ -205,7 +207,7 @@ JOB_URL = http://192.168.0.105:8080/job/react/
 
 ## Jenkins 前端 React 项目构建
 
-#### 简单的 pipeline 写法
+#### 简单的 pipeline 写法（开源项目）
 
 ```
 pipeline {
@@ -275,6 +277,85 @@ pipeline {
 ```
 
 
+#### 简单的 pipeline 写法（闭源项目 -- 码云为例）
+
+- 新增一个全局凭据：<http://192.168.0.105:8080/credentials/store/system/domain/_/newCredentials>
+- 类型：`Username with password`
+- 范围：`全局`
+- Username：`你的 Gitee 账号`
+- Password：`你的 Gitee 密码`
+- **ID**：`只要是唯一值就行，后面要用到`
+- 描述：`最好跟 ID 一致，方便认`
+
+```
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+  /*=======================================常修改变量-start=======================================*/
+
+  environment {
+    gitUrl = "https://gitee.com/youmeek/react-demo.git"
+    branchName = "master"
+    projectBuildPath = "${env.WORKSPACE}/dist/"
+    nginxHtmlRoot = "/usr/share/nginx/react/"
+    giteeCredentialsId = "上面全局凭据填写的 ID"
+  }
+  
+  /*=======================================常修改变量-end=======================================*/
+  
+  stages {
+    
+    stage('Pre Env') {
+      steps {
+         echo "======================================项目名称 = ${env.JOB_NAME}"
+         echo "======================================项目 URL = ${gitUrl}"
+         echo "======================================项目分支 = ${branchName}"
+         echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+         echo "======================================项目 Build 文件夹路径 = ${projectBuildPath}"
+         echo "======================================项目 Nginx 的 ROOT 路径 = ${nginxHtmlRoot}"
+      }
+    }
+    
+    stage('Git Clone'){
+      steps {
+          git branch: "${branchName}",
+          credentialsId: "${giteeCredentialsId}",
+          url: "${gitUrl}"
+      }
+    }
+
+    stage('NPM Install') {
+      steps {
+        sh "npm install"
+      }
+    }
+
+    stage('NPM Build') {
+      steps {
+        sh "npm run build"
+      }
+    }
+
+    stage('Nginx Deploy') {
+      steps {
+        sh "rm -rf ${nginxHtmlRoot}"
+        sh "cp -r ${projectBuildPath} ${nginxHtmlRoot}"
+      }
+    }
+
+
+  }
+}
+```
 
 
 
