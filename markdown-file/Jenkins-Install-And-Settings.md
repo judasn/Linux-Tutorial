@@ -160,7 +160,7 @@ daacc724767640a29ddc99d159a80cf8
 This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 ```
 
-- 守护进程启动：`nohup java -jar /usr/lib/jenkins/jenkins.war > /opt/jenkins-nohup.log 2>&1 &`
+- 守护进程启动：`nohup java -jar /usr/lib/jenkins/jenkins.war > /dev/null 2>&1 &`
 - 浏览器访问 Jenkins 首页开始配置：<http://192.168.0.105:8080/>
 - 特殊情况：
 	- 如果配置插件过程遇到这个错误：`No valid crumb was included in the request`，则多重试几次。
@@ -535,10 +535,8 @@ pipeline {
     stage('Spring Boot Run') {
       steps {
         sh "mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}"
-        sh "cp ${projectBuildTargetPath}/${projectJarNewName} /opt/"
-        sh "cp /etc/rc.d/init.d/spring-boot.sh /opt/"
-        sh "chmod 777 /opt/spring-boot.sh"
-        sh "bash /opt/spring-boot.sh restart ${projectJarNewName}"
+        sh "cp /etc/rc.d/init.d/spring-boot.sh ${projectBuildTargetPath}"
+        sh "bash ${projectBuildTargetPath}/spring-boot.sh restart ${projectJarNewName}"
       }
     }
 
@@ -547,8 +545,10 @@ pipeline {
 ```
 
 
--------------------------------------------------------------------
 
+#### 简单的 pipeline 写法（Docker 方式运行）（闭源项目 -- 码云为例）
+
+-------------------------------------------------------------------
 
 
 ## 资料
