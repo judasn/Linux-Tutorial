@@ -379,8 +379,8 @@ pipeline {
 ###### 先写一个控制 jar 脚本
 
 - 来源：[鹏磊](https://segmentfault.com/a/1190000011504208)
-- 创建脚本：`vim /etc/rc.d/init.d/spring-boot.sh`
-- 设置权限：`chmod 777 /etc/rc.d/init.d/spring-boot.sh`
+- 创建脚本：`vim /opt/spring-boot.sh`
+- 设置权限：`chmod 777 /opt/spring-boot.sh`
 - 脚本内容：
 
 
@@ -534,7 +534,7 @@ pipeline {
     stage('Spring Boot Run') {
       steps {
         sh "mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}"
-        sh "cp /etc/rc.d/init.d/spring-boot.sh ${projectBuildTargetPath}"
+        sh "cp /opt/spring-boot.sh ${projectBuildTargetPath}"
         sh "bash ${projectBuildTargetPath}/spring-boot.sh restart ${projectJarNewName}"
       }
     }
