@@ -227,8 +227,8 @@ pipeline {
   environment {
     gitUrl = "https://github.com/satan31415/heh_umi_template.git"
     branchName = "master"
-    projectBuildPath = "${env.WORKSPACE}/dist/"
-    nginxHtmlRoot = "/usr/share/nginx/react/"
+    projectBuildPath = "${env.WORKSPACE}/dist"
+    nginxHtmlRoot = "/usr/share/nginx/react"
   }
   
   /*=======================================常修改变量-end=======================================*/
@@ -266,8 +266,8 @@ pipeline {
 
     stage('Nginx Deploy') {
       steps {
-        sh "rm -rf ${nginxHtmlRoot}"
-        sh "cp -r ${projectBuildPath} ${nginxHtmlRoot}"
+        sh "rm -rf ${nginxHtmlRoot}/"
+        sh "cp -r ${projectBuildPath}/ ${nginxHtmlRoot}/"
       }
     }
 
@@ -305,9 +305,9 @@ pipeline {
   environment {
     gitUrl = "https://gitee.com/youmeek/react-demo.git"
     branchName = "master"
-    projectBuildPath = "${env.WORKSPACE}/dist/"
-    nginxHtmlRoot = "/usr/share/nginx/react/"
     giteeCredentialsId = "上面全局凭据填写的 ID"
+    projectBuildPath = "${env.WORKSPACE}/dist"
+    nginxHtmlRoot = "/usr/share/nginx/react"
   }
   
   /*=======================================常修改变量-end=======================================*/
@@ -347,8 +347,8 @@ pipeline {
 
     stage('Nginx Deploy') {
       steps {
-        sh "rm -rf ${nginxHtmlRoot}"
-        sh "cp -r ${projectBuildPath} ${nginxHtmlRoot}"
+        sh "rm -rf ${nginxHtmlRoot}/"
+        sh "cp -r ${projectBuildPath}/ ${nginxHtmlRoot}/"
       }
     }
 
@@ -357,6 +357,194 @@ pipeline {
 }
 ```
 
+
+-------------------------------------------------------------------
+
+## Jenkins 后端 Spring Boot 项目构建
+
+#### 安装 Maven
+
+- [参考该文章](Maven-Install-And-Settings.md)
+
+#### 配置工具
+
+- 访问：<http://192.168.0.105:8080/configureTools/>
+- 我习惯自己安装，所以这里修改配置：
+	- **需要注意**：配置里面的 `别名` 不要随便取名字，后面 Pipeline 要用到的。在 tool 标签里面会用到。
+
+![screencaptu](https://upload-images.jianshu.io/upload_images/12159-ef61595aebaa4244.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+#### 简单的 pipeline 写法（Jar 方式运行）（闭源项目 -- 码云为例）
+
+###### 先写一个控制 jar 脚本
+
+- 来源：[鹏磊](https://segmentfault.com/a/1190000011504208)
+- 创建脚本：`vim /etc/rc.d/init.d/spring-boot.sh`
+- 设置权限：`chmod 777 /etc/rc.d/init.d/spring-boot.sh`
+- 脚本内容：
+
+
+```
+#!/bin/bash
+
+SpringBoot=$2
+
+if [ "$1" = "" ];
+then
+    echo -e "\033[0;31m 未输入操作名 \033[0m  \033[0;34m {start|stop|restart|status} \033[0m"
+    exit 1
+fi
+
+if [ "$SpringBoot" = "" ];
+then
+    echo -e "\033[0;31m 未输入应用名 \033[0m"
+    exit 1
+fi
+
+function start()
+{
+    count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
+    if [ $count != 0 ];then
+        echo "$SpringBoot is running..."
+    else
+        echo "Start $SpringBoot success..."
+        BUILD_ID=dontKillMe nohup java -jar $SpringBoot > /dev/null 2>&1 &
+    fi
+}
+
+function stop()
+{
+    echo "Stop $SpringBoot"
+    boot_id=`ps -ef |grep java|grep $SpringBoot|grep -v grep|awk '{print $2}'`
+    count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
+
+    if [ $count != 0 ];then
+        kill $boot_id
+        count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
+
+        boot_id=`ps -ef |grep java|grep $SpringBoot|grep -v grep|awk '{print $2}'`
+        kill -9 $boot_id
+    fi
+}
+
+function restart()
+{
+    stop
+    sleep 2
+    start
+}
+
+function status()
+{
+    count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
+    if [ $count != 0 ];then
+        echo "$SpringBoot is running..."
+    else
+        echo "$SpringBoot is not running..."
+    fi
+}
+
+case $1 in
+    start)
+    start;;
+    stop)
+    stop;;
+    restart)
+    restart;;
+    status)
+    status;;
+    *)
+
+    echo -e "\033[0;31m Usage: \033[0m  \033[0;34m sh  $0  {start|stop|restart|status}  {SpringBootJarName} \033[0m\033[0;31m Example: \033[0m\033[0;33m sh  $0  start esmart-test.jar \033[0m"
+esac
+```
+
+
+###### 配置 Jenkins
+
+- **必须**：新增一个全局凭据，方法参考前端部分
+
+```
+pipeline {
+  agent any
+
+  /*=======================================工具环境修改-start=======================================*/
+  tools {
+    jdk 'JDK8'
+    maven 'MAVEN3'
+  }
+  /*=======================================工具环境修改-end=======================================*/
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+  /*=======================================常修改变量-start=======================================*/
+
+  environment {
+    gitUrl = "https://gitee.com/youmeek/springboot-jenkins-demo.git"
+    branchName = "master"
+    giteeCredentialsId = "Gitee"
+    projectWorkSpacePath = "${env.WORKSPACE}"
+    projectBuildTargetPath = "${env.WORKSPACE}/target"
+    projectJarNewName = "${env.JOB_NAME}.jar"
+
+  }
+  
+  /*=======================================常修改变量-end=======================================*/
+  
+  stages {
+    
+    stage('Pre Env') {
+      steps {
+         echo "======================================项目名称 = ${env.JOB_NAME}"
+         echo "======================================项目 URL = ${gitUrl}"
+         echo "======================================项目分支 = ${branchName}"
+         echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+         echo "======================================项目空间文件夹路径 = ${projectWorkSpacePath}"
+         echo "======================================项目 build 后 jar 路径 = ${projectBuildTargetPath}"
+      }
+    }
+    
+    stage('Git Clone'){
+      steps {
+          git branch: "${branchName}",
+          credentialsId: "${giteeCredentialsId}",
+          url: "${gitUrl}"
+      }
+    }
+
+    stage('Maven Clean') {
+      steps {
+        sh "mvn clean"
+      }
+    }
+
+    stage('Maven Package') {
+      steps {
+        sh "mvn package -DskipTests"
+      }
+    }
+
+    stage('Spring Boot Run') {
+      steps {
+        sh "mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}"
+        sh "cp ${projectBuildTargetPath}/${projectJarNewName} /opt/"
+        sh "cp /etc/rc.d/init.d/spring-boot.sh /opt/"
+        sh "chmod 777 /opt/spring-boot.sh"
+        sh "bash /opt/spring-boot.sh restart ${projectJarNewName}"
+      }
+    }
+
+  }
+}
+```
 
 
 -------------------------------------------------------------------

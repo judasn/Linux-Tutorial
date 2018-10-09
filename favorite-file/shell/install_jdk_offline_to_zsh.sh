@@ -37,6 +37,7 @@ export JAVA_HOME
 export JRE_HOME
 export PATH
 export CLASSPATH
+
 EOF
 
 
