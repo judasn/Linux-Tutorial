@@ -371,8 +371,7 @@ pipeline {
 - 访问：<http://192.168.0.105:8080/configureTools/>
 - 我习惯自己安装，所以这里修改配置：
 	- **需要注意**：配置里面的 `别名` 不要随便取名字，后面 Pipeline 要用到的。在 tool 标签里面会用到。
-
-![screencaptu](https://upload-images.jianshu.io/upload_images/12159-ef61595aebaa4244.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+	- 具体可以查看该图片说明：[点击查看](https://upload-images.jianshu.io/upload_images/12159-ef61595aebaa4244.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 #### 简单的 pipeline 写法（Jar 方式运行）（闭源项目 -- 码云为例）
