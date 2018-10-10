@@ -816,7 +816,7 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-tomcat1-PID-20180917.log`
 		- 把占用 CPU 资源高的线程十进制的 PID 转换成 16 进制：`printf "%x\n" PID`，比如：`printf "%x\n" 12401` 得到结果是：`3071`
 		- 在刚刚输出的那个 log 文件中搜索：`3071`，可以找到：`nid=0x3071`
-	- 使用 `jstat -gc PID 250 10`，查看gc情况（截图）
+	- 使用 `jstat -gc PID 10000 10`，查看gc情况（截图）
 	- 使用 `jstat -gccause PID`：额外输出上次GC原因（截图）
 	- 使用 `jstat -gccause PID 10000 10`：额外输出上次GC原因，收集 10 次，每隔 10 秒
 	- 使用 `jmap -dump:format=b,file=/opt/dumpfile-tomcat1-PID-20180917.hprof PID`，生成堆转储文件

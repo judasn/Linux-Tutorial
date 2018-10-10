@@ -366,6 +366,21 @@ EXPOSE 8081
     - **Tomcat 7.0.68**：`wget http://apache.fayea.com/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz`
     - **Tomcat 6.0.45**：`wget http://mirrors.cnnic.cn/apache/tomcat/tomcat-6/v6.0.45/bin/apache-tomcat-6.0.45.tar.gz`
 
+## 其他问题
+
+
+#### log4j2 输出的时间与北京时间相差 8 小时
+
+- 原因是系统时区不对。
+- 设置时区：
+
+```
+timedatectl set-timezone Asia/Shanghai
+timedatectl status
+```
+
+
+
 ## 资料
 
 - <http://www.jikexueyuan.com/course/2064_3.html?ss=1>
