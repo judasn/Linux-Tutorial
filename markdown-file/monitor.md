@@ -818,9 +818,11 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 		- 在刚刚输出的那个 log 文件中搜索：`3071`，可以找到：`nid=0x3071`
 	- 使用 `jstat -gc PID 250 10`，查看gc情况（截图）
 	- 使用 `jstat -gccause PID`：额外输出上次GC原因（截图）
-	- 使用 `jmap -dump:format=b,file=/opt/dumpfile-tomcat1-PID-20180917 PID`，生成堆转储文件
+	- 使用 `jstat -gccause PID 10000 10`：额外输出上次GC原因，收集 10 次，每隔 10 秒
+	- 使用 `jmap -dump:format=b,file=/opt/dumpfile-tomcat1-PID-20180917.hprof PID`，生成堆转储文件
 		- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 	- 结合代码解决内存溢出或泄露问题。
+	- 给 VM 增加 dump 触发参数：`-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tomcat-1.hprof`
 
 #### CPU 低，负载高，访问慢（带数据库）
 
