@@ -82,8 +82,12 @@ killasgroup=true
 
 - 启动程序（默认会启动所有子任务）：`/usr/bin/supervisord -c /etc/supervisord.conf`
 - 管理子任务的命令：
+	- 子任务状态：`/usr/bin/supervisorctl status`
 	- 启动所有子任务：`/usr/bin/supervisorctl start all`
 	- 结束所有子任务：`/usr/bin/supervisorctl stop all`
+	- 启动指定子任务：`/usr/bin/supervisorctl start gitnavi-logstash`
+	- 结束指定子任务：`/usr/bin/supervisorctl stop gitnavi-logstash`
+	- 重启指定子任务：`/usr/bin/supervisorctl restart gitnavi-logstash`
 	- 只载入最新的配置文件, 并不重启任何进程：`/usr/bin/supervisorctl reread`
 	- 载入最新的配置文件，停止原来的所有进程并按新的配置启动管理所有进程：`/usr/bin/supervisorctl reload`
 	- 根据最新的配置文件，启动新配置或有改动的进程，配置没有改动的进程不会受影响而重启：`/usr/bin/supervisorctl update`

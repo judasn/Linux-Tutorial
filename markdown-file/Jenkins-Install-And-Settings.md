@@ -376,89 +376,10 @@ pipeline {
 
 #### 简单的 pipeline 写法（Jar 方式运行）（闭源项目 -- 码云为例）
 
-###### 先写一个控制 jar 脚本
+###### 用 supervisord 做进程控制
 
-- 来源：[鹏磊](https://segmentfault.com/a/1190000011504208)
-- 创建脚本：`vim /opt/spring-boot.sh`
-- 设置权限：`chmod 777 /opt/spring-boot.sh`
-- 脚本内容：
-
-
-```
-#!/bin/bash
-
-SpringBoot=$2
-
-if [ "$1" = "" ];
-then
-    echo -e "\033[0;31m 未输入操作名 \033[0m  \033[0;34m {start|stop|restart|status} \033[0m"
-    exit 1
-fi
-
-if [ "$SpringBoot" = "" ];
-then
-    echo -e "\033[0;31m 未输入应用名 \033[0m"
-    exit 1
-fi
-
-function start()
-{
-    count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
-    if [ $count != 0 ];then
-        echo "$SpringBoot is running..."
-    else
-        echo "Start $SpringBoot success..."
-        BUILD_ID=dontKillMe nohup java -jar $SpringBoot > /dev/null 2>&1 &
-    fi
-}
-
-function stop()
-{
-    echo "Stop $SpringBoot"
-    boot_id=`ps -ef |grep java|grep $SpringBoot|grep -v grep|awk '{print $2}'`
-    count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
-
-    if [ $count != 0 ];then
-        kill $boot_id
-        count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
-
-        boot_id=`ps -ef |grep java|grep $SpringBoot|grep -v grep|awk '{print $2}'`
-        kill -9 $boot_id
-    fi
-}
-
-function restart()
-{
-    stop
-    sleep 2
-    start
-}
-
-function status()
-{
-    count=`ps -ef |grep java|grep $SpringBoot|grep -v grep|wc -l`
-    if [ $count != 0 ];then
-        echo "$SpringBoot is running..."
-    else
-        echo "$SpringBoot is not running..."
-    fi
-}
-
-case $1 in
-    start)
-    start;;
-    stop)
-    stop;;
-    restart)
-    restart;;
-    status)
-    status;;
-    *)
-
-    echo -e "\033[0;31m Usage: \033[0m  \033[0;34m sh  $0  {start|stop|restart|status}  {SpringBootJarName} \033[0m\033[0;31m Example: \033[0m\033[0;33m sh  $0  start esmart-test.jar \033[0m"
-esac
-```
-
+- [supervisord 的使用](Daemontools.md)
+- 生成 supervisord 的配置文件会写在 Pipeline，所以只要你保证服务器 supervisord 正常运行即可
 
 ###### 配置 Jenkins
 
@@ -533,9 +454,34 @@ pipeline {
 
     stage('Spring Boot Run') {
       steps {
-        sh "mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}"
-        sh "cp /opt/spring-boot.sh ${projectBuildTargetPath}"
-        sh "bash ${projectBuildTargetPath}/spring-boot.sh restart ${projectJarNewName}"
+
+sh """
+mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}
+
+if [ ! -f /etc/supervisor/conf.d/${env.JOB_NAME}.conf ]; then
+
+touch /etc/supervisor/conf.d/${env.JOB_NAME}.conf
+    
+cat << EOF >> /etc/supervisor/conf.d/${env.JOB_NAME}.conf
+[program:${env.JOB_NAME}]
+command=java -jar ${projectBuildTargetPath}/${projectJarNewName}
+stdout_logfile=/var/log/supervisor/${env.JOB_NAME}.log
+stderr_logfile=/var/log/supervisor/${env.JOB_NAME}-err.log
+user=root
+autostart=true
+autorestart=true
+startsecs=5
+priority=1
+stopasgroup=true
+killasgroup=true
+EOF
+
+/usr/bin/supervisorctl update
+fi
+
+/usr/bin/supervisorctl restart ${env.JOB_NAME}
+"""
+
       }
     }
 
