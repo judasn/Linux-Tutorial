@@ -414,6 +414,8 @@ pipeline {
     projectWorkSpacePath = "${env.WORKSPACE}"
     projectBuildTargetPath = "${env.WORKSPACE}/target"
     projectJarNewName = "${env.JOB_NAME}.jar"
+    supervisorConfigFileFullPath = "/etc/supervisor/conf.d/${env.JOB_NAME}.conf"
+    supervisorLogPath = "/var/log/supervisor"
 
   }
   
@@ -458,15 +460,15 @@ pipeline {
 sh """
 mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}
 
-if [ ! -f /etc/supervisor/conf.d/${env.JOB_NAME}.conf ]; then
+if [ ! -f ${supervisorConfigFileFullPath} ]; then
 
-touch /etc/supervisor/conf.d/${env.JOB_NAME}.conf
+touch ${supervisorConfigFileFullPath}
     
-cat << EOF >> /etc/supervisor/conf.d/${env.JOB_NAME}.conf
+cat << EOF >> ${supervisorConfigFileFullPath}
 [program:${env.JOB_NAME}]
 command=java -jar ${projectBuildTargetPath}/${projectJarNewName}
-stdout_logfile=/var/log/supervisor/${env.JOB_NAME}.log
-stderr_logfile=/var/log/supervisor/${env.JOB_NAME}-err.log
+stdout_logfile=${supervisorLogPath}/${env.JOB_NAME}.log
+stderr_logfile=${supervisorLogPath}/${env.JOB_NAME}-err.log
 user=root
 autostart=true
 autorestart=false
