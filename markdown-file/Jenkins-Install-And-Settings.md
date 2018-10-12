@@ -20,7 +20,7 @@
 - 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/jenkins/jenkins_home && chmod 777 -R /data/jenkins/jenkins_home`
 - 安装镜像（813MB，有点大）：`docker pull jenkins/jenkins:lts`
 - 查看下载下来的镜像：`docker images`
-- 首次运行镜像：`docker run --name jenkins-master -p 8123:8080 -p 50000:50000 -v /etc/localtime:/etc/localtime -v /data/jenkins/jenkins_home:/var/jenkins_home -e JAVA_OPTS="-Duser.timezone=Asia/Shanghai" -d --restart always jenkins/jenkins:lts`
+- 首次运行镜像：`docker run --name jenkins-master -p 8123:18080 -p 50000:50000 -v /etc/localtime:/etc/localtime -v /data/jenkins/jenkins_home:/var/jenkins_home -e JAVA_OPTS="-Duser.timezone=Asia/Shanghai" -d --restart always jenkins/jenkins:lts`
 	- 这里的 8080 端口是 jenkins 运行程序的端口，必须要有映射的。50000 端口是非必须映射的，但是如果你要用 Jenkins 分布式构建这个就必须开放
 - 如果报下面的错误：
 
@@ -95,7 +95,7 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 
 ## Docker 的 Jenkins 与 Docker 结合使用
 
-- 运行镜像命令：`docker run --name jenkins-master -p 8123:8080 -p 50000:50000 -v /etc/localtime:/etc/localtime -v /data/jenkins/jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -e JAVA_OPTS="-Duser.timezone=Asia/Shanghai" -d --restart always jenkins/jenkins:lts`
+- 运行镜像命令：`docker run --name jenkins-master -p 8123:18080 -p 50000:50000 -v /etc/localtime:/etc/localtime -v /data/jenkins/jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock -e JAVA_OPTS="-Duser.timezone=Asia/Shanghai" -d --restart always jenkins/jenkins:lts`
 	- 比上面多了一步：`-v /var/run/docker.sock:/var/run/docker.sock`
 - 这样，在 jenkins 里面写 shell 脚本调用 docker 程序，就可以直接调用宿主机的 docker 了。
 
@@ -138,16 +138,8 @@ sudo yum install -y jenkins
 /var/log/jenkins/jenkins.log：jenkins 日志文件。
 ```
 
-- 配置 jenkins 端口，默认是：8080
-
-```
-vim /etc/sysconfig/jenkins
-
-56 行：JENKINS_PORT="8080"
-```
-
-- 控制台输出方式启动：`java -jar /usr/lib/jenkins/jenkins.war`
-- 内置 Jetty
+- 控制台输出方式启动：`java -jar /usr/lib/jenkins/jenkins.war --httpPort=18080`
+- 内置 Jetty，默认是 18080 端口，你也可以改为其他（建议修改为其他）
 - 可以看到有一个这个重点内容，这是你的初始化密码，等下会用到的：
 
 
@@ -160,17 +152,17 @@ daacc724767640a29ddc99d159a80cf8
 This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 ```
 
-- 守护进程启动：`nohup java -jar /usr/lib/jenkins/jenkins.war > /dev/null 2>&1 &`
-- 浏览器访问 Jenkins 首页开始配置：<http://192.168.0.105:8080/>
+- 守护进程启动：`nohup java -jar /usr/lib/jenkins/jenkins.war --httpPort=18080 > /dev/null 2>&1 &`
+- 浏览器访问 Jenkins 首页开始配置：<http://192.168.0.105:18080/>
 - 特殊情况：
 	- 如果配置插件过程遇到这个错误：`No valid crumb was included in the request`，则多重试几次。
-	- 登录后把：<http://192.168.0.105:8080/configureSecurity/> 下面的 `防止跨站点请求伪造` 勾选去掉。遇到问题多试几次。
+	- 登录后把：<http://192.168.0.105:18080/configureSecurity/> 下面的 `防止跨站点请求伪造` 勾选去掉。遇到问题多试几次。
 
 -------------------------------------------------------------------
 
 ## pipeline 语法
 
-- 全局 pipeline 语法说明：<http://192.168.0.105:8080/job/react/pipeline-syntax/globals>
+- 全局 pipeline 语法说明：<http://192.168.0.105:18080/job/react/pipeline-syntax/globals>
 - 其他资料
 	- <http://www.cnblogs.com/fengjian2016/p/8227532.html>
 
@@ -197,9 +189,9 @@ JOB_NAME = react
 JOB_BASE_NAME = react
 WORKSPACE = /root/.jenkins/workspace/react
 JENKINS_HOME = /root/.jenkins
-JENKINS_URL = http://192.168.0.105:8080/
-BUILD_URL = http://192.168.0.105:8080/job/react/21/
-JOB_URL = http://192.168.0.105:8080/job/react/
+JENKINS_URL = http://192.168.0.105:18080/
+BUILD_URL = http://192.168.0.105:18080/job/react/21/
+JOB_URL = http://192.168.0.105:18080/job/react/
 ```
 
 
@@ -279,7 +271,7 @@ pipeline {
 
 #### 简单的 pipeline 写法（闭源项目 -- 码云为例）
 
-- 新增一个全局凭据：<http://192.168.0.105:8080/credentials/store/system/domain/_/newCredentials>
+- 新增一个全局凭据：<http://192.168.0.105:18080/credentials/store/system/domain/_/newCredentials>
 - 类型：`Username with password`
 - 范围：`全局`
 - Username：`你的 Gitee 账号`
@@ -368,7 +360,7 @@ pipeline {
 
 #### 配置工具
 
-- 访问：<http://192.168.0.105:8080/configureTools/>
+- 访问：<http://192.168.0.105:18080/configureTools/>
 - 我习惯自己安装，所以这里修改配置：
 	- **需要注意**：配置里面的 `别名` 不要随便取名字，后面 Pipeline 要用到的。在 tool 标签里面会用到。
 	- 具体可以查看该图片说明：[点击查看](https://upload-images.jianshu.io/upload_images/12159-ef61595aebaa4244.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
