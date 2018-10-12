@@ -647,12 +647,13 @@ docker rmi $(docker images -f "dangling=true" -q)
 - <https://docs.docker.com/engine/reference/commandline/dockerd/>
 
 
-## Docker remote api 配置（保证在内网环境）
+## Docker remote api 远程操作配置（保证在内网环境）
 
 - 假设要被远程操作的服务器 IP：`192.168.1.22`
 - 修改其配置文件：`vim /lib/systemd/system/docker.service`
 - 修改默认值为：`ExecStart=/usr/bin/dockerd`
 - 改为：`ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2376`
+	- 如果还需要连自己的 harbor 这类，完整配置：`ExecStart=/usr/bin/dockerd --insecure-registry harbor.youmeek.com -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2376`
 - `systemctl daemon-reload`
 - `systemctl reload docker`
 - `systemctl restart docker`
