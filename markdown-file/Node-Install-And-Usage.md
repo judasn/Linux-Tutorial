@@ -21,6 +21,7 @@ curl --silent --location https://rpm.nodesource.com/setup_9.x | sudo bash -
 sudo yum -y install nodejs
 ```
 
+- 验证：`node -v`
 - 注意:因为网络原因，最好先把脚本下载到本地，再用代理进行安装
 
 

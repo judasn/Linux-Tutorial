@@ -199,6 +199,8 @@ JOB_URL = http://192.168.0.105:18080/job/react/
 
 ## Jenkins 前端 React 项目构建
 
+- **确保**：安装了 [Node.js](Node-Install-And-Usage.md)
+
 #### 简单的 pipeline 写法（开源项目）
 
 ```
