@@ -498,9 +498,134 @@ fi
 
 #### 简单的 pipeline 写法（Docker 方式运行）（闭源项目 -- 码云为例）
 
+- **确保** 项目根目录有 Dockerfile 文件（部分内容自己修改），内容模板：
+
+```
+FROM java:8
+VOLUME /tmp
+
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ADD ./target/buildApp.jar /app.jar
+
+RUN bash -c 'touch /app.jar'
+
+EXPOSE 8081
+
+ENTRYPOINT ["java", "-jar", "-Xms512M", "-Xmx512M" , "-XX:MetaspaceSize=128M", "-XX:MaxMetaspaceSize=256M" ,"/app.jar"]
+```
+
+- Pipeline 写法
+
+```
+pipeline {
+  agent any
+
+  /*=======================================工具环境修改-start=======================================*/
+  tools {
+    jdk 'JDK8'
+    maven 'MAVEN3'
+  }
+  /*=======================================工具环境修改-end=======================================*/
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+  /*=======================================常修改变量-start=======================================*/
+
+  environment {
+    gitUrl = "https://gitee.com/youmeek/springboot-jenkins-demo.git"
+    branchName = "master"
+    giteeCredentialsId = "Gitee"
+    projectWorkSpacePath = "${env.WORKSPACE}"
+    projectBuildTargetPath = "${env.WORKSPACE}/target"
+    projectJarNewName = "buildApp.jar"
 
 
+    dockerImageName = "docker.youmeek.com/demo/${env.JOB_NAME}:${env.BUILD_NUMBER}"
+    dockerContainerName = "${env.JOB_NAME}"
+    inHostPort = "8082"
+    inDockerAndJavaPort = "8081"
+    inHostLogPath = "/data/docker/logs/${dockerContainerName}"
+    inDockerLogPath = "/data/logs"
+    dockerRunParam = "--name ${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
+  }
+  
+  /*=======================================常修改变量-end=======================================*/
+  
+  stages {
+    
+    stage('Pre Env') {
+      steps {
+         echo "======================================项目名称 = ${env.JOB_NAME}"
+         echo "======================================项目 URL = ${gitUrl}"
+         echo "======================================项目分支 = ${branchName}"
+         echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+         echo "======================================项目空间文件夹路径 = ${projectWorkSpacePath}"
+         echo "======================================项目 build 后 jar 路径 = ${projectBuildTargetPath}"
+         echo "======================================项目 jar 新名称 = ${projectJarNewName}"
+         echo "======================================Docker 镜像名称 = ${dockerImageName}"
+         echo "======================================Docker 容器名称 = ${dockerContainerName}"
+      }
+    }
+    
+    stage('Git Clone'){
+      steps {
+          git branch: "${branchName}",
+          credentialsId: "${giteeCredentialsId}",
+          url: "${gitUrl}"
+      }
+    }
 
+    stage('Maven Clean') {
+      steps {
+        sh "mvn clean"
+      }
+    }
+
+    stage('Maven Package') {
+      steps {
+        sh "mvn package -DskipTests"
+      }
+    }
+
+    stage('构建 Docker 镜像') {
+      steps {
+        sh """
+            mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}
+            
+            cd ${projectWorkSpacePath}
+            
+            docker build -t ${dockerImageName} ./
+        """
+      }
+    }
+
+    stage('运行 Docker 镜像') {
+      steps {
+        sh """
+            docker rm -f ${dockerContainerName} | true
+            
+            docker run -d  ${dockerRunParam} ${dockerImageName}
+        """
+      }
+    }
+    
+    
+
+    
+    
+
+  }
+}
+```
 
 
 
