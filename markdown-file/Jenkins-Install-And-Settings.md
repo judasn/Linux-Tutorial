@@ -431,6 +431,9 @@ pipeline {
          echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
          echo "======================================项目空间文件夹路径 = ${projectWorkSpacePath}"
          echo "======================================项目 build 后 jar 路径 = ${projectBuildTargetPath}"
+         echo "======================================项目 jar 新名称 = ${projectJarNewName}"
+         echo "======================================supervisor 配置文件路径 = ${supervisorConfigFileFullPath}"
+         echo "======================================supervisor 存放 log 路径 = ${supervisorLogPath}"
       }
     }
     
@@ -494,6 +497,13 @@ fi
 
 
 #### 简单的 pipeline 写法（Docker 方式运行）（闭源项目 -- 码云为例）
+
+
+
+
+
+
+
 
 -------------------------------------------------------------------
 
