@@ -72,6 +72,7 @@ Docker CE has both stable and edge channels.
     - `sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`
     - `sudo yum makecache fast`
     - `sudo yum install -y docker-ce`，大小：19M，速度很慢。
+- 查看配置文件位置：`systemctl show --property=FragmentPath docker`
 - 启动 Docker：`systemctl start docker.service`
 - 停止 Docker：`systemctl stop docker.service`
 - 查看状态：`systemctl status docker.service`
@@ -644,6 +645,20 @@ docker rmi $(docker images -f "dangling=true" -q)
 ## Docker daemon.json 可配置参数
 
 - <https://docs.docker.com/engine/reference/commandline/dockerd/>
+
+
+## Docker remote api 配置（保证在内网环境）
+
+- 假设要被远程操作的服务器 IP：`192.168.1.22`
+- 修改其配置文件：`vim /lib/systemd/system/docker.service`
+- 修改默认值为：`ExecStart=/usr/bin/dockerd`
+- 改为：`ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2376`
+- `systemctl daemon-reload`
+- `systemctl reload docker`
+- `systemctl restart docker`
+- 验证：
+	- 在其他服务器上运行：`docker -H 192.168.1.22:2376 images `
+	- 能拿到和它本身看到的一样的数据表示可以了
 
 
 ## Dockerfile 解释

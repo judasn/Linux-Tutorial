@@ -5,16 +5,20 @@
 - CentOS 7.4
 - IP：`192.168.0.105`
 - 需要访问的机子 hosts 需要映射（如果绑定真实域名就不需要这一步了）：`192.168.0.105 harbor.gitnavi.com`
+	- 直接用 IP 也是可以的，只是不用起来不美观
 
 ## 官方文档
 
-- 安装指导：<https://github.com/vmware/harbor/blob/master/docs/installation_guide.md>
+- 安装指导：<https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md>
 	- 从中我们可以知道需要：[Docker、Docker Compose 环境](./Docker-Install-And-Usage.md)
 - 硬件最低要求：2C + 4GB（推荐 8GB）
-- 下载：<https://github.com/vmware/harbor/releases>
+	- 官网有推荐配置说明：[hardware](https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md#hardware)
+- 下载：<https://github.com/goharbor/harbor/releases>
 	- 当前（201806）最新版本：**v1.5.1**
+	- 当前（201810）最新版本：**v1.5.3 和 1.6.0**
 	- 分 offline 和 online 版本，推荐使用 offline
 	- **v1.5.1** 下载地址：<https://storage.googleapis.com/harbor-releases/release-1.5.0/harbor-offline-installer-v1.5.1.tgz>
+	- **v1.5.3** 下载地址：<https://storage.googleapis.com/harbor-releases/harbor-offline-installer-v1.5.3.tgz>
 
 
 ## 安装
@@ -95,7 +99,7 @@ registry_storage_provider_config =
 	- `5000`
 	- `1514`
 - 后面重新启动 Harbor 也靠这个文件了：`docker-compose -f /usr/local/harbor/docker-compose.yml restart`
-- 开始安装：`sh /usr/local/harbor/install.sh`，控制台输出如下：
+- 开始安装：`sh /usr/local/harbor/install.sh`，控制台输出如下（预计需要 5 ~ 10 分钟）：
 
 ```
 
@@ -227,19 +231,18 @@ For more details, please visit https://github.com/vmware/harbor .
 - 安装成功后，可以访问：<http://harbor.gitnavi.com>
 	- 默认用户名：`admin`
 	- 默认密码：`Harbor12345`
-- docker 客户端默认是使用 https 访问 docker registry，我们默认在安装 Harbor 的时候配置文件用的时候 http，所以这里需要修改
+- docker 客户端默认是使用 https 访问 docker registry，我们默认在安装 Harbor 的时候配置文件用的时候 http，所以其他 docker 客户端需要修改
 	- `vim /lib/systemd/system/docker.service`
 	- 修改默认值为：`ExecStart=/usr/bin/dockerd`
 	- 改为：`ExecStart=/usr/bin/dockerd --insecure-registry harbor.gitnavi.com`
 	- `systemctl daemon-reload`
     - `systemctl reload docker`
     - `systemctl restart docker`
-    - `docker-compose -f /usr/local/harbor/docker-compose.yml restart`
 - 访问：<http://harbor.gitnavi.com/harbor/projects>，创建一个项目，比如：`youmeek`，等下需要用到。
 	- 这里用 admin 用户，不再另外创建用了，但是实际使用最好新建用户。
 	- `docker login -u admin -p Harbor12345 harbor.gitnavi.com`
 - 给本地的一个 maven 镜像打 tag：`docker tag maven:3.3-jdk-8 harbor.gitnavi.com/youmeek/harbor-maven:3.3-jdk-8`
-- push 到仓库：`docker push harbor.gitnavi.com/youmeek/harbor-maven:3.3-jdk-8`
+- push 到仓库：`docker push 182.61.19.178/demo/springboot-jenkins-docker:3`
 
 ----------------------------------------------------------------------------
 

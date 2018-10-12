@@ -628,6 +628,156 @@ pipeline {
 ```
 
 
+#### 简单的 pipeline 写法（Docker + Harbor 方式运行）（闭源项目 -- 码云为例）
+
+- 请先看懂上面 Docker 方式
+- 一共需要 3 台机子（要保证在内网环境，不然一定会有安全问题）
+	- 一台部署 [Harbor](Harbor-Install-And-Usage.md)
+	- 一台部署 Jenkins
+	- 一台运行项目
+- 确保 Jenkins 机子已经 Docker Login Harbor，这个就一次性的动作，所以自己在 Jenkins 服务器上操作即可
+- 确保 Spring Boot 项目运行的机子已经 Docker Login Harbor，这个就一次性的动作，所以自己在 Jenkins 服务器上操作即可
+- 确保 Spring Boot 项目运行的机子 docker remote api 开启（没有身份认证功能，所以才要保证内网）
+- Pipeline 写法
+
+```
+pipeline {
+  agent any
+
+  /*=======================================工具环境修改-start=======================================*/
+  tools {
+    jdk 'JDK8'
+    maven 'MAVEN3'
+  }
+  /*=======================================工具环境修改-end=======================================*/
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+  /*=======================================常修改变量-start=======================================*/
+
+  environment {
+    gitUrl = "https://gitee.com/youmeek/springboot-jenkins-demo.git"
+    branchName = "master"
+    giteeCredentialsId = "Gitee"
+    projectWorkSpacePath = "${env.WORKSPACE}"
+    projectBuildTargetPath = "${env.WORKSPACE}/target"
+    projectJarNewName = "buildApp.jar"
+
+    projectDockerDaemon = "tcp://192.168.1.12:2376"
+    harborUrl = "192.168.1.13"
+    harborProjectName = "demo"
+    dockerImageName = "${harborUrl}/${harborProjectName}/${env.JOB_NAME}:${env.BUILD_NUMBER}"
+    dockerContainerName = "${env.JOB_NAME}"
+    inHostPort = "8082"
+    inDockerAndJavaPort = "8081"
+    inHostLogPath = "/data/docker/logs/${dockerContainerName}"
+    inDockerLogPath = "/data/logs"
+    dockerRunParam = "--name ${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
+  }
+  
+  /*=======================================常修改变量-end=======================================*/
+  
+  stages {
+    
+    stage('Pre Env') {
+      steps {
+         echo "======================================项目名称 = ${env.JOB_NAME}"
+         echo "======================================项目 URL = ${gitUrl}"
+         echo "======================================项目分支 = ${branchName}"
+         echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+         echo "======================================项目空间文件夹路径 = ${projectWorkSpacePath}"
+         echo "======================================项目 build 后 jar 路径 = ${projectBuildTargetPath}"
+         echo "======================================项目 jar 新名称 = ${projectJarNewName}"
+         echo "======================================Docker 镜像名称 = ${dockerImageName}"
+         echo "======================================Docker 容器名称 = ${dockerContainerName}"
+         echo "======================================harbor 地址 = ${harborUrl}"
+         echo "======================================harbor 项目名称 = ${harborProjectName}"
+         echo "======================================项目在宿主机的端口 = ${inHostPort}"
+         echo "======================================项目在 Docker 容器中的端口 = ${inDockerAndJavaPort}"
+         echo "======================================项目在宿主机的 log 路径 = ${inHostLogPath}"
+         echo "======================================项目在 docker 容器的 log 路径 = ${inDockerLogPath}"
+         echo "======================================项目运行的 Docker remote ip 信息 = ${projectDockerDaemon}"
+         echo "======================================项目运行的参数 = ${dockerRunParam}"
+      }
+    }
+    
+    stage('Git Clone'){
+      steps {
+          git branch: "${branchName}",
+          credentialsId: "${giteeCredentialsId}",
+          url: "${gitUrl}"
+      }
+    }
+
+    stage('Maven Clean') {
+      steps {
+        sh "mvn clean"
+      }
+    }
+
+    stage('Maven Package') {
+      steps {
+        sh "mvn package -DskipTests"
+      }
+    }
+
+    stage('构建 Docker 镜像') {
+      steps {
+        sh """
+            mv ${projectBuildTargetPath}/*.jar ${projectBuildTargetPath}/${projectJarNewName}
+            
+            cd ${projectWorkSpacePath}
+            
+            docker build -t ${dockerImageName} ./
+        """
+      }
+    }
+
+    stage('Push Docker 镜像') {
+      options {
+        timeout(time: 5, unit: 'MINUTES') 
+      }
+      steps {
+        sh """
+          docker push ${dockerImageName}
+          docker rmi ${dockerImageName}
+        """
+      }
+    }
+
+    stage('运行远程 Docker 镜像') {
+      options {
+        timeout(time: 5, unit: 'MINUTES') 
+      }
+      steps {
+        sh """
+            docker -H ${projectDockerDaemon} pull ${dockerImageName}
+            
+            docker -H ${projectDockerDaemon} rm -f ${dockerContainerName} | true
+            
+            docker -H ${projectDockerDaemon} run -d  ${dockerRunParam} ${dockerImageName}
+        """
+      }
+    }
+    
+    
+
+    
+    
+
+  }
+}
+```
+
+
+
 
 
 -------------------------------------------------------------------
