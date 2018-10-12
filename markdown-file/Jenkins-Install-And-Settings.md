@@ -547,7 +547,7 @@ pipeline {
     dockerContainerName = "${env.JOB_NAME}"
     inHostPort = "8082"
     inDockerAndJavaPort = "8081"
-    inHostLogPath = "/data/docker/logs/${dockerContainerName}"
+    inHostLogPath = "/data/docker/logs/${dockerContainerName}/${env.BUILD_NUMBER}"
     inDockerLogPath = "/data/logs"
     dockerRunParam = "--name ${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
   }
@@ -671,7 +671,7 @@ pipeline {
     dockerContainerName = "${env.JOB_NAME}"
     inHostPort = "8082"
     inDockerAndJavaPort = "8081"
-    inHostLogPath = "/data/docker/logs/${dockerContainerName}"
+    inHostLogPath = "/data/docker/logs/${dockerContainerName}/${env.BUILD_NUMBER}"
     inDockerLogPath = "/data/logs"
     dockerRunParam = "--name ${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
   }
