@@ -549,7 +549,7 @@ pipeline {
     inDockerAndJavaPort = "8081"
     inHostLogPath = "/data/docker/logs/${dockerContainerName}/${env.BUILD_NUMBER}"
     inDockerLogPath = "/data/logs"
-    dockerRunParam = "--name ${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
+    dockerRunParam = "--name=${dockerContainerName} --hostname=${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
   }
   
   /*=======================================常修改变量-end=======================================*/
@@ -673,7 +673,7 @@ pipeline {
     inDockerAndJavaPort = "8081"
     inHostLogPath = "/data/docker/logs/${dockerContainerName}/${env.BUILD_NUMBER}"
     inDockerLogPath = "/data/logs"
-    dockerRunParam = "--name ${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
+    dockerRunParam = "--name=${dockerContainerName} --hostname=${dockerContainerName} -v /etc/hosts:/etc/hosts -v ${inHostLogPath}:${inDockerLogPath} --restart=always  -p ${inHostPort}:${inDockerAndJavaPort}"
   }
   
   /*=======================================常修改变量-end=======================================*/
@@ -753,6 +753,8 @@ pipeline {
       steps {
         sh """
             docker -H ${projectDockerDaemon} pull ${dockerImageName}
+            
+            docker -H ${projectDockerDaemon} stop ${dockerContainerName} | true
             
             docker -H ${projectDockerDaemon} rm -f ${dockerContainerName} | true
             
