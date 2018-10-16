@@ -165,6 +165,12 @@ This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 - 全局 pipeline 语法说明：<http://192.168.0.105:18080/job/react/pipeline-syntax/globals>
 - 其他资料
 	- <http://www.cnblogs.com/fengjian2016/p/8227532.html>
+	- <https://github.com/nbbull/jenkins2Book>
+	- <https://github.com/mcpaint/learning-jenkins-pipeline>
+	- <https://www.cnblogs.com/fengjian2016/p/8227532.html>
+	- <https://blog.csdn.net/diantun00/article/details/81075007>
+
+#### 内置的参数
 
 ```
 BUILD_NUMBER = ${env.BUILD_NUMBER}"
@@ -192,6 +198,124 @@ JENKINS_HOME = /root/.jenkins
 JENKINS_URL = http://192.168.0.105:18080/
 BUILD_URL = http://192.168.0.105:18080/job/react/21/
 JOB_URL = http://192.168.0.105:18080/job/react/
+```
+
+#### 构建时指定参数
+
+- 如果要构建的时候明确输入参数值，可以用 `parameters`：
+
+```
+pipeline {
+  agent any
+
+  parameters {
+    string(name: 'assignVersionValue', defaultValue: '1.1.3', description: '构建之前请先指定版本号')
+  }
+  
+  tools {
+    jdk 'JDK8'
+    maven 'MAVEN3'
+  }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+
+  environment {
+    gitUrl = "https://gitee.com/youmeek/springboot-jenkins-demo.git"
+    branchName = "master"
+    giteeCredentialsId = "Gitee"
+    projectWorkSpacePath = "${env.WORKSPACE}"
+  }
+  
+  
+  stages {
+    
+    stage('Check Env') {
+    
+      /*当指定的参数版本号等于空字符的时候进入 steps。这里的 when 对 当前 stage 有效，对其他 stage 无效*/
+      when {
+        environment name: 'assignVersionValue', value: ''
+      }
+    
+      /*结束整个任务。如果不想结束整个任务，就不要用：exit 1*/
+      steps {
+        sh "exit 1"
+      }
+    }
+    
+    stage('Pre Env') {
+    
+      steps {
+        echo "======================================项目名称 = ${env.JOB_NAME}"
+        echo "======================================项目 URL = ${gitUrl}"
+        echo "======================================项目分支 = ${branchName}"
+        echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+        echo "======================================项目空间文件夹路径 = ${projectWorkSpacePath}"
+        echo "======================================构建时自己指定的版本号值 = ${params.assignVersionValue}"
+      }
+    }
+        
+  }
+}
+```
+
+
+#### 定时构建
+
+```
+pipeline {
+  agent any
+  
+  /*采用 linux cron 语法即可*/
+  triggers {
+    cron('*/1 * * * *')
+  }
+  
+  tools {
+    jdk 'JDK8'
+    maven 'MAVEN3'
+  }
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    buildDiscarder(logRotator(
+      numToKeepStr: '20',
+      daysToKeepStr: '30',
+    ))
+  }
+
+
+  environment {
+    gitUrl = "https://gitee.com/youmeek/springboot-jenkins-demo.git"
+    branchName = "master"
+    giteeCredentialsId = "Gitee"
+    projectWorkSpacePath = "${env.WORKSPACE}"
+  }
+  
+  
+  stages {
+    
+    stage('Pre Env') {
+      steps {
+         echo "======================================项目名称 = ${env.JOB_NAME}"
+         echo "======================================项目 URL = ${gitUrl}"
+         echo "======================================项目分支 = ${branchName}"
+         echo "======================================当前编译版本号 = ${env.BUILD_NUMBER}"
+         echo "======================================项目空间文件夹路径 = ${projectWorkSpacePath}"
+      }
+    }
+    
+  }
+}
+
 ```
 
 
