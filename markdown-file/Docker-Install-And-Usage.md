@@ -199,7 +199,7 @@ java -jar /root/spring-boot-my-demo.jar
 	- 我们看到了我们刚刚运行的容器 ID（CONTAINER ID）为：`a5d544d9b6f9`，这个下面要用到
 - 基于刚刚运行的容器创建新镜像：`docker commit a5d544d9b6f9 youmeek/springboot:0.1`
 	- 查看现在的镜像库：`docker images`，会发现多了一个 youmeek/springboot 新镜像，镜像 ID 为：`7024f230fef9`
-- 运行新镜像，实例化为一个容器，并启动容器中刚刚写的脚本：`docker run -d -p 38080:8080 --name springBootJar 7024f230fef9 /root/spring-boot-run.sh`
+- 运行新镜像，实例化为一个容器，并启动容器中刚刚写的脚本：`docker run -d -p 38080:8080 --name=springBootJar --hostname=springBootJar 7024f230fef9 /root/spring-boot-run.sh`
     - `-d`：表示以“守护模式”执行 spring-boot-run.sh 脚本，此时 jar 中的 log 日志不会出现在输出终端上。  
     - `-p`：表示宿主机与容器的端口映射，此时将容器内部的 8080 端口映射为宿主机的 38080 端口，这样就向外界暴露了 38080 端口，可通过 Docker 网桥来访问容器内部的 8080 端口了。  
     - `--name`：表示给新实例容器取的名称，用一个有意义的名称命名即可
@@ -271,13 +271,13 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 #### 容器生命周期管理
  
 - `docker run`，运行镜像
-    - `docker run -v /java_logs/:/opt/ -d -p 8080:80 --name myDockerNameIsGitNavi -i -t 镜像ID /bin/bash`
+    - `docker run -v /java_logs/:/opt/ -d -p 8080:80 --name=myDockerNameIsGitNavi --hostname=myDockerNameIsGitNavi -i -t 镜像ID /bin/bash`
         - `-i -t` 分别表示保证容器中的 STDIN 开启，并分配一个伪 tty 终端进行交互，这两个是合着用。
         - `--name` 是给容器起了一个名字（如果没有主动给名字，docker 会自动给你生成一个）容器的名称规则：大小写字母、数字、下划线、圆点、中横线，用正则表达式来表达就是：[a-zA-Z0-9_*-]
         - `-d` 容器运行在后台。
         - `-p 8080:80` 表示端口映射，将宿主机的8080端口转发到容器内的80端口。（如果是 -P 参数，则表示随机映射应该端口，一般用在测试的时候）
         - `-v /java_logs/:/opt/` 表示目录挂载，/java_logs/ 是宿主机的目录，/opt/ 是容器目录
-    - `docker run --rm --name myDockerNameIsGitNavi -i -t centos /bin/bash`，--rm，表示退出即删除容器，一般用在做实验测试的时候
+    - `docker run --rm --name=myDockerNameIsGitNavi --hostname=myDockerNameIsGitNavi -i -t centos /bin/bash`，--rm，表示退出即删除容器，一般用在做实验测试的时候
     - `docker run --restart=always -i -t centos /bin/bash`，--restart=always 表示停止后会自动重启
     - `docker run --restart=on-failure:5 -i -t centos /bin/bash`，--restart=on-failure:5 表示停止后会自动重启，最多重启 5 次
 - `docker exec`：对守护式的容器里面执行命令，方便对正在运行的容器进行维护、监控、管理
@@ -720,7 +720,7 @@ EXPOSE 9096
 	- `cd /opt/zch`
 	- `docker build . --tag="skb/user:v1.0.1"`
 		- 因为 build 过程中会有多层镜像 step 过程，所以如果 build 过程中失败，那解决办法的思路是找到 step 失败的上一层，成功的 step 中镜像 ID。然后 docker run 该镜像 ID，手工操作，看报什么错误，然后就比较清晰得了解错误情况了。
-	- `docker run -d -p 9096:9096 -v /usr/local/logs/:/opt/ --name="skbUser1.0.0" skb/user:v1.0.1`
+	- `docker run -d -p 9096:9096 -v /usr/local/logs/:/opt/ --name=skbUser --hostname=skbUser skb/user:v1.0.1`
 	- 查看启动后容器列表：`docker ps`
 	- jar 应用的日志是输出在容器的 /opt 目录下，因为我们上面用了挂载，所在在我们宿主机的 /usr/local/logs 目录下可以看到输出的日志
 - 防火墙开放端口：
@@ -758,8 +758,8 @@ CMD ["catalina.sh", "run"]
 ```
 
 - 打包镜像：`docker build -t harbor.gitnavi.com/demo/qiyeweixin:1.2.2 ./`
-- 运行：`docker run -d -p 8888:8080 --name qiyeweixin -v /data/docker/logs/qiyeweixin:/data/logs/qiyeweixin harbor.gitnavi.com/demo/qiyeweixin:1.2.2`
-- 带 JVM 参数运行：`docker run -d -p 8888:8080 -e JAVA_OPTS='-Xms7g -Xmx7g -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=512M' --name qiyeweixin -v /data/docker/logs/qiyeweixin:/data/logs/qiyeweixin harbor.gitnavi.com/demo/qiyeweixin:1.2.2`
+- 运行：`docker run -d -p 8888:8080 --name=qiyeweixin --hostname=qiyeweixin -v /data/docker/logs/qiyeweixin:/data/logs/qiyeweixin harbor.gitnavi.com/demo/qiyeweixin:1.2.2`
+- 带 JVM 参数运行：`docker run -d -p 8888:8080 -e JAVA_OPTS='-Xms7g -Xmx7g -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=512M' --name=qiyeweixin --hostname=qiyeweixin -v /data/docker/logs/qiyeweixin:/data/logs/qiyeweixin harbor.gitnavi.com/demo/qiyeweixin:1.2.2`
 	- 虽然 Dockerfile 已经有 JVM 参数，并且也是有效的。但是如果 docker run 的时候又带了 JVM 参数，则会以 docker run 的参数为准
 - 测试 JVM 是否有效方法，在代码里面书写，该值要接近 xmx 值：
 
