@@ -605,6 +605,8 @@ pipeline {
     stage('运行 Docker 镜像') {
       steps {
         sh """
+            docker stop ${dockerContainerName} | true
+
             docker rm -f ${dockerContainerName} | true
             
             docker run -d  ${dockerRunParam} ${dockerImageName}
