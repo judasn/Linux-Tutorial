@@ -734,6 +734,39 @@ ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ```
 
+## Dockerfile 部署 Tomcat 应用
+
+- 编写 Dockerfile
+
+```
+FROM tomcat:8.0.46-jre8
+MAINTAINER GitNavi <gitnavi@qq.com>
+
+ENV JAVA_OPTS="-Xms2g -Xmx2g -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=312M"
+ENV CATALINA_HOME /usr/local/tomcat
+
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+ADD qiyeweixin.war /usr/local/tomcat/webapps/
+
+EXPOSE 8080
+
+CMD ["catalina.sh", "run"]
+```
+
+- 打包镜像：`docker build -t harbor.gitnavi.com/demo/qiyeweixin:1.2.2 ./`
+- 运行：`docker run -d -p 8888:8080 --name qiyeweixin -v /data/docker/logs/qiyeweixin:/data/logs/qiyeweixin harbor.gitnavi.com/demo/qiyeweixin:1.2.2`
+- 带 JVM 参数运行：`docker run -d -p 8888:8080 -e JAVA_OPTS='-Xms7g -Xmx7g -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=512M' --name qiyeweixin -v /data/docker/logs/qiyeweixin:/data/logs/qiyeweixin harbor.gitnavi.com/demo/qiyeweixin:1.2.2`
+	- 虽然 Dockerfile 已经有 JVM 参数，并且也是有效的。但是如果 docker run 的时候又带了 JVM 参数，则会以 docker run 的参数为准
+- 测试 JVM 是否有效方法，在代码里面书写，该值要接近 xmx 值：
+
+```
+long maxMemory = Runtime.getRuntime().maxMemory();
+logger.warn("-------------maxMemory=" + ((double) maxMemory / (1024 * 1024)));
+```
 
 ## Docker Compose
 
