@@ -168,6 +168,8 @@
 - 更多其他参数的使用可以看：
 	- [Java命令学习系列（四）——jstat](https://mp.weixin.qq.com/s?__biz=MzI3NzE0NjcwMg==&mid=402330276&idx=2&sn=58117de92512f83090d0a9de738eeacd&scene=21#wechat_redirect)
 	- [java高分局之jstat命令使用](https://blog.csdn.net/maosijunzi/article/details/46049117)
+	- [ jstat命令查看jvm的GC情况 （以Linux为例）](https://www.cnblogs.com/yjd_hycf_space/p/7755633.html)
+
 
 -------------------------------------------------------------------
 
@@ -357,7 +359,6 @@ Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.151-b12 mixed mode):
 
 JNI global references: 281
 ```
-
 
 
 ## 资料

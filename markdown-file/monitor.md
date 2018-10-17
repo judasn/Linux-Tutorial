@@ -813,7 +813,7 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 	- 使用内置 tomcat-manager 监控配置，或者使用类似工具：psi-probe
 	- 使用 `ps -ef | grep java`，查看进程 PID
 		- 根据高 CPU 的进程 PID，查看其线程 CPU 使用情况：`top -Hp PID`，找到占用 CPU 资源高的线程 PID
-	- 查看堆栈情况：`jstack -l PID >> /opt/jstack-tomcat1-PID-20180917.log`
+	- 保存堆栈情况：`jstack -l PID >> /opt/jstack-tomcat1-PID-20180917.log`
 		- 把占用 CPU 资源高的线程十进制的 PID 转换成 16 进制：`printf "%x\n" PID`，比如：`printf "%x\n" 12401` 得到结果是：`3071`
 		- 在刚刚输出的那个 log 文件中搜索：`3071`，可以找到：`nid=0x3071`
 	- 使用 `jstat -gc PID 10000 10`，查看gc情况（截图）
@@ -823,6 +823,58 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 		- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
 	- 结合代码解决内存溢出或泄露问题。
 	- 给 VM 增加 dump 触发参数：`-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/tomcat-1.hprof`
+
+#### 一次 JVM 引起的 CPU 高排查
+
+- 使用 `ps -ef | grep java`，查看进程 PID
+	- 根据高 CPU 的进程 PID，查看其线程 CPU 使用情况：`top -Hp PID`，找到占用 CPU 资源高的线程 PID
+- 保存堆栈情况：`jstack -l PID >> /opt/jstack-tomcat1-PID-20181017.log`
+- 把占用 CPU 资源高的线程十进制的 PID 转换成 16 进制：`printf "%x\n" PID`，比如：`printf "%x\n" 12401` 得到结果是：`3071`
+- 在刚刚输出的那个 log 文件中搜索：`3071`，可以找到：`nid=0x3071`
+- 也可以在终端中直接看：`jstack PID |grep 十六进制线程 -A 30`，此时如果发现如下：
+
+```
+"GC task thread#0 (ParallelGC)" os_prio=0 tid=0x00007fd0ac01f000 nid=0x66f runnable 
+```
+
+- 这种情况一般是 heap 设置得过小，而又要频繁分配对象；二是内存泄露，对象一直不能被回收，导致 CPU 占用过高
+- 使用：`jstat -gcutil PID 3000 10`：
+- 正常情况结果应该是这样的：
+
+```
+S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT
+0.00   0.00  67.63  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.68  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.71  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+0.00   0.00  67.71  38.09  78.03  68.82    124    0.966     5    0.778    1.744
+
+```
+
+- S0：SO 当前使用比例
+- S1：S1 当前使用比例
+- E：**Eden 区使用比例（百分比）（异常的时候，这里可能会接近 100%）**
+- O：**old 区使用比例（百分比）（异常的时候，这里可能会接近 100%）**
+- M：**Metaspace 区使用比例（百分比）（异常的时候，这里可能会接近 100%）**
+- CCS：压缩使用比例
+- YGC：年轻代垃圾回收次数
+- FGC：老年代垃圾回收次数
+- FGCT：老年代垃圾回收消耗时间（单位秒）
+- GCT：垃圾回收消耗总时间（单位秒）
+- **异常的时候每次 Full GC 时间也可能非常长，每次时间计算公式=FGCT值/FGC指）**
+- `jmap -heap PID`，查看具体占用量是多大
+- 使用 `jmap -dump:format=b,file=/opt/dumpfile-tomcat1-PID-20180917.hprof PID`，生成堆转储文件（如果设置的 heap 过大，dump 下来会也会非常大）
+	- 使用 jhat 或者可视化工具（Eclipse Memory Analyzer 、IBM HeapAnalyzer）分析堆情况。
+	- 一般这时候就只能根据 jhat 的分析，看源码了
+- 这里有几篇类似经历的文章推荐给大家：
+	- [三个神奇bug之Java占满CPU](http://luofei.me/?p=197)
+	- [CPU 负载过高问题排查](http://zhouyun.me/2017/10/24/cpu_load_issue/)
+
 
 #### CPU 低，负载高，访问慢（带数据库）
 
@@ -844,6 +896,8 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 - <http://www.rfyy.net/archives/2456.html>
 - <http://programmerfamily.com/blog/linux/sav.html>
 - <https://www.jianshu.com/p/3991c0dba094>
+- <https://www.jianshu.com/p/3667157d63bb>
+- <https://www.cnblogs.com/yjd_hycf_space/p/7755633.html>
 
 
 
