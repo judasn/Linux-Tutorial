@@ -23,6 +23,7 @@
 - [日常维护](markdown-file/maintenance.md)
 - [日常监控](markdown-file/monitor.md)
 - [nmon 系统性能监控工具](markdown-file/Nmon.md)
+- [Glances 安装和配置](markdown-file/Glances-Install-And-Settings.md)
 - [SSH（Secure Shell）介绍](markdown-file/SSH.md)
 - [FTP（File Transfer Protocol）介绍](markdown-file/FTP.md)
 - [VPN（Virtual Private Network）介绍](markdown-file/VPN.md)
