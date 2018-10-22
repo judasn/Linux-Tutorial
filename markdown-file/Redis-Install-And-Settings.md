@@ -246,17 +246,14 @@ M: 5d0fe968559af3035d8d64ab598f2841e5f3a059 172.19.0.7:6379
     - 官网 Github 地址：<https://github.com/redis>
     - 此时（20160212） Redis 最新稳定版本为：**3.0.7**
     - 官网帮助中心：<http://redis.io/documentation>
-    - 我个人习惯 `/opt` 目录下创建一个目录 `setups` 用来存放各种软件安装包；在 `/usr` 目录下创建一个 `program` 用来存放各种解压后的软件包，下面的讲解也都是基于此习惯
-    - 我个人已经使用了第三方源：`EPEL、RepoForge`，如果你出现 `yum install XXXXX` 安装不成功的话，很有可能就是你没有相关源，请查看我对源设置的文章
-    - Redis 下载：`wget http://download.redis.io/releases/redis-3.0.7.tar.gz` （大小：1.4 M）
+    - Redis 下载（/usr/local）：`wget http://download.redis.io/releases/redis-3.0.7.tar.gz` （大小：1.4 M）
         - 安装依赖包：`yum install -y gcc-c++ tcl`
         - 解压：`tar zxvf redis-3.0.7.tar.gz`
-        - 移动到我个人安装目录：`mv redis-3.0.7/ /usr/program/`
-        - 进入解压后目录：`cd /usr/program/redis-3.0.7/`
+        - 进入解压后目录：`cd /usr/local/redis-3.0.7/`
         - 编译：`make`
         - 编译安装：`make install`
             - 安装完之后会在：`/usr/local/bin` 目录下生成好几个 redis 相关的文件
-        - 复制配置文件：`cp /usr/program/redis-3.0.7/redis.conf /etc/`
+        - 复制配置文件：`cp /usr/local/redis-3.0.7/redis.conf /etc/`
         - 修改配置：`vim /etc/redis.conf`
             - 把旧值：`daemonize no` 
             - 改为新值：`daemonize yes` 
