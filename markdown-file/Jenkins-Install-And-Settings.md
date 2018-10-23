@@ -69,6 +69,8 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 	- Mailer Plugin
 	- NotifyQQ（[QQ 消息通知](https://github.com/ameizi/NotifyQQ)）
 	- 钉钉通知（[钉钉 消息通知](https://wiki.jenkins.io/display/JENKINS/Dingding+Notification+Plugin)）
+	- 360 FireLine：代码规范检查，已经集成了阿里巴巴的代码规约（P3C）检查
+    - AnsiColor（可选）：这个插件可以让Jenkins的控制台输出的log带有颜色
 	- oauth（具体名字要看下）
 	- Build Failure Analyzer 分析构建错误日志并在构建页面显示错误
 	- SSH plugin 支持通过SSH执行脚本
@@ -82,14 +84,12 @@ Can not write to /var/jenkins_home/copy_reference_file.log. Wrong volume permiss
 	- Gitlab Plugin：可能会直接安装不成功，如果不成功根据报错的详细信息可以看到 hpi 文件的下载地址，挂代理下载下来，然后离线安装即可
 	- Gitlab Hook：用于触发 GitLab 的一些 WebHooks 来构建项目
 	- Gitlab Authentication 这个插件提供了使用GitLab进行用户认证和授权的方案
-	- FireLine Plugin：代码规范检查，已经集成了阿里巴巴的代码规约（P3C）检查
 	- Docker Commons Plugin
 	- Docker plugin
 	- Kubernetes
 	- Pre SCM BuildStep Plugin 在拉代码之前插入一些步骤
 	- GitHub Pull Request Builder Github Pull Request时自动构建
 	- GitHub API Plugin Github API插件
-	- AnsiColor（可选）：这个插件可以让Jenkins的控制台输出的log带有颜色
 	- NodeJS Plugin
 
 
@@ -900,6 +900,13 @@ pipeline {
 
 
 
+
+
+-------------------------------------------------------------------
+
+## 多节点 master 与 slave 
+
+- 可以参考这篇：<http://www.cnblogs.com/sparkdev/p/7102622.html>
 
 
 -------------------------------------------------------------------
