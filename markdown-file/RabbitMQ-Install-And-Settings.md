@@ -5,11 +5,24 @@
 
 - 官网镜像：<https://hub.docker.com/_/rabbitmq/>
 - 官网镜像说明：<https://docs.docker.com/samples/library/rabbitmq>
-- 运行：
+- 一般情况，运行：
 
 ```
 docker run -d --name cloud-rabbitmq -p 5671:5671 -p 5672:5672 -p 4369:4369 -p 25672:25672 -p 15671:15671 -p 15672:15672 -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=adg123456 rabbitmq:3-management
 ```
+
+- 带有 websocket stomp 功能（不知道是什么就不用管它）：
+
+``` 
+docker run -d --name cloud-rabbitmq -p 5671:5671 -p 5672:5672 -p 4369:4369 -p 25672:25672 -p 15671:15671 -p 15672:15672 -p 61613:61613 -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=adg123456 rabbitmq:3-management
+
+
+进入 Docker 容器启动 stomp 插件：
+docker exec -it cloud-rabbitmq /bin/bash
+cd /plugins
+rabbitmq-plugins enable rabbitmq_web_stomp
+```
+
 
 - 参数解释：
 - rabbitmq:3-management：只有带 management 后缀的才有 web 端管理入口
