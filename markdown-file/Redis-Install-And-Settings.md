@@ -22,9 +22,16 @@
 - Redis 默认的配置文件内容：
 
 ``` ini
-bind 0.0.0.0
+安全情况的几个特殊配置：
+bind 127.0.0.1
 requirepass adgredis123456
 protected-mode yes
+
+免密情况：
+bind 0.0.0.0
+protected-mode no
+
+其他：
 port 6379
 tcp-backlog 511
 timeout 0
