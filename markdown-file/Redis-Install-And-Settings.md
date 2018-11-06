@@ -95,6 +95,8 @@ aof-rewrite-incremental-fsync yes
 #### Redis 容器准备
 
 - 目标：3 主 3 从（一般都是推荐奇数个 master）
+- 最小集群数推荐是：3
+- 测试机的最低配置推荐是：2C4G
 - 拉取镜像：`docker pull registry.cn-shenzhen.aliyuncs.com/youmeek/redis-to-cluster:3.2.3`
 - 重新打个 tag（旧名字太长了）：`docker tag registry.cn-shenzhen.aliyuncs.com/youmeek/redis-to-cluster:3.2.3 redis-to-cluster:3.2.3`
 - 创建网段：`docker network create --subnet=172.19.0.0/16 net-redis-to-cluster`
