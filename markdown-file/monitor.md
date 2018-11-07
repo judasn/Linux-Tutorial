@@ -803,6 +803,7 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 		- `netstat -nulp`
 	- 统计当前连接的一些状态情况：`netstat -nat |awk '{print $6}'|sort|uniq -c|sort -rn`
 	- 查看每个 ip 跟服务器建立的连接数：`netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn`
+	- 查看与后端应用端口连接的有多少：`lsof -i:8080|grep 'TCP'|wc -l`
 	- 跟踪程序（按 `Ctrl + C` 停止跟踪）：`strace -tt -T -v -f -e trace=file -o /opt/strace-20180915.log -s 1024 -p PID`
 	- 看下谁在线：`w`，`last`
 	- 看下执行了哪些命令：`history`
