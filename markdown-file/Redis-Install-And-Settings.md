@@ -664,6 +664,38 @@ used_cpu_sys_children : Redis 后台进程在 内核态 消耗的 CPU
 used_cpu_user_children : Redis 后台进程在 用户态 消耗的 CPU
 ```
 
+## Redis 基准压力测试
+
+- 默认安装包下就自带
+- 官网文档：<https://redis.io/topics/benchmarks>
+- 运行：`redis-benchmark -q -n 100000`
+	- `-q` 表示 quiet 安静执行，结束后直接输出结果即可
+	- `-n 100000` 请求 10 万次
+
+```
+PING_INLINE: 62189.05 requests per second
+PING_BULK: 68634.18 requests per second
+SET: 58241.12 requests per second
+GET: 65445.03 requests per second
+INCR: 57703.40 requests per second
+LPUSH: 61199.51 requests per second
+RPUSH: 68119.89 requests per second
+LPOP: 58309.04 requests per second
+RPOP: 63775.51 requests per second
+SADD: 58479.53 requests per second
+HSET: 61500.61 requests per second
+SPOP: 58241.12 requests per second
+LPUSH (needed to benchmark LRANGE): 59523.81 requests per second
+LRANGE_100 (first 100 elements): 60350.03 requests per second
+LRANGE_300 (first 300 elements): 57636.89 requests per second
+LRANGE_500 (first 450 elements): 63251.11 requests per second
+LRANGE_600 (first 600 elements): 58479.53 requests per second
+MSET (10 keys): 56401.58 requests per second
+```
+
+- 只测试特定类型：`redis-benchmark -t set,lpush -n 100000 -q`
+
+
 ## 资料
 
 - <http://yanshisan.blog.51cto.com/7879234/1377992>
