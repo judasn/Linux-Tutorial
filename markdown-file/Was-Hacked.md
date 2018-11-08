@@ -32,6 +32,7 @@
 - 检查某个端口的具体信息：`lsof -i :18954`
 - 检查启动项：`chkconfig`
 - 检查定时器：`cat /etc/crontab`
+- 检查定时器：`crontab -l`
 - 检查其他系统重要文件：
     - `cat /etc/rc.local`
     - `cd /etc/init.d;ll`
