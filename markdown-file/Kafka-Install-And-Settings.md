@@ -123,6 +123,8 @@ services:
       - /data/docker/kafka/logs:/data/docker/kafka/logs
 ```
 
+- 启动：`docker-compose up -d`
+- 停止：`docker-compose stop`
 - 测试：
 	- 进入 kafka 容器：`docker exec -it kafkadocker_kafka_1 /bin/bash`
 	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
