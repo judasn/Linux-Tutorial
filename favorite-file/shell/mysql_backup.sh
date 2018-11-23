@@ -11,7 +11,7 @@ fi
 
 echo "备份日期 = $backupDatetime"
 
-/usr/bin/mysqldump -u root --password=adg123adg456adg wordpress > /opt/wordpress-"$backupDatetime".sql
+/usr/bin/mysqldump -u root --password=123456 数据库名 > /opt/mydb-"$backupDatetime".sql
 
 
 
