@@ -164,7 +164,7 @@
 	- CCSMX 最大压缩类空间大小
 	- CCSC 当前压缩类空间大小
 	- YGC 年轻代gc次数，从应用程序启动到采样时年轻代中gc次数 
-	- FGC 老年代GC次数，从应用程序启动到采样时old代(全gc)gc次数
+	- FGC 老年代GC次数，从应用程序启动到采样时old代(全gc = Full gc次数)gc次数
 - 更多其他参数的使用可以看：
 	- [Java命令学习系列（四）——jstat](https://mp.weixin.qq.com/s?__biz=MzI3NzE0NjcwMg==&mid=402330276&idx=2&sn=58117de92512f83090d0a9de738eeacd&scene=21#wechat_redirect)
 	- [java高分局之jstat命令使用](https://blog.csdn.net/maosijunzi/article/details/46049117)
@@ -198,7 +198,7 @@ S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT
 - CCS：压缩使用比例
 - YGC：年轻代垃圾回收次数
 - FGC：老年代垃圾回收次数
-- FGCT：老年代垃圾回收消耗时间（单位秒）
+- FGCT：老年代垃圾回收消耗时间（Full gc耗时）（单位秒）
 - GCT：垃圾回收消耗总时间（单位秒）
 - **异常的时候每次 Full GC 时间也可能非常长，每次时间计算公式=FGCT值/FGC指）**
 - 在 YGC 之前 年轻代 = eden + S1；YGC 之后，年轻代 = eden + S0。
@@ -330,6 +330,10 @@ tenured generation:
 - 在线看某个线程 PID 的情况：`jstack 进程ID | grep 十六进制线程ID -A 10`
 	- `-A 10` 参数用来指定显示行数，否则只会显示一行信息
 - 下面 demo 内容太多，所以选取其中一部分结构：
+- 常见线程状态
+	- Runnable：正在运行的线程
+	- Sleeping：休眠的线程
+	- Waiting：等待的线程
 
 ```
 2018-03-08 14:28:13
