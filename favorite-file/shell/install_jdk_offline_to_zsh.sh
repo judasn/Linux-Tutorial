@@ -8,28 +8,28 @@ fi
 
 echo "判断 JDK 压缩包是否存在"
 
-if [ ! -f "/opt/setups/jdk-8u181-linux-x64.tar.gz" ]; then
+if [ ! -f "/opt/setups/jdk-8u191-linux-x64.tar.gz" ]; then
 	echo "JDK 压缩包不存在"
 	exit 1
 fi
 
 echo "开始解压 JDK"
-cd /opt/setups ; tar -zxf jdk-8u181-linux-x64.tar.gz
+cd /opt/setups ; tar -zxf jdk-8u191-linux-x64.tar.gz
 
-if [ ! -d "/opt/setups/jdk1.8.0_181" ]; then
+if [ ! -d "/opt/setups/jdk1.8.0_191" ]; then
 	echo "JDK 解压失败，结束脚本"
 	exit 1
 fi
 
 echo "JDK 解压包移到 /usr/local/ 目录下"
-mv jdk1.8.0_181/ /usr/local/
+mv jdk1.8.0_191/ /usr/local/
 
 echo "JDK 写入系统变量到 zshrc"
 
 cat << EOF >> ~/.zshrc
 
 # JDK
-JAVA_HOME=/usr/local/jdk1.8.0_181
+JAVA_HOME=/usr/local/jdk1.8.0_191
 JRE_HOME=\$JAVA_HOME/jre
 PATH=\$PATH:\$JAVA_HOME/bin
 CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar
