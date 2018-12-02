@@ -1,5 +1,14 @@
 # Kafka 安装和配置
 
+
+## 对于版本
+
+- 由于 Kafka 经常会被连接到各个地方去，所以对于 Kafka 的版本，一般不能用太新的，要看你用在什么地方。
+- [Flink 的要求](https://ci.apache.org/projects/flink/flink-docs-release-1.6/dev/connectors/kafka.html)
+- [Spark 的要求](https://spark.apache.org/docs/latest/streaming-kafka-integration.html)
+- [Spring 的要求](http://projects.spring.io/spring-kafka/)
+
+
 ## 消息系统的好处
 
 - 解耦（各个业务系统各自为政，有各自新需求，各自系统自行修改，只通过消息来通信）
@@ -123,6 +132,8 @@ services:
       - /data/docker/kafka/logs:/data/docker/kafka/logs
 ```
 
+- 启动：`docker-compose up -d`
+- 停止：`docker-compose stop`
 - 测试：
 	- 进入 kafka 容器：`docker exec -it kafkadocker_kafka_1 /bin/bash`
 	- 根据官网 Dockerfile 说明，kafka home 应该是：`cd /opt/kafka`
@@ -358,15 +369,32 @@ wurstmeister/kafka:latest
 - 如果 kafka1 输入的消息，kafka2 和 kafka3 能收到，则表示已经成功。
 
 
+#### Kafka 认证配置
 
-#### 部署 kafka-manager（未能访问成功）
+- 可以参考：[Kafka的SASL/PLAIN认证配置说明](http://www.2bowl.info/kafka%e7%9a%84saslplain%e8%ae%a4%e8%af%81%e9%85%8d%e7%bd%ae%e8%af%b4%e6%98%8e/)
 
-- 节点 1：`docker run -d --name=kafka-manager1 --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181" sheepkiller/kafka-manager:latest`
+
+#### Kafka 单纯监控 KafkaOffsetMonitor
+
+- Github 官网：<https://github.com/quantifind/KafkaOffsetMonitor>
+	- README 带了下载地址和运行命令
+	- 只是已经很久不更新了
+
+#### 部署 kafka-manager
+
+- Github 官网：<https://github.com/yahoo/kafka-manager>
+	- 注意官网说明的版本支持
+- 节点 1（没成功）：`docker run -d --name=kafka-manager1 --restart=always -p 9000:9000 -e ZK_HOSTS="youmeekhost1:2181,youmeekhost2:2181,youmeekhost3:2181" sheepkiller/kafka-manager:latest`
+- 源码类安装可以看：[Kafka监控工具—Kafka Manager](http://www.2bowl.info/kafka%e7%9b%91%e6%8e%a7%e5%b7%a5%e5%85%b7-kafka-manager/)
+- Kafka manager 是一款管理 + 监控的工具，比较重
+
+
 
 ----------------------------------------------------------------------------------------------
 
-## Kafka 1.0.1 源码安装
+## Kafka 1.0.1 源码安装（也支持 1.0.2、0.11.0.3）
 
+- 测试环境：2G 内存足够
 - 一台机子：CentOS 7.4，根据文章最开头，已经修改了 hosts
 - 确保本机安装有 JDK8（JDK 版本不能随便挑选）
 - 先用上面的 docker 方式部署一个 zookeeper，我这里的 zookeeper IP 地址为：`172.16.0.2`
@@ -388,6 +416,8 @@ broker.id=1
 listeners=PLAINTEXT://0.0.0.0:9092
 # 向 Zookeeper 注册的地址。这里可以直接填写外网IP地址，但是不建议这样做，而是通过配置 hosts 的方式来设置。不然填写外网 IP 地址会导致所有流量都走外网（单节点多 broker 的情况下该参数必改）
 advertised.listeners=PLAINTEXT://youmeekhost:9092
+# zookeeper，存储了 broker 的元信息
+zookeeper.connect=youmeekhost:2181
 # 日志数据目录，可以通过逗号来指定多个目录（单节点多 broker 的情况下该参数必改）
 log.dirs=/data/kafka/logs
 # 创建新 topic 的时候默认 1 个分区。需要特别注意的是：已经创建好的 topic 的 partition 的个数只可以被增加，不能被减少。
@@ -402,8 +432,7 @@ auto.create.topics.enable=false
 #log.flush.interval.ms=1000
 # kafka 数据保留时间 默认 168 小时 == 7 天
 log.retention.hours=168
-# zookeeper，存储了 broker 的元信息
-zookeeper.connect=youmeekhost:2181
+
 
 # 其余都使用默认配置，但是顺便解释下：
 # borker 进行网络处理的线程数
@@ -431,7 +460,7 @@ socket.request.max.bytes=104857600
 	- 查看 topic 命令：`bin/kafka-topics.sh --list --zookeeper youmeekhost:2181`
 	- 删除 topic：`bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper youmeekhost:2181`
 	- 给 topic 发送消息命令：`bin/kafka-console-producer.sh --broker-list youmeekhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
-	- 再开一个终端，进入 kafka 容器，接受消息：`bin/kafka-console-consumer.sh --bootstrap-server youmeekhost:9092 --topic my-topic-test --from-beginning`
+	- 再开一个终端，进入 kafka 容器，接受消息：`cd /usr/local/kafka && bin/kafka-console-consumer.sh --bootstrap-server youmeekhost:9092 --topic my-topic-test --from-beginning`
 	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
 - Spring Boot 依赖：
 
@@ -454,6 +483,8 @@ socket.request.max.bytes=104857600
 	<version>1.0.1</version>
 </dependency>
 ```
+
+- 项目配置文件：bootstrap-servers 地址：`instance-3v0pbt5d:9092`（这里端口是 9092 别弄错了）
 
 ----------------------------------------------------------------------------------------------
 

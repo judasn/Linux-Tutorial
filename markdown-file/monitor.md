@@ -682,12 +682,12 @@ eth0      1500 10903437      0      0 0      10847867      0      0      0 BMRU
 lo       65536   453650      0      0 0        453650      0      0      0 LRU
 ```
 
-- 接收：
+- 接收（该值是历史累加数据，不是瞬间数据，要计算时间内的差值需要自己减）：
 	- RX-OK 已接收字节数
 	- RX-ERR 已接收错误字节数（数据值大说明网络存在问题）
 	- RX-DRP 已丢失字节数（数据值大说明网络存在问题）
 	- RX-OVR 由于误差而遗失字节数（数据值大说明网络存在问题）
-- 发送：
+- 发送（该值是历史累加数据，不是瞬间数据，要计算时间内的差值需要自己减）：
 	- TX-OK 已发送字节数
 	- TX-ERR 已发送错误字节数（数据值大说明网络存在问题）
 	- TX-DRP 已丢失字节数（数据值大说明网络存在问题）
@@ -776,6 +776,33 @@ Out of memory: Kill process 19452 (java) score 264 or sacrifice child
 ---------------------------------------------------------------------
 
 ## 服务器故障排查顺序
+
+#### 请求时好时坏
+
+- 系统层面
+	- 查看负载、CPU、内存、上线时间、高资源进程 PID：`htop`
+	- 查看网络丢失情况：`netstat -i 3`，关注：RX-DRP、TX-DRP，如果两个任何一个有值，或者都有值，肯定是网络出了问题（该值是历史累加数据，不是瞬间数据）。
+- 应用层面
+	- 临时修改 nginx log 输出格式，输出完整信息，包括请求头
+
+```
+$request_body   请求体（含POST数据）
+$http_XXX       指定某个请求头（XXX为字段名，全小写）
+$cookie_XXX     指定某个cookie值（XXX为字段名，全小写）
+
+
+类似用法：
+log_format  special_main  '$remote_addr - $remote_user [$time_local] "$request" '
+    '$status $body_bytes_sent "$request_body" "$http_referer" '
+    '"$http_user_agent" $http_x_forwarded_for "appid=$http_appid,appver=$http_appver,vuser=$http_vuser" '
+    '"phpsessid=$cookie_phpsessid,vuser_cookie=$cookie___vuser" ';
+
+
+access_log  /home/wwwlogs/hicrew.log special_main;
+
+```
+
+
 
 #### CPU 高，负载高，访问慢（没有数据库）
 
@@ -899,6 +926,7 @@ S0     S1     E      O      M     CCS    YGC     YGCT    FGC    FGCT     GCT
 - <https://www.jianshu.com/p/3991c0dba094>
 - <https://www.jianshu.com/p/3667157d63bb>
 - <https://www.cnblogs.com/yjd_hycf_space/p/7755633.html>
+- <http://silverd.cn/2016/05/27/nginx-access-log.html>
 
 
 
