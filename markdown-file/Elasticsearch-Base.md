@@ -22,6 +22,8 @@ services:
       - /data/docker/elasticsearch/data:/usr/share/elasticsearch/data
 ```
 
+-------------------------------------------------------------------
+
 ## 环境
 
 - CentOS 7.3
@@ -31,10 +33,11 @@ services:
 	- `systemctl stop firewalld.service` #停止firewall
 	- `systemctl disable firewalld.service` #禁止firewall开机启动
 
-## Elasticsearch 5.5.0 安装
+## Elasticsearch 6.5.x 安装（适配与 5.5.x）
 
 ### 先配置部分系统变量
 
+- 更多系统层面的配置可以看官网：<https://www.elastic.co/guide/en/elasticsearch/reference/current/system-config.html>
 - 配置系统最大打开文件描述符数：`vim /etc/sysctl.conf`
 
 ```
@@ -53,15 +56,15 @@ elasticsearch hard memlock unlimited
 
 ### 开始安装
 
-- 官网 RPM 安装流程（重要，以下资料都是对官网的总结）：<https://www.elastic.co/guide/en/elasticsearch/reference/5.5/rpm.html>
-- `rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch`
+- 官网 RPM 安装流程（重要，以下资料都是对官网的总结）：<https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html>
+- 导入 KEY：`rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch`
 - 新建文件：`vim /etc/yum.repos.d/elasticsearch.repo`
 - 内容如下：
 
 ```
-[elasticsearch-5.x]
-name=Elasticsearch repository for 5.x packages
-baseurl=https://artifacts.elastic.co/packages/5.x/yum
+[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://artifacts.elastic.co/packages/6.x/yum
 gpgcheck=1
 gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
 enabled=1
@@ -70,23 +73,27 @@ type=rpm-md
 ```
 
 - 开始安装：`yum install -y elasticsearch`，国内网络安装会很慢，慢慢等
+- 启动和停止软件（默认是不启动的）：
+	- 启动：`systemctl start elasticsearch.service`
+	- 状态：`systemctl status elasticsearch.service`
+	- 停止：`systemctl stop elasticsearch.service`
 - 安装完成后，增加系统自启动：
-- `/bin/systemctl daemon-reload`
-- `/bin/systemctl enable elasticsearch.service`
-- 启动和停止软件：
-- `systemctl start elasticsearch.service`
-- `systemctl stop elasticsearch.service`
+	- `/bin/systemctl daemon-reload`
+	- `/bin/systemctl enable elasticsearch.service`
+- 检查：`curl -X GET "localhost:9200/"`
 
 ### RPM 安装后的一些配置位置说明
 
+- 更多说明可以看官网：<https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html#rpm-configuring>
+- 更加详细的配置可以看：<https://www.elastic.co/guide/en/elasticsearch/reference/current/important-settings.html>
 - 默认系统生成了一个 elasticsearch 用户，下面的目录权限属于该用户
-- Elasticsearch 安装后位置：/usr/share/elasticsearch
-- Elasticsearch 的软件环境、堆栈的设置：/etc/sysconfig/elasticsearch
-- Elasticsearch 的集群设置：/etc/elasticsearch/elasticsearch.yml
-- Log 位置：/var/log/elasticsearch/
-- 索引数据位置：/var/lib/elasticsearch
-- 插件位置：/usr/share/elasticsearch/plugins
-- 脚本文件位置：/etc/elasticsearch/scripts
+- Elasticsearch 安装后位置：`/usr/share/elasticsearch`
+- Elasticsearch 的软件环境、堆栈的设置：`/etc/sysconfig/elasticsearch`
+- Elasticsearch 的集群设置：`/etc/elasticsearch/elasticsearch.yml`
+- Log 位置：`/var/log/elasticsearch/`
+- 索引数据位置：`/var/lib/elasticsearch`
+- 插件位置：`/usr/share/elasticsearch/plugins`
+- 脚本文件位置：`/etc/elasticsearch/scripts`
 
 
 -------------------------------------------------------------------------------------------------------------------
