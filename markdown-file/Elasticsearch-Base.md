@@ -122,94 +122,40 @@ type=rpm-md
 
 - 如果就单个节点测试，新建索引的时候副本数记得填 0。
 
+#### 创建索引并设置 mapping
+
+- 官网类型说明：<https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>
+
+```
+curl -XPUT 'http://127.0.0.1:9200/grafanadb' -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "refresh_interval": "5s",
+    "number_of_shards": 5,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "radar": {
+      "properties": {
+        "request_num": {
+          "type": "long"
+        },
+        "post_date": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||epoch_millis"
+        }
+      }
+    }
+  }
+}
+'
+```
+
+
 #### 批量增加 / 删除测试数据
 
 - 官网文档：<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html>
 - 批量增加，接口地址：`POST /_bulk`
-
-```
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100001" } }
-{ "post_date" : "2018-12-01 10:00:00", "request_num" :  1 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100002" } }
-{ "post_date" : "2018-12-01 10:00:05", "request_num" :  2 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100003" } }
-{ "post_date" : "2018-12-01 10:00:10", "request_num" :  3 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100004" } }
-{ "post_date" : "2018-12-01 10:00:15", "request_num" :  4 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100005" } }
-{ "post_date" : "2018-12-01 10:00:20", "request_num" :  5 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100006" } }
-{ "post_date" : "2018-12-01 10:00:25", "request_num" :  6 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100007" } }
-{ "post_date" : "2018-12-01 10:00:30", "request_num" :  7 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100008" } }
-{ "post_date" : "2018-12-01 10:00:35", "request_num" :  8 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100009" } }
-{ "post_date" : "2018-12-01 10:00:40", "request_num" :  9 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100010" } }
-{ "post_date" : "2018-12-01 10:00:45", "request_num" :  10 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100011" } }
-{ "post_date" : "2018-12-01 10:00:50", "request_num" :  1 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100012" } }
-{ "post_date" : "2018-12-01 10:00:55", "request_num" :  2 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100013" } }
-{ "post_date" : "2018-12-01 10:01:00", "request_num" :  3 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100014" } }
-{ "post_date" : "2018-12-01 10:01:05", "request_num" :  4 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100015" } }
-{ "post_date" : "2018-12-01 10:01:10", "request_num" :  5 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100016" } }
-{ "post_date" : "2018-12-01 10:01:15", "request_num" :  6 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100017" } }
-{ "post_date" : "2018-12-01 10:01:20", "request_num" :  7 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100018" } }
-{ "post_date" : "2018-12-01 10:01:25", "request_num" :  8 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100019" } }
-{ "post_date" : "2018-12-01 10:01:30", "request_num" :  9 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100020" } }
-{ "post_date" : "2018-12-01 10:01:35", "request_num" :  10 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100021" } }
-{ "post_date" : "2018-12-01 10:01:40", "request_num" :  1 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100022" } }
-{ "post_date" : "2018-12-01 10:01:45", "request_num" :  2 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100023" } }
-{ "post_date" : "2018-12-01 10:01:50", "request_num" :  3 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100024" } }
-{ "post_date" : "2018-12-01 10:01:55", "request_num" :  4 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100025" } }
-{ "post_date" : "2018-12-01 10:02:00", "request_num" :  5 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100026" } }
-{ "post_date" : "2018-12-01 10:02:05", "request_num" :  6 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100027" } }
-{ "post_date" : "2018-12-01 10:02:10", "request_num" :  7 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100028" } }
-{ "post_date" : "2018-12-01 10:02:15", "request_num" :  8 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100029" } }
-{ "post_date" : "2018-12-01 10:02:20", "request_num" :  9 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100030" } }
-{ "post_date" : "2018-12-01 10:02:25", "request_num" :  10 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100031" } }
-{ "post_date" : "2018-12-01 10:02:30", "request_num" :  1 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100032" } }
-{ "post_date" : "2018-12-01 10:02:35", "request_num" :  2 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100033" } }
-{ "post_date" : "2018-12-01 10:02:40", "request_num" :  3 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100034" } }
-{ "post_date" : "2018-12-01 10:02:45", "request_num" :  4 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100035" } }
-{ "post_date" : "2018-12-01 10:02:50", "request_num" :  5 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100036" } }
-{ "post_date" : "2018-12-01 10:02:55", "request_num" :  6 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100037" } }
-{ "post_date" : "2018-12-01 10:03:00", "request_num" :  7 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100038" } }
-{ "post_date" : "2018-12-01 10:03:05", "request_num" :  8 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100039" } }
-{ "post_date" : "2018-12-01 10:03:10", "request_num" :  9 }
-{ "index" : { "_index" : "grafanadb", "_type" : "radar", "_id" : "100040" } }
-{ "post_date" : "2018-12-01 10:03:15", "request_num" :  10 }
-```
-
 - cURL 格式：
 
 ```

@@ -26,30 +26,6 @@
 
 - 请看 logstash 专题文：[logstash 相关知识](Logstash-Base.md)
 
-### 安装 Kibana
-
-- 选择一台机子安装即可，我选择：192.168.1.127 这台
-- 切换到存放目录：`cd /usr/program/elk`
-- 解压：`tar zxvf kibana-4.6.1-linux-x86_64.tar.gz`
-- 修改配置文件：`vim /usr/program/elk/kibana-4.6.1-linux-x86_64/config/kibana.yml`，打开下面注释并配置：
-
-``` nginx
-server.port: 5601                                  #端口
-server.host: "192.168.1.127"                        #访问ip地址
-elasticsearch.url: "http://192.168.1.127:9200"      #连接elastic               
-kibana.index: ".kibana"                            #在elastic中添加.kibana索引
-```
-
-- 记得先切换到 elasticsearch 用户下，然后先启动 elasticsearch。先确保 elasticsearch 集群是启动的。
-- 再切换到 root 用户下，启动 kibana
-- 带控制台的启动（比较慢）：`/usr/program/elk/kibana-4.6.1-linux-x86_64/bin/kibana`
-- 守护进程方式启动：`/usr/program/elk/kibana-4.6.1-linux-x86_64/bin/kibana -d`
-- 守护进程方式停止：`ps -ef|grep kibana`，只能通过 kill pid 来结束
-- 然后你可以访问：`http://192.168.1.127:5601`，可以看到 kibana 的相关界面。
-- 在 logstash 安装这一步，如果你刚刚有按着我说的去做一个 elasticsearch 索引，那你此时不会看到这样的提示：`Unable to fetch mapping. Do you have indices matching the pattern?`
-	- 此时你可以直接点击 `create` 统计 `logstash-*` 格式的索引结果，看到相关内容
-	- 如果你知道你的索引名称的规则，比如我现在要统计 Tomcat 的相关索引，我的索引名称是：`tomcat-log-*`，则我输入这个，点击：create 即可。
-- kibana 的高级用法请看我单独的一篇文章：[kibana 相关知识](Kibana-Base.md)
 
 
 ## 资料
