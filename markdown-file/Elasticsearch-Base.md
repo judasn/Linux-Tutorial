@@ -155,8 +155,7 @@ curl -XPUT 'http://127.0.0.1:9200/grafanadb' -H 'Content-Type: application/json'
 #### 批量增加 / 删除测试数据
 
 - 官网文档：<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html>
-- 批量增加，接口地址：`POST /_bulk`
-- cURL 格式：
+- 批量增加，cURL 格式：
 
 ```
 curl -X POST "http://127.0.0.1:9200/_bulk" -H 'Content-Type: application/json' -d'
@@ -243,14 +242,7 @@ curl -X POST "http://127.0.0.1:9200/_bulk" -H 'Content-Type: application/json' -
 '
 ```
 
-- 批量删除，接口地址：`POST /_bulk`
-
-```
-{ "delete": { "_index": "grafanadb", "_type": "radar", "_id": "100001" } }
-{ "delete": { "_index": "grafanadb", "_type": "radar", "_id": "100002" } }
-```
-
-- cURL 格式：
+- 批量删除，cURL 格式：
 
 ```
 curl -X POST "http://127.0.0.1:9200/_bulk" -H 'Content-Type: application/json' -d'
