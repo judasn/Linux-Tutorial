@@ -45,7 +45,7 @@
 ## Nginx 的 Docker 部署
 
 - 预设好目录，在宿主机上创建下面目录：`mkdir -p /data/docker/nginx/html /data/docker/nginx/conf.d /data/docker/nginx/logs /data/docker/nginx/conf`
-- **重点**：先准备好你的 nginx.conf 文件，存放在宿主机的：/data/docker/nginx/conf 目录下，等下需要映射。
+- **重点**：先准备好你的 nginx.conf 文件，存放在宿主机的：`vim /data/docker/nginx/conf/nginx.conf` 目录下，等下需要映射。
 
 ```
 worker_processes      1;
