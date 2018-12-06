@@ -44,7 +44,7 @@
 
 ## Nginx 的 Docker 部署
 
-- 预设好目录，在宿主机上创建下面目录：`mkdir -p /data/docker/nginx/html /data/docker/nginx/conf.d /data/docker/nginx/logs /data/docker/nginx/conf`
+- 预设好目录，在宿主机上创建下面目录：`mkdir -p /data/docker/nginx/logs /data/docker/nginx/conf`
 - **重点**：先准备好你的 nginx.conf 文件，存放在宿主机的：`vim /data/docker/nginx/conf/nginx.conf` 目录下，等下需要映射。
 
 ```
@@ -76,7 +76,7 @@ http {
 
 - 官网镜像：<https://hub.docker.com/_/nginx/>
 - 下载镜像：`docker pull nginx:1.12.2`
-- 运行容器：`docker run --name youmeek-nginx -p 80:80 -v /data/docker/nginx/html:/usr/share/nginx/html:ro -v /data/docker/nginx/conf.d:/etc/nginx/conf.d -v /data/docker/nginx/logs:/var/log/nginx -v /data/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx:1.12.2`
+- 运行容器：`docker run --name youmeek-nginx -p 80:80 -v /data/docker/nginx/logs:/var/log/nginx -v /data/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx:1.12.2`
 - 重新加载配置（目前测试无效，只能重启服务）：`docker exec -it youmeek-nginx nginx -s reload`
 - 停止服务：`docker exec -it youmeek-nginx nginx -s stop` 或者：`docker stop youmeek-nginx`
 - 重新启动服务：`docker restart youmeek-nginx`
