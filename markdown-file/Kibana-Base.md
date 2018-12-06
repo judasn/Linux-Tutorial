@@ -57,6 +57,10 @@ type=rpm-md
 ```
 
 - 然后你可以访问：`http://192.168.0.105:5601`，可以看到 kibana 的相关界面。
+	- 1. Create index pattern
+		- 如果你 Elasticsearch 新创建了索引，kibana 是不会自动帮你匹配到的，所以要匹配新索引，这一步都要走
+	- 2. Discover | 右上角筛选时间区间
+		- 这一步非常重要，里面的 filter，图表等都是基于此时间区间的
 - 在 logstash 安装这一步，如果你刚刚有按着我说的去做一个 elasticsearch 索引，那你此时不会看到这样的提示：`Unable to fetch mapping. Do you have indices matching the pattern?`
 	- 此时你可以直接点击 `create` 统计 `logstash-*` 格式的索引结果，看到相关内容
 	- 如果你知道你的索引名称的规则，比如我现在要统计 Tomcat 的相关索引，我的索引名称是：`tomcat-log-*`，则我输入这个，点击：create 即可。
