@@ -26,7 +26,7 @@ sudo cp wrk /usr/local/bin
 
 ## 使用
 
-- 启用 10 个线程，每个线程发起 100 个请求，持续 15 秒：`wrk -t10 -c100 -d15s http://www.baidu.com`
+- 启用 10 个线程，每个线程发起 100 个连接，持续 15 秒：`wrk -t10 -c100 -d15s http://www.baidu.com`
 - 最终报告：
 
 ```
