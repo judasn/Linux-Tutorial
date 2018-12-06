@@ -74,6 +74,7 @@ http {
 }
 ```
 
+- 官网镜像：<https://hub.docker.com/_/nginx/>
 - 下载镜像：`docker pull nginx:1.12.2`
 - 运行容器：`docker run --name youmeek-nginx -p 80:80 -v /data/docker/nginx/html:/usr/share/nginx/html:ro -v /data/docker/nginx/conf.d:/etc/nginx/conf.d -v /data/docker/nginx/logs:/var/log/nginx -v /data/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro -d nginx:1.12.2`
 - 重新加载配置（目前测试无效，只能重启服务）：`docker exec -it youmeek-nginx nginx -s reload`
