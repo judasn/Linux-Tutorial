@@ -54,6 +54,7 @@
 * [Jenkins 安装和配置](markdown-file/Jenkins-Install-And-Settings.md)
 * [TeamCity 安装和配置](markdown-file/TeamCity-Install-And-Settings.md)
 * [Nginx 安装和配置](markdown-file/Nginx-Install-And-Settings.md)
+* [wrk 安装和配置](markdown-file/wrk-Install-And-Settings.md)
 * [FastDFS 安装和配置](markdown-file/FastDFS-Install-And-Settings.md)
 * [FastDFS 结合 GraphicsMagick](markdown-file/FastDFS-Nginx-Lua-GraphicsMagick.md)
 * [RabbitMQ 安装和配置](markdown-file/RabbitMQ-Install-And-Settings.md)
