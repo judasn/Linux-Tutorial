@@ -58,6 +58,17 @@ mvn archetype:generate								\
 		- 有一个 `Add New` 按钮可以上传 jar 包，然后填写 Class 路径：`com.youmeek.WordCount`
 		- `parallelism` 表示并行度，填写数字，一般并行度设置为集群 CPU 核数总和的 2-3 倍（如果是单机模式不需要设置并行度）
 
+## 安装 ncat 方便发送数据包
+
+- 环境：CentOS 7.4
+- 官网下载：<https://nmap.org/download.html>，找到 rpm 包
+- 当前时间（201803）最新版本下载：`wget https://nmap.org/dist/ncat-7.60-1.x86_64.rpm`
+- 当前时间（201812）最新版本下载：`wget https://nmap.org/dist/ncat-7.70-1.x86_64.rpm`
+- 安装：`sudo rpm -i ncat-7.60-1.x86_64.rpm`
+- ln 下：`sudo ln -s /usr/bin/ncat /usr/bin/nc`
+- 检验：`nc --version`
+- 启动监听 9011 端口：`nc -lk 9011`，然后你可以输入内容，Flink demo 看是否有收到
+
 -------------------------------------------------------------------
 
 
