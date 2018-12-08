@@ -76,8 +76,8 @@ mvn archetype:generate								\
 
 - 四个基石：Checkpoint、State、Time、Window
 - 解决 exactly-once 的问题
-- 状态管理
 - 实现了 watermark 的机制，解决了基于事件时间处理时的数据乱序和数据迟到的问题
+- 状态管理
 - 提供了一套开箱即用的窗口操作，包括滚动窗口、滑动窗口、会话窗口
 - 我想说的，都被这篇文章说了：
 	- <http://shiyanjun.cn/archives/1508.html>
@@ -85,7 +85,7 @@ mvn archetype:generate								\
 - 这里补充点其他的
 
 
-
+```
 Client 用来提交任务给 JobManager，JobManager 分发任务给 TaskManager 去执行，然后 TaskManager 会心跳的汇报任务状态
 在 Flink 集群中，计算资源被定义为 Task Slot
 每个 TaskManager 会拥有一个或多个 Slots
@@ -103,14 +103,14 @@ Flink 中的计算资源通过 Task Slot 来定义。每个 task slot 代表了 
 
 每一个 TaskManager 会拥有一个或多个的 task slot，每个 slot 都能跑由多个连续 task 组成的一个 pipeline，比如 MapFunction 的第n个并行实例和 ReduceFunction 的第n个并行实例可以组成一个 pipeline。
 
-
 source（Streaming 进来）
 Transformations（Streaming 处理）
 sink（Streaming 出去）
 
 Flink程序与生俱来的就是并行和分布式的。Streams被分割成stream patition, Operators被被分割成operator subtasks。这些subtasks在不同的机器（容器）上的不同的线程中运行，彼此独立，互不干扰。 一个操作的operator subtask的数目，被称为parallelism（并行度）。一个stream的并行度，总是等于生成它的（operator）操作的并行度。一个Flink程序中，不同的operator可能具有不同的并行度。
+```
 
-
+-------------------------------------------------------------------
 
 
 #### 为了容错的 Checkpoint 机制
@@ -120,8 +120,6 @@ Flink程序与生俱来的就是并行和分布式的。Streams被分割成strea
 	- [A Deep Dive into Rescalable State in Apache Flink](https://flink.apache.org/features/2017/07/04/flink-rescalable-state.html)
 	- [Flink 小贴士 (5): Savepoint 和 Checkpoint 的 3 个不同点](http://wuchong.me/blog/2018/11/25/flink-tips-differences-between-savepoints-and-checkpoints/)
 	- [Flink 小贴士 (2)：Flink 如何管理 Kafka 消费位点](http://wuchong.me/blog/2018/11/04/how-apache-flink-manages-kafka-consumer-offsets/)
-	- []()
-	- []()
 - Checkpoint 允许 Flink 恢复流中的状态和位置，使应用程序具有与无故障执行相同的语义
 - Checkpoint 是 Flink 用来从故障中恢复的机制，快照下了整个应用程序的状态，当然也包括输入源读取到的位点。如果发生故障，Flink 将通过从 Checkpoint 加载应用程序状态并从恢复的读取位点继续应用程序的处理，就像什么事情都没发生一样。
 
@@ -144,11 +142,23 @@ Flink通过一个可配置的时间，周期性的生成checkpoint，将它写�
 - 这里有一个核心：用到 Facebook 的 RocksDB 数据库（可嵌入式的支持持久化的 key-value 存储系统）
 
 
+-------------------------------------------------------------------
 
 #### Exactly-Once
 
 - 因为有了 Checkpoint，才有了 Exactly-Once
 - [Apache Flink 端到端（end-to-end）Exactly-Once特性概览 （翻译）](https://my.oschina.net/u/992559/blog/1819948)
+- 常见有这几种语义：
+
+```
+at most once : 至多一次。可能导致消息丢失。
+at least once : 至少一次。可能导致消息重复。
+exactly once ： 刚好一次。不丢失也不重复。
+```
+
+
+-------------------------------------------------------------------
+
 
 #### Watermark
 
@@ -157,34 +167,163 @@ Flink通过一个可配置的时间，周期性的生成checkpoint，将它写�
 - watermark 的作用，他们定义了何时不再等待更早的数据
 - WaterMark 只在时间特性 EventTime 和 IngestionTime 起作用，并且 IngestionTime 的时间等同于消息的 ingestion 时间
 
+-------------------------------------------------------------------
+
 #### 窗口
 
-- 翻滚窗口（Tumble）
+- <http://wuchong.me/blog/2016/05/25/flink-internals-window-mechanism/>
 - [Flink 原理与实现：Window 机制](http://wuchong.me/blog/2016/05/25/flink-internals-window-mechanism/)
 - [Flink 原理与实现：Session Window](http://wuchong.me/blog/2016/06/06/flink-internals-session-window/)
 
+##### 滚动窗口（Tumbling Windows）
 
-#### 生产环境
+- 滚动窗口有一个固定的大小，并且不会出现重叠
+
+###### 滚动事件时间窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+    .<windowed transformation>(<window function>);
+```
+
+- 每日偏移8小时的滚动事件时间窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(TumblingEventTimeWindows.of(Time.days(1), Time.hours(-8)))
+    .<windowed transformation>(<window function>);
+```
+
+###### 滚动处理时间窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(TumblingProcessingTimeWindows.of(Time.seconds(5)))
+    .<windowed transformation>(<window function>);
+```
+
+---------------------------------
+
+##### 滑动窗口（Sliding Windows）
+
+- 滑动窗口分配器将元素分配到固定长度的窗口中，与滚动窗口类似，窗口的大小由窗口大小参数来配置，另一个窗口滑动参数控制滑动窗口开始的频率。因此，滑动窗口如果滑动参数小于滚动参数的话，窗口是可以重叠的，在这种情况下元素会被分配到多个窗口中。
+- 例如，你有10分钟的窗口和5分钟的滑动，那么每个窗口中5分钟的窗口里包含着上个10分钟产生的数据
+
+###### 滑动事件时间窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+    .<windowed transformation>(<window function>);
+```
+
+###### 滑动处理时间窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(SlidingProcessingTimeWindows.of(Time.seconds(10), Time.seconds(5)))
+    .<windowed transformation>(<window function>);
+```
+
+- 偏移8小时的滑动处理时间窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(SlidingProcessingTimeWindows.of(Time.hours(12), Time.hours(1), Time.hours(-8)))
+    .<windowed transformation>(<window function>);
+```
+
+---------------------------------
+
+##### 计数窗口（Count Window）
+
+- 根据元素个数对数据流进行分组的
+
+###### 翻滚计数窗口
+
+- 当我们想要每 100 个用户购买行为事件统计购买总数，那么每当窗口中填满 100 个元素了，就会对窗口进行计算，这种窗口我们称之为翻滚计数窗口（Tumbling Count Window）
+
+```
+input
+    .keyBy(<key selector>)
+    .countWindow(100)
+    .<windowed transformation>(<window function>);
+```
+
+---------------------------------
+
+
+##### 会话窗口（Session Windows）
+
+- session 窗口分配器通过 session 活动来对元素进行分组，session 窗口跟滚动窗口和滑动窗口相比，不会有重叠和固定的开始时间和结束时间的情况。相反，当它在一个固定的时间周期内不再收到元素，即非活动间隔产生，那个这个窗口就会关闭。一个 session 窗口通过一个 session 间隔来配置，这个 session 间隔定义了非活跃周期的长度。当这个非活跃周期产生，那么当前的 session 将关闭并且后续的元素将被分配到新的 session 窗口中去。
+
+###### 事件时间会话窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(EventTimeSessionWindows.withGap(Time.minutes(10)))
+    .<windowed transformation>(<window function>);
+```
+
+###### 处理时间会话窗口
+
+```
+input
+    .keyBy(<key selector>)
+    .window(ProcessingTimeSessionWindows.withGap(Time.minutes(10)))
+    .<windowed transformation>(<window function>);
+```
+
+---------------------------------
+
+##### 全局窗口（Global Windows）
+
+- 全局窗口分配器将所有具有相同 key 的元素分配到同一个全局窗口中，这个窗口模式仅适用于用户还需自定义触发器的情况。否则，由于全局窗口没有一个自然的结尾，无法执行元素的聚合，将不会有计算被执行。
+
+```
+input
+    .keyBy(<key selector>)
+    .window(GlobalWindows.create())
+    .<windowed transformation>(<window function>);
+```
+
+-------------------------------------------------------------------
+
+
+#### 生产环境准备
 
 - [Flink 小贴士 (7): 4个步骤，让 Flink 应用达到生产状态](http://wuchong.me/blog/2018/12/03/flink-tips-4-steps-flink-application-production-ready/)
 
-
+-------------------------------------------------------------------
 
 
 #### 运行环境
 
 
-Flink 的部署
-Flink 有三种部署模式，分别是 Local、Standalone Cluster 和 Yarn Cluster。对于 Local 模式来说，JobManager 和 TaskManager 会公用一个 JVM 来完成 Workload。如果要验证一个简单的应用，Local 模式是最方便的。实际应用中大多使用 Standalone 或者 Yarn Cluster。下面我主要介绍下这两种模式。
+- Flink 的部署
+- Flink 有三种部署模式，分别是 Local、Standalone Cluster 和 Yarn Cluster。
+- 对于 Local 模式来说，JobManager 和 TaskManager 会公用一个 JVM 来完成 Workload。
+- 如果要验证一个简单的应用，Local 模式是最方便的。实际应用中大多使用 Standalone 或者 Yarn Cluster
 
+-------------------------------------------------------------------
 
 #### Flink 的 HA
 
+-------------------------------------------------------------------
 
 #### Monitoring REST API
 
 https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/rest_api.html#monitoring-rest-api
 
+-------------------------------------------------------------------
 
 #### 主要核心 API
 
@@ -195,6 +334,7 @@ https://ci.apache.org/projects/flink/flink-docs-stable/monitoring/rest_api.html#
 	- Kafka Connectors
 - Elasticsearch sink
 
+-------------------------------------------------------------------
 
 #### Table & SQL API（关系型 API）
 
@@ -218,6 +358,5 @@ SQL API：支持标准SQL（自1.1.0版本开始）
 - [Flink学习笔记(4):基本概念](https://www.jianshu.com/p/0cd1db4282be)
 - [Apache Flink：特性、概念、组件栈、架构及原理分析](http://shiyanjun.cn/archives/1508.html)
 - [Flink 原理与实现：理解 Flink 中的计算资源](http://wuchong.me/blog/2016/05/09/flink-internals-understanding-execution-resources/)
-- []()
-- []()
+- [Flink实战教程](https://liguohua-bigdata.gitbooks.io/simple-flink/content/)
 
