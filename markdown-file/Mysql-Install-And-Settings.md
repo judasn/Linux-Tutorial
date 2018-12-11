@@ -192,7 +192,7 @@ table_open_cache=256
 	- 在终端中执行（CentOS 7）：`systemctl stop mysql`
 	- 在终端中执行（前面添加的 Linux 用户 mysql 必须有存在）：`/usr/local/mysql/bin/mysqld --skip-grant-tables --user=mysql`
 		- 此时 MySQL 服务会一直处于监听状态，你需要另起一个终端窗口来执行接下来的操作
-		- 在终端中执行：`mysql -u root mysql`
+		- 在终端中执行：`mysql -u root mysql` 或者：`mysql -h 127.0.0.1 -u root -P 3306 -p`
 		- 把密码改为：123456，进入 MySQL 命令后执行：`UPDATE user SET Password=PASSWORD('123456') where USER='root';FLUSH PRIVILEGES;`
 		- 然后重启 MySQL 服务（CentOS 6）：`service mysql restart`
 		- 然后重启 MySQL 服务（CentOS 7）：`systemctl restart mysql`
@@ -220,6 +220,24 @@ set global validate_password_length=6; #密码允许最小长度为6
 set password = password('新密码');
 FLUSH PRIVILEGES;
 ```
+
+## MySQL 5.7 
+
+- 报错内容：
+
+```
+Expression #1 of ORDER BY clause is not in GROUP BY clause and contains nonaggregated column 'youmeek.nm.id' 
+which is not functionally dependent on columns in GROUP BY clause; 
+this is incompatible with sql_mode=only_full_group_by
+```
+
+- 查下自己的模式：`select version(), @@sql_mode;`
+- 解决办法，修改 my.cnf，增加这一行：
+
+```
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION;
+```
+
 
 ## 小内存机子，MySQL 频繁挂掉解决办法（1G + CentOS 7.4）
 
