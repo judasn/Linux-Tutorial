@@ -41,6 +41,19 @@ Requests/sec:    755.26
 Transfer/sec:     11.08MB
 ```
 
+#### 使用 lua 脚本（发送一个 post 请求）
+
+- 创建：`vim /opt/post-wrk.lua`
+
+```
+wrk.method = "POST"  
+wrk.body   = "hms_user_id=222222&routing_key=ad.sys_user.add"  
+wrk.headers["Content-Type"] = "application/x-www-form-urlencoded"
+```
+
+- 测试：`wrk -t10 -c100 -d15s --script=/opt/post-wrk.lua --latency http://127.0.0.1:9090/websocket/api/send-by-user-id`
+
+
 ## 其他说明
 
 - wrk 使用的是 HTTP/1.1，缺省开启的是长连接
@@ -49,3 +62,4 @@ Transfer/sec:     11.08MB
 ## 资料
 
 - <https://huoding.com/2017/05/31/620>
+- <https://zjumty.iteye.com/blog/2221040>
