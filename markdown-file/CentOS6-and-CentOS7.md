@@ -36,6 +36,9 @@
 
 ### 开放端口
 
+- 一般设置软件端口有一个原则：
+	- 0 ~ 1024 系统保留，一般不要用到
+	- 1024 ~ 65535（2^16） 可以随意用
 - 添加单个端口：`firewall-cmd --zone=public --add-port=8883/tcp --permanent`
 - 添加范围端口：`firewall-cmd --zone=public --add-port=8883-8885/tcp --permanent`
 - 删除端口：`firewall-cmd --zone=public --remove-port=8883/tcp --permanent`
