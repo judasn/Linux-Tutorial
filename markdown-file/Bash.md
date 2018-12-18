@@ -140,6 +140,8 @@ drwxr-xr-x. 5 root root 4096 3月 26 10:57，其中最前面的 d 表示这是�
 
 ## 用户、权限-相关命令
 
+- 使用 pem 证书登录：`ssh -i /opt/mykey.pem root@192.168.0.70`
+	- 证书权限不能太大，不然无法使用：`chmod 600 mykey.pem`
 - `hostname`，查看当前登陆用户全名
 - `cat /etc/group`，查看所有组
 - `cat /etc/passwd`，查看所有用户
