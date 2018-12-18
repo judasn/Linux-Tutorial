@@ -432,8 +432,21 @@ tcp6       0      0 :::37481                :::*                    LISTEN      
 
 ## 运行作业
 
+- 在主节点上操作
 - 运行一个 Mapreduce 作业试试：
-	- `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.5.jar pi 5 10`
+	- 计算 π：`hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.5.jar pi 5 10`
+- 运行一个文件相关作业：
+	- 由于运行 hadoop 时指定的输入文件只能是 HDFS 文件系统中的文件，所以我们必须将要进行 wordcount 的文件从本地文件系统拷贝到 HDFS 文件系统中。
+	- 查看目前根目录结构：`hadoop fs -ls /`
+	- 创建目录：`hadoop fs -mkdir -p /tmp/zch/wordcount_input_dir`
+	- 上传文件：`hadoop fs -put /opt/input.txt /tmp/zch/wordcount_input_dir`
+	- 查看上传的目录下是否有文件：`hadoop fs -ls /tmp/zch/wordcount_input_dir`
+	- 向 yarn 提交作业，计算单词个数：`hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.5.jar wordcount /tmp/zch/wordcount_input_dir /tmp/zch/wordcount_output_dir`
+	- 查看计算结果输出的目录：`hadoop fs -ls /tmp/zch/wordcount_output_dir`
+	- 查看计算结果输出内容：`hadoop fs -cat /tmp/zch/wordcount_output_dir/part-r-00000`
+- 查看正在运行的 Hadoop 任务：`yarn application -list`
+- 关闭 Hadoop 任务进程：`yarn application -kill 你的ApplicationId`
+
 
 -------------------------------------------------------------------
 
@@ -442,3 +455,4 @@ tcp6       0      0 :::37481                :::*                    LISTEN      
 - <https://www.linode.com/docs/databases/hadoop/how-to-install-and-set-up-hadoop-cluster/>
 - <http://www.cnblogs.com/Leo_wl/p/7426496.html>
 - <https://blog.csdn.net/bingduanlbd/article/details/51892750>
+- <https://blog.csdn.net/whdxjbw/article/details/81050597>
