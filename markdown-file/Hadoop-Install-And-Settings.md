@@ -61,6 +61,7 @@ ssh localhost
 ```
 
 - 将公钥复制到两台 slave
+	- 如果你是采用 pem 登录的，可以看这个：[SSH 免密登录](SSH-login-without-password.md)
 
 ```
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@172.16.0.43，根据提示输入 hadoop-node1 机器的 root 密码，成功会有相应提示
@@ -95,6 +96,7 @@ tar zxvf hadoop-2.6.5.tar.gz，有 191M 左右
 ```
 
 - **给三台机子都先设置 HADOOP_HOME**
+	- 会 ansible playbook 会方便点：[Ansible 安装和配置](Ansible-Install-And-Settings.md) 
 
 ```
 vim /etc/profile
@@ -338,29 +340,31 @@ SHUTDOWN_MSG: Shutting down NameNode at localhost/127.0.0.1
 
 ```
 
-- 启动
+## HDFS 启动
+
+- 启动：start-dfs.sh，根据提示一路 yes
 
 ```
-启动：start-dfs.sh，根据提示一路 yes
-hadoop-master 会启动：NameNode 和 SecondaryNameNode
-从节点启动：DataNode
+这个命令效果：
+主节点会启动任务：NameNode 和 SecondaryNameNode
+从节点会启动任务：DataNode
 
-查看：jps，可以看到：
+
+主节点查看：jps，可以看到：
 21922 Jps
 21603 NameNode
 21787 SecondaryNameNode
 
 
-然后再从节点可以 jps 可以看到：
+从节点查看：jps 可以看到：
 19728 DataNode
 19819 Jps
-
 ```
 
+
+- 查看运行更多情况：`hdfs dfsadmin -report`
+
 ```
-
-查看运行更多情况：hdfs dfsadmin -report
-
 Configured Capacity: 0 (0 B)
 Present Capacity: 0 (0 B)
 DFS Remaining: 0 (0 B)
@@ -371,15 +375,9 @@ Blocks with corrupt replicas: 0
 Missing blocks: 0
 ```
 
+- 如果需要停止：`stop-dfs.sh`
+- 查看 log：`cd $HADOOP_HOME/logs`
 
-```
-
-如果需要停止：stop-dfs.sh
-
-查看 log：cd $HADOOP_HOME/logs
-
-
-```
 
 ## YARN 运行
 
@@ -391,22 +389,53 @@ start-yarn.sh
 
 停止：stop-yarn.sh
 
-
 ```
 
-- 可以看到当前运行的所有端口：`netstat -tpnl | grep java`
+## 端口情况
+
+- 主节点当前运行的所有端口：`netstat -tpnl | grep java`
+- 会用到端口（为了方便展示，整理下顺序）：
+
+```
+tcp        0      0 172.16.0.17:9000        0.0.0.0:*               LISTEN      22932/java >> NameNode
+tcp        0      0 0.0.0.0:50070           0.0.0.0:*               LISTEN      22932/java >> NameNode
+tcp        0      0 0.0.0.0:50090           0.0.0.0:*               LISTEN      23125/java >> SecondaryNameNode
+tcp6       0      0 172.16.0.17:8030      :::*                    LISTEN      23462/java   >> ResourceManager
+tcp6       0      0 172.16.0.17:8031      :::*                    LISTEN      23462/java   >> ResourceManager
+tcp6       0      0 172.16.0.17:8032      :::*                    LISTEN      23462/java   >> ResourceManager
+tcp6       0      0 172.16.0.17:8033      :::*                    LISTEN      23462/java   >> ResourceManager
+tcp6       0      0 172.16.0.17:8088      :::*                    LISTEN      23462/java   >> ResourceManager
+```
+
+- 从节点当前运行的所有端口：`netstat -tpnl | grep java`
+- 会用到端口（为了方便展示，整理下顺序）：
+
+```
+tcp        0      0 0.0.0.0:50010           0.0.0.0:*               LISTEN      14545/java >> DataNode
+tcp        0      0 0.0.0.0:50020           0.0.0.0:*               LISTEN      14545/java >> DataNode
+tcp        0      0 0.0.0.0:50075           0.0.0.0:*               LISTEN      14545/java >> DataNode
+tcp6       0      0 :::8040                 :::*                    LISTEN      14698/java >> NodeManager
+tcp6       0      0 :::8042                 :::*                    LISTEN      14698/java >> NodeManager
+tcp6       0      0 :::13562                :::*                    LISTEN      14698/java >> NodeManager
+tcp6       0      0 :::37481                :::*                    LISTEN      14698/java >> NodeManager
+```
+
+-------------------------------------------------------------------
+
+## 管理界面
+
+- 查看 HDFS 管理界面：<http://hadoop-master:50070>
+- 访问 YARN 管理界面：<http://hadoop-master:8088> 
 
 
+-------------------------------------------------------------------
 
-查看HDFS管理界面：http://hadoop-master:50070
-访问YARN管理界面：http://hadoop-master:8088 
+## 运行作业
 
+- 运行一个 Mapreduce 作业试试：
+	- `hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.5.jar pi 5 10`
 
-
-搭建完成之后，我们运行一个Mapreduce作业感受一下：
-hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.5.jar pi 5 10
-hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.6.5.jar wordcount  /data/input  /data/output/result
-
+-------------------------------------------------------------------
 
 ## 资料
 
