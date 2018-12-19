@@ -424,8 +424,10 @@ tcp6       0      0 :::37481                :::*                    LISTEN      
 
 ## 管理界面
 
-- 查看 HDFS 管理界面：<http://hadoop-master:50070>
-- 访问 YARN 管理界面：<http://hadoop-master:8088> 
+- 查看 HDFS NameNode 管理界面：<http://hadoop-master:50070>
+- 访问 YARN ResourceManager 管理界面：<http://hadoop-master:8088> 
+- 访问 NodeManager-1 管理界面：<http://hadoop-node1:8042> 
+- 访问 NodeManager-2 管理界面：<http://hadoop-node2:8042> 
 
 
 -------------------------------------------------------------------
