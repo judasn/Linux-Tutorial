@@ -438,6 +438,9 @@ tcp6       0      0 :::37481                :::*                    LISTEN      
 - 运行一个文件相关作业：
 	- 由于运行 hadoop 时指定的输入文件只能是 HDFS 文件系统中的文件，所以我们必须将要进行 wordcount 的文件从本地文件系统拷贝到 HDFS 文件系统中。
 	- 查看目前根目录结构：`hadoop fs -ls /`
+		- 查看目前根目录结构，另外写法：`hadoop fs -ls hdfs://linux-05:9000/`
+		- 或者列出目录以及下面的文件：`hadoop fs -ls -R /`
+		- 更多命令可以看：[hadoop HDFS常用文件操作命令](https://segmentfault.com/a/1190000002672666)
 	- 创建目录：`hadoop fs -mkdir -p /tmp/zch/wordcount_input_dir`
 	- 上传文件：`hadoop fs -put /opt/input.txt /tmp/zch/wordcount_input_dir`
 	- 查看上传的目录下是否有文件：`hadoop fs -ls /tmp/zch/wordcount_input_dir`
