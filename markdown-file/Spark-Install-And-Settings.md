@@ -13,6 +13,7 @@
 - CentOS 7.4
 - IP 地址：`192.168.0.105`
 - 必须 JDK 8.x
+- 已经安装了 hadoop-2.6.5 集群（**这个细节注意**）
 - 因为个人原因，我这里 Hadoop 还是 2.6.5 版本，Spark 要用的是 2.2.0
 - Spark 2.2.0 官网文档：<https://spark.apache.org/docs/2.2.0/>
 	- 192M，下载速度有点慢
@@ -39,6 +40,8 @@ source /etc/profile
 ```
 export HADOOP_CONF_DIR=/usr/local/hadoop-2.6.5/etc/hadoop
 ```
+
+- 因为要交给 YARN 作业，所以到这里就好了。
 
 
 ## 资料
