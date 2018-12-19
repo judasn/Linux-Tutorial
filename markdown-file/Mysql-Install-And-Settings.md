@@ -41,6 +41,7 @@ max_allowed_packet = 50M
 - `docker run -p 3306:3306 --name cloud-mysql -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/log:/var/log/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7`
 - 连上容器：`docker exec -it cloud-mysql /bin/bash`
 	- 连上 MySQL：`mysql -u root -p`
+	- 创建表：`CREATE DATABASE wormhole DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
 - 关于容器的 MySQL 配置，官网是这样说的：<https://hub.docker.com/_/mysql/>
 
 >> The MySQL startup configuration is specified in the file /etc/mysql/my.cnf, and that file in turn includes any files found in the /etc/mysql/conf.d directory that end with .cnf.Settings in files in this directory will augment and/or override settings in /etc/mysql/my.cnf. If you want to use a customized MySQL configuration,you can create your alternative configuration file in a directory on the host machine and then mount that directory location as /etc/mysql/conf.d inside the mysql container.
