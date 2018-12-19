@@ -5,7 +5,7 @@
 
 - 关掉：SELinux
 - 创建本地数据存储 + 配置文件目录：`mkdir -p /data/docker/mysql/datadir /data/docker/mysql/conf /data/docker/mysql/log`
-- 在宿主机上创建一个配置文件：`vim /data/docker/mysql/conf/mycat-mysql-1.cnf`，内容如下：
+- 在宿主机上创建一个配置文件：`vim /data/docker/mysql/conf/mysql-1.cnf`，内容如下：
 
 ```
 # 该编码设置是我自己配置的
@@ -36,10 +36,11 @@ max_allowed_packet = 50M
 
 - 赋权（避免挂载的时候，一些程序需要容器中的用户的特定权限使用）：`chmod -R 777 /data/docker/mysql/datadir /data/docker/mysql/log`
 - 赋权：`chown -R 0:0 /data/docker/mysql/conf`
-	- 配置文件的赋权比较特殊，如果是给 777 权限会报：[Warning] World-writable config file '/etc/mysql/conf.d/mycat-mysql-1.cnf' is ignored，所以这里要特殊对待。容器内是用 root 的 uid，所以这里与之相匹配赋权即可。
+	- 配置文件的赋权比较特殊，如果是给 777 权限会报：[Warning] World-writable config file '/etc/mysql/conf.d/mysql-1.cnf' is ignored，所以这里要特殊对待。容器内是用 root 的 uid，所以这里与之相匹配赋权即可。
 	- 我是进入容器 bash 内，输入：`whoami && id`，看到默认用户的 uid 是 0，所以这里才 chown 0
-- `docker run -p 3306:3306 --name cloud-mysql -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/log:/var/log/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=adg123456 -d mysql:5.7`
-- 连上容器：`docker exec -it 09747cd7d0bd /bin/bash`
+- `docker run -p 3306:3306 --name cloud-mysql -v /data/docker/mysql/datadir:/var/lib/mysql -v /data/docker/mysql/log:/var/log/mysql -v /data/docker/mysql/conf:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7`
+- 连上容器：`docker exec -it cloud-mysql /bin/bash`
+	- 连上 MySQL：`mysql -u root -p`
 - 关于容器的 MySQL 配置，官网是这样说的：<https://hub.docker.com/_/mysql/>
 
 >> The MySQL startup configuration is specified in the file /etc/mysql/my.cnf, and that file in turn includes any files found in the /etc/mysql/conf.d directory that end with .cnf.Settings in files in this directory will augment and/or override settings in /etc/mysql/my.cnf. If you want to use a customized MySQL configuration,you can create your alternative configuration file in a directory on the host machine and then mount that directory location as /etc/mysql/conf.d inside the mysql container.
