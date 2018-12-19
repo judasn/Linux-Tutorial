@@ -19,14 +19,15 @@
 	- 最终我选择了：Apache 1.7.0 Flink only Scala 2.11，共：240M
 - 解压：`tar zxf flink-*.tgz`
 - 进入根目录：`cd flink-1.7.0`，完整路径：`cd /usr/local/flink-1.7.0`
-- 启动：`cd /usr/local/flink-1.7.0 && ./bin/start-cluster.sh`
-- 停止：`cd /usr/local/flink-1.7.0 && ./bin/stop-cluster.sh`
+- 改下目录名方便后面书写：`mv /usr/local/flink-1.7.0 /usr/local/flink`
+- 启动：`cd /usr/local/flink && ./bin/start-cluster.sh`
+- 停止：`cd /usr/local/flink && ./bin/stop-cluster.sh`
 - 查看日志：`tail -300f log/flink-*-standalonesession-*.log`
 - 浏览器访问 WEB 管理：`http://192.168.0.105:8081`
 
 ## Demo
 
-- 运行程序解压包下也有一些 jar demo：`cd /usr/local/flink-1.7.0/examples`
+- 运行程序解压包下也有一些 jar demo：`cd /usr/local/flink/examples`
 - 官网：<https://ci.apache.org/projects/flink/flink-docs-release-1.7/examples/>
 - DataStream API：<https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/datastream_api.html>
 - DataSet API：<https://ci.apache.org/projects/flink/flink-docs-release-1.7/dev/batch/>
@@ -53,7 +54,7 @@ mvn archetype:generate								\
 
 - 可以直接在 IntelliJ IDEA 上 run
 - 也可以交给服务器上 flink 执行，也有两种方式：
-	- 把 jar 自己上传 Flink 服务器运行：`cd /usr/local/flink-1.7.0 && ./bin/flink run -c com.youmeek.WordCount /opt/flink-simple-demo-1.0-SNAPSHOT.jar`
+	- 把 jar 自己上传 Flink 服务器运行：`cd /usr/local/flink && ./bin/flink run -c com.youmeek.WordCount /opt/flink-simple-demo-1.0-SNAPSHOT.jar`
 	- 也可以通过 WEB UI 上传 jar：<http://192.168.0.105:8081/#/submit>
 		- 有一个 `Add New` 按钮可以上传 jar 包，然后填写 Class 路径：`com.youmeek.WordCount`
 		- `parallelism` 表示并行度，填写数字，一般并行度设置为集群 CPU 核数总和的 2-3 倍（如果是单机模式不需要设置并行度）
