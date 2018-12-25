@@ -30,7 +30,7 @@
     - `l`，右
     - `v`，按 v 之后按方向键可以选中你要选中的文字
     - `gg`，跳到第 1 行
-    - `G`，跳到第最后行
+    - `G`，跳到最后一行
     - `16G` 或 `:16`，跳到第 16 行
     - `$`，到本行 **行尾**
     - `0`，到本行 **行头**
@@ -94,7 +94,7 @@
     - `:s/YouMeek/Judasn/`，把光标当前行第一个 YouMeek 替换为 Judasn
     - `:s/YouMeek/Judasn/g`，把光标当前行所有 YouMeek 替换为 Judasn
     - `:s#YouMeek/#Judasn/#`，除了使用斜杠作为分隔符之外，还可以使用 # 作为分隔符，此时中间出现的 / 不会作为分隔符，该命令表示：把光标当前行第一个 YouMeek/ 替换为 Judasn/
-    - `:10,31s/YouMeek/Judasng`，把第 10 行到 31 行之间所有 YouMeek 替换为 Judasn
+    - `:10,31s/YouMeek/Judasn/g`，把第 10 行到 31 行之间所有 YouMeek 替换为 Judasn
 
 
 ## Vim 的特殊复制、黏贴
@@ -114,7 +114,7 @@
 	- 效果如下：
 		- ![vim-for-server](https://raw.githubusercontent.com/wklken/gallery/master/vim/vim-for-server.png)
 - 需要特别注意的是，如果你平时粘贴内容到终端 Vim 出现缩进错乱，一般需要这样做：
-	- 进入 vim 后，按 `F5`，然后 `shirt + insert` 进行粘贴。这种事就不会错乱了。
+	- 进入 vim 后，按 `F5`，然后 `shift + insert` 进行粘贴。这种事就不会错乱了。
 	- 原因是：`vim ~/.vimrc` 中有一行这样的设置：`set pastetoggle=<F5>`
 
 ## 资料
