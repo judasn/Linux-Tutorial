@@ -39,6 +39,7 @@
     - Zookeeper 单点（linux-05）：`3.4.13`
     - Kafka 单点（linux-05）：`0.10.2.2`
     - MySQL 单点（linux-05）：`5.7`
+    - wormhole 单点（linux-05）：`0.6.0-beta`，2018-12-06 版本
     - 以上组件安装教程可以查看该教程：[点击我](https://github.com/judasn/Linux-Tutorial)
 - 非必须：
     - Elasticsearch（支持版本 5.x）（非必须，若无则无法查看 wormhole 处理数据的吞吐和延时）
