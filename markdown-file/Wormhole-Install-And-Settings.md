@@ -14,13 +14,13 @@
     - hostname：`linux-07`
 - 必须（版本请不要随便用，而是按照如下说明来）：
     - 一般情况下，我组件都是放在：`/usr/local`
-    - JDK 1.8（三台）
-    - Hadoop 集群（HDFS，YARN）（三台）：2.6.5
-    - Spark 单点（linux-05）：2.2.0
-    - Flink 单点（linux-05）：1.5.1
-    - Zookeeper（linux-05）：3.4.13
-    - Kafka（linux-05）：0.10.2.2
-    - MySQL（linux-05）：5.7
+    - JDK（三台）：`1.8.0_181`
+    - Hadoop 集群（HDFS，YARN）（三台）：`2.6.5`
+    - Spark 单点（linux-05）：`2.2.0`
+    - Flink 单点（linux-05）：`1.5.1`
+    - Zookeeper 单点（linux-05）：`3.4.13`
+    - Kafka 单点（linux-05）：`0.10.2.2`
+    - MySQL 单点（linux-05）：`5.7`
     - 以上组件安装教程可以查看该教程：[点击我](https://github.com/judasn/Linux-Tutorial)
 - 非必须：
     - Elasticsearch（支持版本 5.x）（非必须，若无则无法查看 wormhole 处理数据的吞吐和延时）
