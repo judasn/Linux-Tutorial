@@ -25,6 +25,14 @@
 - 查看日志：`tail -300f log/flink-*-standalonesession-*.log`
 - 浏览器访问 WEB 管理：`http://192.168.0.105:8081`
 
+## yarn 启动
+
+- 安装方式跟上面一样，但是必须保证有 hadoop、yarn 集群
+- 控制台启动：`cd /usr/local/flink && ./bin/yarn-session.sh -n 2 -jm 1024 -tm 1024`
+- 守护进程启动：`cd /usr/local/flink && ./bin/yarn-session.sh -n 2 -jm 1024 -tm 1024 -d`
+- 有可能会报：`The Flink Yarn cluster has failed`，可能是资源不够
+
+
 ## Demo
 
 - 运行程序解压包下也有一些 jar demo：`cd /usr/local/flink/examples`
