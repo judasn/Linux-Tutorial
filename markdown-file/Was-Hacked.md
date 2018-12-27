@@ -31,8 +31,10 @@
 - 查看开放的端口，比如常用的80,22,8009，后面的箭头表示端口对应占用的程序：`netstat -lnp`
 - 检查某个端口的具体信息：`lsof -i :18954`
 - 检查启动项：`chkconfig`
-- 检查定时器：`cat /etc/crontab`
-- 检查定时器：`crontab -l`
+- 检查定时器（重要）：`cat /etc/crontab`
+- 检查定时器（重要）：`crontab -l`
+    - `vim /var/spool/cron/crontabs/root`
+    - `vim /var/spool/cron/root`
 - 检查其他系统重要文件：
     - `cat /etc/rc.local`
     - `cd /etc/init.d;ll`
@@ -88,6 +90,25 @@ TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb 
 	- yum update openssh-clients
 	- yum update openssh-server
 
+
+## 实战
+
+#### 挖矿程序
+
+- 先查看调度任务是否有新增内容
+    - `vim /var/spool/cron/root`
+    - `vim /var/spool/cron/crontabs/root`
+- 如果有，先停止定时任务：`systemctl stop crond`
+- 如果对方有去 wget curl 指定网站，则先在 hosts 里面映射为 127.0.0.1，比如：`127.0.0.1 prax0zma.ru`
+    - 查看当前最占用 CPU 的进程 PID，加入发现是 22935，则：`cd /proc/22935 && ll`，发现程序目录是：`/root/.tmp00/bash64`
+    - 我们就把该程序去掉执行任务的权限：`chmod -R -x /root/.tmp00/`，然后再 kill 掉该程序
+- 打开别人的脚本，看下是如何书写的，发现有写入几个目录，这里进行删除：
+
+```
+rm -rf /tmp/.ha /boot/.b /boot/.0 /root/.tmp00
+```
+
+- 最后检查下是否有免密内容被修改：`cd ~/.ssh/ && cat authorized_keys`
 
 ## 资料
 
