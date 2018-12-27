@@ -37,6 +37,7 @@
     - Ansible 批量添加 hosts 请看：[点击我](Ansible-Install-And-Settings.md)
 - 必须（版本请不要随便用，而是按照如下说明来）：
     - 一般情况下，我组件都是放在：`/usr/local`
+    - 批量部署用的是：Ansible（linux01）
     - JDK（所有服务器）：`1.8.0_181`
         - 批量添加 JDK 请看：[点击我](Ansible-Install-And-Settings.md)
     - Hadoop 集群（HDFS，YARN）（linux01、linux02、linux03）：`2.6.5`

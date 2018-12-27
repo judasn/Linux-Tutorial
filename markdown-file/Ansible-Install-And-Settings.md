@@ -168,43 +168,29 @@ PLAY RECAP *********************************************************************
 
 ## 更多 playbook 实战
 
-#### 部署 JDK 
 
-- 创建脚本文件：`vim /opt/jdk8-playbook.yml`
+#### 禁用防火墙（CentOS 7.x）
+
+
+- 创建脚本文件：`vim /opt/disable-firewalld-playbook.yml`
 
 ```
-- hosts: hadoop-host
+- hosts: all
   remote_user: root
-  vars:
-    java_install_folder: /usr/local
   tasks:
-    - name: copy jdk
-      copy: src=/opt/jdk-8u181-linux-x64.tar.gz dest={{ java_install_folder }}
-      
-    - name: tar jdk
-      shell: chdir={{ java_install_folder }} tar zxf jdk-8u181-linux-x64.tar.gz
-      
-    - name: Set JAVA_HOME
-      blockinfile: 
-        path: /etc/profile
-        marker: "#{mark} JDK ENV"
-        block: |
-          JAVA_HOME={{ java_install_folder }}/jdk1.8.0_181
-          JRE_HOME=$JAVA_HOME/jre
-          PATH=$PATH:$JAVA_HOME/bin
-          CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-          export JAVA_HOME
-          export JRE_HOME
-          export PATH
-          export CLASSPATH
-    
-    - name: source profile
-      shell: source /etc/profile
+    - name: Disable SELinux at next reboot
+      selinux:
+        state: disabled
+    - name: disable firewalld
+      command: "{{ item }}"
+      with_items:
+         - systemctl stop firewalld
+         - systemctl disable firewalld
+         - setenforce 0
 ```
 
 
-- 执行命令：`ansible-playbook /opt/jdk8-playbook.yml`
-
+- 执行命令：`ansible-playbook /opt/disable-firewalld-playbook.yml`
 
 #### 修改 hosts
 
@@ -228,6 +214,103 @@ PLAY RECAP *********************************************************************
 
 
 - 执行命令：`ansible-playbook /opt/hosts-playbook.yml`
+
+
+
+#### 部署 JDK 
+
+- 创建脚本文件：`vim /opt/jdk8-playbook.yml`
+
+```
+- hosts: hadoop-host
+  remote_user: root
+  vars:
+    java_install_folder: /usr/local
+  tasks:
+    - name: copy jdk
+      copy: src=/opt/jdk-8u181-linux-x64.tar.gz dest={{ java_install_folder }}
+      
+    - name: tar jdk
+      shell: chdir={{ java_install_folder }} tar zxf jdk-8u181-linux-x64.tar.gz
+      
+    - name: set JAVA_HOME
+      blockinfile: 
+        path: /etc/profile
+        marker: "#{mark} JDK ENV"
+        block: |
+          JAVA_HOME={{ java_install_folder }}/jdk1.8.0_181
+          JRE_HOME=$JAVA_HOME/jre
+          PATH=$PATH:$JAVA_HOME/bin
+          CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+          export JAVA_HOME
+          export JRE_HOME
+          export PATH
+          export CLASSPATH
+    
+    - name: source profile
+      shell: source /etc/profile
+```
+
+
+- 执行命令：`ansible-playbook /opt/jdk8-playbook.yml`
+
+
+
+#### 部署 Hadoop 集群 
+
+- 创建脚本文件：`vim /opt/hadoop-playbook.yml`
+
+```
+- hosts: hadoop-host
+  remote_user: root
+  tasks:
+    - name: Creates directory
+      file:
+        path: /data/hadoop/hdfs/name
+        state: directory
+    - name: Creates directory
+      file:
+        path: /data/hadoop/hdfs/data
+        state: directory
+    - name: Creates directory
+      file:
+        path: /data/hadoop/hdfs/tmp
+        state: directory
+
+    - name: copy gz file
+      copy: src=/opt/hadoop-2.6.5.tar.gz dest=/usr/local
+      
+    - name: tar gz file
+      command: cd /usr/local && tar zxf hadoop-2.6.5.tar.gz
+      
+    - name: check folder existed
+      stat: path=/usr/local/hadoop-2.6.5
+      register: folder_existed
+    
+    - name: rename folder
+      command: mv /usr/local/hadoop-2.6.5 /usr/local/hadoop
+      when: folder_existed.stat.exists == true
+      
+    - name: set HADOOP_HOME
+      blockinfile: 
+        path: /etc/profile
+        marker: "#{mark} HADOOP ENV"
+        block: |
+          HADOOP_HOME=/usr/local/hadoop
+          PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+          export HADOOP_HOME
+          export PATH
+    
+    - name: source profile
+      shell: source /etc/profile
+```
+
+
+- 执行命令：`ansible-playbook /opt/jdk8-playbook.yml`
+
+
+
+
 
 -------------------------------------------------------------------
 
