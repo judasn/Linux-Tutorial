@@ -28,9 +28,9 @@
 - 分别给三台机子设置 hostname
 
 ```
-hostnamectl --static set-hostname hadoop-master
-hostnamectl --static set-hostname hadoop-node1
-hostnamectl --static set-hostname hadoop-node2
+hostnamectl --static set-hostname linux01
+hostnamectl --static set-hostname linux02
+hostnamectl --static set-hostname linux03
 ```
 
 
@@ -39,13 +39,13 @@ hostnamectl --static set-hostname hadoop-node2
 ```
 就按这个来，其他多余的别加，不然可能也会有影响
 vim /etc/hosts
-172.16.0.17 hadoop-master
-172.16.0.43 hadoop-node1
-172.16.0.180 hadoop-node2
+172.16.0.17 linux01
+172.16.0.43 linux02
+172.16.0.180 linux03
 ```
 
 
-- 对 hadoop-master 设置免密：
+- 对 linux01 设置免密：
 
 ```
 生产密钥对
@@ -64,13 +64,13 @@ ssh localhost
 	- 如果你是采用 pem 登录的，可以看这个：[SSH 免密登录](SSH-login-without-password.md)
 
 ```
-ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@172.16.0.43，根据提示输入 hadoop-node1 机器的 root 密码，成功会有相应提示
-ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@172.16.0.180，根据提示输入 hadoop-node2 机器的 root 密码，成功会有相应提示
+ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@172.16.0.43，根据提示输入 linux02 机器的 root 密码，成功会有相应提示
+ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@172.16.0.180，根据提示输入 linux03 机器的 root 密码，成功会有相应提示
 
 
-在 hadoop-master 上测试：
-ssh hadoop-node1
-ssh hadoop-node2
+在 linux01 上测试：
+ssh linux02
+ssh linux03
 
 ```
 
@@ -88,7 +88,7 @@ mkdir -p /data/hadoop/hdfs/name /data/hadoop/hdfs/data /data/hadoop/hdfs/tmp
 ```
 
 - 下载 Hadoop：<http://apache.claz.org/hadoop/common/hadoop-2.6.5/>
-- 现在 hadoop-master 机子上安装
+- 现在 linux01 机子上安装
 
 ```
 cd /usr/local && wget http://apache.claz.org/hadoop/common/hadoop-2.6.5/hadoop-2.6.5.tar.gz
@@ -108,7 +108,7 @@ source /etc/profile
 ```
 
 
-## 修改 hadoop-master 配置
+## 修改 linux01 配置
 
 
 ```
@@ -145,12 +145,12 @@ vim $HADOOP_HOME/etc/hadoop/core-site.xml，改为：
     <!--
     <property>
         <name>fs.default.name</name>
-        <value>hdfs://hadoop-master:9000</value>
+        <value>hdfs://linux01:9000</value>
     </property>
     -->
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://hadoop-master:9000</value>
+        <value>hdfs://linux01:9000</value>
     </property>
     <property>
         <name>hadoop.proxyuser.root.hosts</name>
@@ -225,7 +225,7 @@ vim $HADOOP_HOME/etc/hadoop/yarn-site.xml
 <configuration>
   <property>
     <name>yarn.resourcemanager.hostname</name>
-    <value>hadoop-master</value>
+    <value>linux01</value>
   </property>
 
   <property>
@@ -244,21 +244,21 @@ vim $HADOOP_HOME/etc/hadoop/yarn-site.xml
 vim $HADOOP_HOME/etc/hadoop/slaves
 
 把默认的配置里面的 localhost 删除，换成：
-hadoop-node1
-hadoop-node2
+linux02
+linux03
 
 ```
 
 
 ```
-scp -r /usr/local/hadoop-2.6.5 root@hadoop-node1:/usr/local/
+scp -r /usr/local/hadoop-2.6.5 root@linux02:/usr/local/
 
-scp -r /usr/local/hadoop-2.6.5 root@hadoop-node2:/usr/local/
+scp -r /usr/local/hadoop-2.6.5 root@linux03:/usr/local/
 
 ```
 
 
-## hadoop-master 机子运行
+## linux01 机子运行
 
 ```
 格式化  HDFS
@@ -269,7 +269,7 @@ hdfs namenode -format
 - 输出结果：
 
 ```
-[root@hadoop-master hadoop-2.6.5]# hdfs namenode -format
+[root@linux01 hadoop-2.6.5]# hdfs namenode -format
 18/12/17 17:47:17 INFO namenode.NameNode: STARTUP_MSG:
 /************************************************************
 STARTUP_MSG: Starting NameNode
@@ -424,10 +424,10 @@ tcp6       0      0 :::37481                :::*                    LISTEN      
 
 ## 管理界面
 
-- 查看 HDFS NameNode 管理界面：<http://hadoop-master:50070>
-- 访问 YARN ResourceManager 管理界面：<http://hadoop-master:8088> 
-- 访问 NodeManager-1 管理界面：<http://hadoop-node1:8042> 
-- 访问 NodeManager-2 管理界面：<http://hadoop-node2:8042> 
+- 查看 HDFS NameNode 管理界面：<http://linux01:50070>
+- 访问 YARN ResourceManager 管理界面：<http://linux01:8088> 
+- 访问 NodeManager-1 管理界面：<http://linux02:8042> 
+- 访问 NodeManager-2 管理界面：<http://linux03:8042> 
 
 
 -------------------------------------------------------------------

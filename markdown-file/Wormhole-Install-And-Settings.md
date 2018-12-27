@@ -26,21 +26,32 @@
 ## 基础环境
 
 - 参考官网：<https://edp963.github.io/wormhole/deployment.html>
-- 三台 4C8G 服务器 CentOS 7.4
-    - hostname：`linux-05`
-    - hostname：`linux-06`
-    - hostname：`linux-07`
+- 4 台 8C32G 服务器 CentOS 7.5
+    - **为了方便测试，服务器都已经关闭防火墙，并且对外开通所有端口**
+    - **都做了免密登录**
+    - hostname：`linux01`
+    - hostname：`linux02`
+    - hostname：`linux03`
+    - hostname：`linux04`
+    - hostname：`linux05`
+    - Ansible 批量添加 hosts 请看：[点击我](Ansible-Install-And-Settings.md)
 - 必须（版本请不要随便用，而是按照如下说明来）：
     - 一般情况下，我组件都是放在：`/usr/local`
-    - JDK（三台）：`1.8.0_181`
-    - Hadoop 集群（HDFS，YARN）（三台）：`2.6.5`
-    - Spark 单点（linux-05）：`2.2.0`
-    - Flink 单点（linux-05）：`1.5.1`
-    - Zookeeper 单点（linux-05）：`3.4.13`
-    - Kafka 单点（linux-05）：`0.10.2.2`
-    - MySQL 单点（linux-05）：`5.7`
-    - wormhole 单点（linux-05）：`0.6.0-beta`，2018-12-06 版本
-    - 以上组件安装教程可以查看该教程：[点击我](https://github.com/judasn/Linux-Tutorial)
+    - JDK（所有服务器）：`1.8.0_181`
+        - 批量添加 JDK 请看：[点击我](Ansible-Install-And-Settings.md)
+    - Hadoop 集群（HDFS，YARN）（linux01、linux02、linux03）：`2.6.5`
+        - 安装请看：[点击我](Hadoop-Install-And-Settings.md)
+    - Zookeeper 单点（linux04）：`3.4.13`
+        - 安装请看：[点击我](Zookeeper-Install.md)
+    - Kafka 单点（linux04）：`0.10.2.2`
+        - 安装请看：[点击我](Kafka-Install-And-Settings.md)
+    - MySQL 单点（linux04）：`5.7`
+        - 安装请看：[点击我](Mysql-Install-And-Settings.md)
+    - Spark 单点（linux05）：`2.2.0`
+        - 安装请看：[点击我](Spark-Install-And-Settings.md)
+    - Flink 单点（linux05）：`1.5.1`
+        - 安装请看：[点击我](Flink-Install-And-Settings.md)
+    - wormhole 单点（linux05）：`0.6.0-beta`，2018-12-06 版本
 - 非必须：
     - Elasticsearch（支持版本 5.x）（非必须，若无则无法查看 wormhole 处理数据的吞吐和延时）
     - Grafana （支持版本 4.x）（非必须，若无则无法查看 wormhole 处理数据的吞吐和延时的图形化展示）
@@ -50,7 +61,8 @@
 ## Wormhole 安装 + 配置
 
 - 参考官网：<https://edp963.github.io/wormhole/deployment.html>
-- 最终环境 application.conf 配置文件参考
+- 解压：`cd /usr/local && tar -xvf wormhole-0.6.0-beta.tar.gz`
+- 修改配置文件：`vim /usr/local/wormhole-0.6.0-beta/conf/application.conf`
 
 ```
 
@@ -58,7 +70,7 @@ akka.http.server.request-timeout = 120s
 
 wormholeServer {
   cluster.id = "" #optional global uuid
-  host = "linux-05"
+  host = "linux05"
   port = 8989
   ui.default.language = "Chinese"
   token.timeout = 1
@@ -73,7 +85,7 @@ mysql = {
     driver = "com.mysql.jdbc.Driver"
     user = "root"
     password = "123456"
-    url = "jdbc:mysql://localhost:3306/wormhole?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
+    url = "jdbc:mysql://linux04:3306/wormhole?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
     numThreads = 4
     minConnections = 4
     maxConnections = 10
@@ -81,28 +93,28 @@ mysql = {
   }
 }
 
-ldap = {
-  enabled = false
-  user = ""
-  pwd = ""
-  url = ""
-  dc = ""
-  read.timeout = 3000
-  read.timeout = 5000
-  connect = {
-    timeout = 5000
-    pool = true
-  }
-}
+#ldap = {
+#  enabled = false
+#  user = ""
+#  pwd = ""
+#  url = ""
+#  dc = ""
+#  read.timeout = 3000
+#  read.timeout = 5000
+#  connect = {
+#    timeout = 5000
+#    pool = true
+#  }
+#}
 
 spark = {
   wormholeServer.user = "root"   #WormholeServer linux user
   wormholeServer.ssh.port = 22       #ssh port, please set WormholeServer linux user can password-less login itself remote
   spark.home = "/usr/local/spark"
   yarn.queue.name = "default"        #WormholeServer submit spark streaming/job queue
-  wormhole.hdfs.root.path = "hdfs://linux-05/wormhole"   #WormholeServer hdfslog data default hdfs root path
-  yarn.rm1.http.url = "linux-05:8088"    #Yarn ActiveResourceManager address
-  yarn.rm2.http.url = "linux-05:8088"   #Yarn StandbyResourceManager address
+  wormhole.hdfs.root.path = "hdfs://linux01/wormhole"   #WormholeServer hdfslog data default hdfs root path
+  yarn.rm1.http.url = "linux01:8088"    #Yarn ActiveResourceManager address
+  yarn.rm2.http.url = "linux01:8088"   #Yarn StandbyResourceManager address
 }
 
 flink = {
@@ -111,20 +123,18 @@ flink = {
   feedback.state.count=100
   checkpoint.enable=false
   checkpoint.interval=60000
-  stateBackend="hdfs://linux-05/flink-checkpoints"
+  stateBackend="hdfs://linux01/flink-checkpoints"
   feedback.interval=30
 }
 
 zookeeper = {
-  connection.url = "localhost:2181"  #WormholeServer stream and flow interaction channel
+  connection.url = "linux04:2181"  #WormholeServer stream and flow interaction channel
   wormhole.root.path = "/wormhole"   #zookeeper
 }
 
 kafka = {
-  #brokers.url = "localhost:6667"         #WormholeServer feedback data store
-  brokers.url = "linux-05:9092"
-  zookeeper.url = "localhost:2181"
-  #topic.refactor = 3
+  brokers.url = "linux04:9092"
+  zookeeper.url = "linux04:2181"
   topic.refactor = 1
   using.cluster.suffix = false #if true, _${cluster.id} will be concatenated to consumer.feedback.topic
   consumer = {
@@ -156,7 +166,7 @@ kafka = {
 
 # choose monitor method among ES、MYSQL
 monitor ={
-   database.type="ES"
+   database.type="MYSQL"
 }
 
 #Wormhole feedback data store, if doesn't want to config, you will not see wormhole processing delay and throughput
@@ -205,7 +215,7 @@ maintenance = {
 - 初始化表结构脚本路径：<https://github.com/edp963/wormhole/blob/master/rider/conf/wormhole.sql>
     - 该脚本存在一个问题：初始化脚本和补丁脚本混在一起，所以直接复制执行会有报错，但是报错的部分是不影响
     - 我是直接把基础 sql 和补丁 sql 分开执行，方便判断。
-- 部署完成，浏览器访问：<http://linux-05:8989>
+- 部署完成，浏览器访问：<http://linux01:8989>
 
 -------------------------------------------------------------------
 
@@ -313,7 +323,7 @@ maintenance = {
 ## Kafka 发送测试数据
 
 - `cd /usr/local/kafka/bin`
-- `./kafka-console-producer.sh --broker-list linux-05:9092 --topic source --property "parse.key=true" --property "key.separator=@@@"`
+- `./kafka-console-producer.sh --broker-list linux01:9092 --topic source --property "parse.key=true" --property "key.separator=@@@"`
 - 发送 UMS 流消息协议规范格式：
 
 ```

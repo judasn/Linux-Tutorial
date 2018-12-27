@@ -206,6 +206,32 @@ PLAY RECAP *********************************************************************
 - 执行命令：`ansible-playbook /opt/jdk8-playbook.yml`
 
 
+#### 修改 hosts
+
+
+- 创建脚本文件：`vim /opt/hosts-playbook.yml`
+
+```
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: update hosts
+      blockinfile: 
+        path: /etc/hosts
+        block: |
+          192.168.0.223     linux01
+          192.168.0.223     linux02
+          192.168.0.223     linux03
+          192.168.0.223     linux04
+          192.168.0.223     linux05
+```
+
+
+- 执行命令：`ansible-playbook /opt/hosts-playbook.yml`
+
+-------------------------------------------------------------------
+
+
 ## 资料
 
 
