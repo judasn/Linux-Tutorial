@@ -31,7 +31,7 @@
 - 控制台启动：`cd /usr/local/flink && ./bin/yarn-session.sh -n 2 -jm 1024 -tm 1024`
 - 守护进程启动：`cd /usr/local/flink && ./bin/yarn-session.sh -n 2 -jm 1024 -tm 1024 -d`
 - 有可能会报：`The Flink Yarn cluster has failed`，可能是资源不够
-
+- YARN 参数配置可以参考：[点击我](https://sustcoder.github.io/2018/09/27/YARN%20%E5%86%85%E5%AD%98%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/)
 
 ## Demo
 

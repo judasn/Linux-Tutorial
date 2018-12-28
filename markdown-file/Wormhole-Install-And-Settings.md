@@ -39,9 +39,12 @@
 
 - **5 台 8C32G 服务器 CentOS 7.5，内存推荐 16G 或以上。**
     - **为了方便，所有服务器都已经关闭防火墙，并且在云服务上设置安全组对外开通所有端口**
+    - **全程 root 用户**
 - 整体部署结构图：
 
-![未命名文件.png](https://upload-images.jianshu.io/upload_images/12159-dc29079158e1e59e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![未命名文件(1).png](https://upload-images.jianshu.io/upload_images/12159-7a94673ea075873c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 #### 服务器基础配置
 
@@ -58,11 +61,11 @@ hostnamectl --static set-hostname linux05
 - 给所有服务器设置 hosts：`vim /etc/hosts`
 
 ```
-172.16.0.17      linux01
-172.16.0.43      linux02
-172.16.0.180     linux03
-172.16.0.180     linux04
-172.16.0.180     linux05
+172.16.0.55       linux01
+172.16.0.92       linux02
+172.16.0.133      linux03
+172.16.0.159      linux04
+172.16.0.184      linux05
 ```
 
 - 在 linux01 生成密钥对，设置 SSH 免密登录
@@ -80,28 +83,77 @@ ssh localhost
 
 将公钥复制到其他机子
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux02（根据提示输入 linux02 密码）
+
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux03（根据提示输入 linux03 密码）
+
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux04（根据提示输入 linux04 密码）
+
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux05（根据提示输入 linux05 密码）
 
 在 linux01 上测试
+ssh linux01
+
 ssh linux02
+
 ssh linux03
+
 ssh linux04
+
 ssh linux05
 ``` 
 
+- 安装基础软件：`yum install -y zip unzip lrzsz git epel-release wget htop deltarpm`
 - 安装 Ansible：`yum install -y ansible`
-- 测试 Ansible：`ansible all -a 'ps'`
 - 配置 Inventory 编辑配置文件：`vim /etc/ansible/hosts`
-- 添加如下内容
+- 在文件尾部补上如下内容
 
 ```
 [hadoop-host]
 linux01
 linux02
 linux03
+
+[kafka-host]
+linux04
+
+[wh-host]
+linux05
 ```
+
+- 测试 Ansible：`ansible all -a 'ps'`，必须保证能得到如下结果：
+
+```
+linux01 | CHANGED | rc=0 >>
+  PID TTY          TIME CMD
+11088 pts/7    00:00:00 sh
+11101 pts/7    00:00:00 python
+11102 pts/7    00:00:00 ps
+
+linux02 | CHANGED | rc=0 >>
+  PID TTY          TIME CMD
+10590 pts/1    00:00:00 sh
+10603 pts/1    00:00:00 python
+10604 pts/1    00:00:00 ps
+
+linux05 | CHANGED | rc=0 >>
+  PID TTY          TIME CMD
+10573 pts/0    00:00:00 sh
+10586 pts/0    00:00:00 python
+10587 pts/0    00:00:00 ps
+
+linux03 | CHANGED | rc=0 >>
+  PID TTY          TIME CMD
+10586 pts/1    00:00:00 sh
+10599 pts/1    00:00:00 python
+10600 pts/1    00:00:00 ps
+
+linux04 | CHANGED | rc=0 >>
+  PID TTY          TIME CMD
+10574 pts/1    00:00:00 sh
+10587 pts/1    00:00:00 python
+10588 pts/1    00:00:00 ps
+```
+
 
 #### 服务器基础组件（CentOS 7.x）
 
@@ -121,7 +173,6 @@ linux03
       with_items:
          - systemctl stop firewalld
          - systemctl disable firewalld
-         - setenforce 0
          
     - name: install-basic
       command: "{{ item }}"
@@ -183,8 +234,7 @@ linux03
 
 #### JDK 安装
 
-- JDK（所有服务器）：`1.8.0_191`
-- 复制压缩包到所有机子的 /opt 目录下：
+- 将 linux01 下的 JDK 压缩包复制到所有机子的 /opt 目录下：
 
 ```
 scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux02:/opt
@@ -196,7 +246,7 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux04:/opt
 scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
 ```
 
-- 创建脚本文件：`vim /opt/jdk8-playbook.yml`
+- 在 linux01 创建脚本文件：`vim /opt/jdk8-playbook.yml`
 
 ```
 - hosts: all
@@ -213,7 +263,7 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
         path: /etc/profile
         marker: "#{mark} JDK ENV"
         block: |
-          JAVA_HOME={{ java_install_folder }}/jdk1.8.0_191
+          JAVA_HOME=/usr/local/jdk1.8.0_191
           JRE_HOME=$JAVA_HOME/jre
           PATH=$PATH:$JAVA_HOME/bin
           CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
@@ -228,13 +278,12 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
 
 
 - 执行命令：`ansible-playbook /opt/jdk8-playbook.yml`
-
+- 经过试验，发现还是要自己再手动：`source /etc/profile`，原因未知。
 
 
 #### Hadoop 集群（HDFS，YARN）
 
 - Hadoop 集群（HDFS，YARN）（linux01、linux02、linux03）：`2.6.5`
-- 内容较多，具体参考：[点击我](Hadoop-Install-And-Settings.md)
 - Hadoop 环境可以用脚本文件，剩余部分内容请参考上文手工操作：`vim /opt/hadoop-playbook.yml`
 
 ```
@@ -260,7 +309,11 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
         marker: "#{mark} HADOOP ENV"
         block: |
           HADOOP_HOME=/usr/local/hadoop
+          HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+          YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
           PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+          export HADOOP_CONF_DIR
+          export YARN_CONF_DIR
           export HADOOP_HOME
           export PATH
     
@@ -270,6 +323,29 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
 
 
 - 执行命令：`ansible-playbook /opt/hadoop-playbook.yml`
+- 剩余内容较多，具体参考：[点击我](Hadoop-Install-And-Settings.md)
+    - 解压压缩包：`tar zxvf hadoop-2.6.5.tar.gz`
+    - 这里最好把目录重命名下：`mv /usr/local/hadoop-2.6.5 /usr/local/hadoop`
+    - 剩下内容从：修改 linux01 配置，开始阅读
+
+
+#### Flink
+
+- 须安装在 linux01
+- Flink 单点（linux01）：`1.5.1`
+- 拷贝：`cd /usr/local/ && cp /opt/flink-1.5.1-bin-hadoop26-scala_2.11.tgz .`
+- 解压：`tar zxf flink-*.tgz`
+- 修改目录名：`mv /usr/local/flink-1.5.1 /usr/local/flink`
+- 修改配置文件：`vim /usr/local/flink/conf/flink-conf.yaml`
+    - 在文件最前加上：`env.java.home: /usr/local/jdk1.8.0_191`
+- 启动：`cd /usr/local/flink && ./bin/start-cluster.sh`
+- 停止：`cd /usr/local/flink && ./bin/stop-cluster.sh`
+- 查看日志：`tail -300f log/flink-*-standalonesession-*.log`
+- 浏览器访问 WEB 管理：`http://linux01:8081/`
+- yarn 启动
+    - 先停止下本地模式
+    - 测试控制台启动：`cd /usr/local/flink && ./bin/yarn-session.sh -n 2 -jm 2024 -tm 2024`
+    - 有可能会报：`The Flink Yarn cluster has failed`，可能是资源不够，需要调优内存相关参数
 
 
 #### Zookeeper
@@ -281,26 +357,27 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
 
 - Kafka 单点（linux04）：`0.10.2.2`
 - 上传压缩包到 /opt 目录下
+- 拷贝压缩包：`cd /usr/local && cp /opt/kafka_2.11-0.10.2.2.tgz .`
 - 解压：`tar zxvf kafka_2.11-0.10.2.2.tgz`
 - 删除压缩包并重命名目录：`rm -rf kafka_2.11-0.10.2.2.tgz && mv /usr/local/kafka_2.11-0.10.2.2 /usr/local/kafka`
 - 修改 kafka-server 的配置文件：`vim /usr/local/kafka/config/server.properties`
 
 ```
-listeners=PLAINTEXT://0.0.0.0:9092
-advertised.listeners=PLAINTEXT://linux04:9092
-zookeeper.connect=linux04:2181
-auto.create.topics.enable=true
+034 行：listeners=PLAINTEXT://0.0.0.0:9092
+039 行：advertised.listeners=PLAINTEXT://linux04:9092
+119 行：zookeeper.connect=linux04:2181
+补充  ：auto.create.topics.enable=true
 ```
 
 - 启动 kafka 服务（必须制定配置文件）：`cd /usr/local/kafka && bin/kafka-server-start.sh config/server.properties`
 	- 后台方式运行 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-start.sh -daemon config/server.properties`
 	- 停止 kafka 服务：`cd /usr/local/kafka && bin/kafka-server-stop.sh`
 - 再开一个终端测试：
-	- 创建 topic 命令：`cd /usr/local/kafka && bin/kafka-topics.sh --create --zookeeper youmeekhost:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
-	- 查看 topic 命令：`cd /usr/local/kafka && bin/kafka-topics.sh --list --zookeeper youmeekhost:2181`
-	- 删除 topic：`cd /usr/local/kafka && bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper youmeekhost:2181`
-	- 给 topic 发送消息命令：`cd /usr/local/kafka && bin/kafka-console-producer.sh --broker-list youmeekhost:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
-	- 再开一个终端，进入 kafka 容器，接受消息：`cd /usr/local/kafka && bin/kafka-console-consumer.sh --bootstrap-server youmeekhost:9092 --topic my-topic-test --from-beginning`
+	- 创建 topic 命令：`cd /usr/local/kafka && bin/kafka-topics.sh --create --zookeeper linux04:2181 --replication-factor 1 --partitions 1 --topic my-topic-test`
+	- 查看 topic 命令：`cd /usr/local/kafka && bin/kafka-topics.sh --list --zookeeper linux04:2181`
+	- 删除 topic：`cd /usr/local/kafka && bin/kafka-topics.sh --delete --topic my-topic-test --zookeeper linux04:2181`
+	- 给 topic 发送消息命令：`cd /usr/local/kafka && bin/kafka-console-producer.sh --broker-list linux04:9092 --topic my-topic-test`，然后在出现交互输入框的时候输入你要发送的内容
+	- 再开一个终端，进入 kafka 容器，接受消息：`cd /usr/local/kafka && bin/kafka-console-consumer.sh --bootstrap-server linux04:9092 --topic my-topic-test --from-beginning`
 	- 此时发送的终端输入一个内容回车，接受消息的终端就可以收到。
 
 #### MySQL
@@ -339,15 +416,32 @@ max_allowed_packet = 50M
 
 #### Spark
 
-- Spark 单点（linux05）：`2.2.0`
+- 须安装在 linux01
+- Spark 单点（linux01）：`2.2.0`
+- 上传压缩包到 /opt 目录下
+- 拷贝压缩包：`cd /usr/local && cp /opt/spark-2.2.0-bin-hadoop2.6.tgz .`
+- 解压：`tar zxvf spark-2.2.0-bin-hadoop2.6.tgz`
+- 重命名：`mv /usr/local/spark-2.2.0-bin-hadoop2.6 /usr/local/spark`
+- 增加环境变量：
 
+```
+vim /etc/profile
 
+SPARK_HOME=/usr/local/spark
+PATH=$PATH:${SPARK_HOME}/bin:${SPARK_HOME}/sbin
+export SPARK_HOME
+export PATH
 
+source /etc/profile
+```
 
-#### Flink
+- 修改配置：`cp $SPARK_HOME/conf/spark-env.sh.template $SPARK_HOME/conf/spark-env.sh`
+- 修改配置：`vim $SPARK_HOME/conf/spark-env.sh`
+- 假设我的 hadoop 路径是：/usr/local/hadoop，则最尾巴增加：
 
-
-- Flink 单点（linux05）：`1.5.1`
+```
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+```
 
 
 #### 非必须组件
@@ -360,7 +454,19 @@ max_allowed_packet = 50M
 
 ## Wormhole 安装 + 配置
 
-- wormhole 单点（linux05）：`0.6.0-beta`，2018-12-06 版本
+- 须安装在 linux01
+- wormhole 单点（linux01）：`0.6.0-beta`，2018-12-06 版本
+- 先在 linux04 机子的 kafka 创建 topic：
+
+```
+cd /usr/local/kafka && bin/kafka-topics.sh --list --zookeeper linux04:2181
+cd /usr/local/kafka && bin/kafka-topics.sh --create --zookeeper linux04:2181 --replication-factor 1 --partitions 1 --topic source
+cd /usr/local/kafka && bin/kafka-topics.sh --create --zookeeper linux04:2181 --replication-factor 1 --partitions 1 --topic wormhole_feedback
+cd /usr/local/kafka && bin/kafka-topics.sh --create --zookeeper linux04:2181 --replication-factor 1 --partitions 1 --topic wormhole_heartbeat
+```
+
+- 上传压缩包到 /opt 目录下
+- 拷贝压缩包：`cd /usr/local && cp /opt/wormhole-0.6.0-beta.tar.gz .`
 - 解压：`cd /usr/local && tar -xvf wormhole-0.6.0-beta.tar.gz`
 - 修改配置文件：`vim /usr/local/wormhole-0.6.0-beta/conf/application.conf`
 
@@ -370,7 +476,7 @@ akka.http.server.request-timeout = 120s
 
 wormholeServer {
   cluster.id = "" #optional global uuid
-  host = "linux05"
+  host = "linux01"
   port = 8989
   ui.default.language = "Chinese"
   token.timeout = 1
@@ -384,7 +490,7 @@ mysql = {
   db = {
     driver = "com.mysql.jdbc.Driver"
     user = "root"
-    password = "123456"
+    password = "aaabbb123456"
     url = "jdbc:mysql://linux04:3306/wormhole?useUnicode=true&characterEncoding=UTF-8&useSSL=false"
     numThreads = 4
     minConnections = 4
@@ -510,12 +616,13 @@ maintenance = {
 #}
 ```
 
-- 初始化数据库：
-    - 创建表：`create database wormhole character set utf8;`
 - 初始化表结构脚本路径：<https://github.com/edp963/wormhole/blob/master/rider/conf/wormhole.sql>
     - 该脚本存在一个问题：初始化脚本和补丁脚本混在一起，所以直接复制执行会有报错，但是报错的部分是不影响
     - 我是直接把基础 sql 和补丁 sql 分开执行，方便判断。
+- 启动：`sh /usr/local/wormhole-0.6.0-beta/bin/start.sh`
+- 查看 log：`tail -200f /usr/local/wormhole-0.6.0-beta/logs/application.log`
 - 部署完成，浏览器访问：<http://linux01:8989>
+- 默认管理员用户名：admin，密码：admin
 
 -------------------------------------------------------------------
 
@@ -524,7 +631,7 @@ maintenance = {
 - **参考官网，必须先了解下**：<https://edp963.github.io/wormhole/quick-start.html>
 - 必须创建用户，后面才能进入 Project 里面创建 Stream / Flow
 - 创建的用户类型必须是：`user`
-
+- 假设这里创建的用户叫做：`user1@bg.com`
 
 -------------------------------------------------------------------
 
@@ -535,12 +642,13 @@ maintenance = {
 - Instance 用于绑定各个组件的所在服务连接
 - 一般我们都会选择 Kafka 作为 source，后面的基础也是基于 Kafka 作为 Source 的场景
 - 假设填写实例名：`source_kafka`
+- URL：`linux04:9092`
 
 #### 创建 Database
 
 - 各个组件的具体数据库、Topic 等信息
-- 假设填写 topic：`source`
-
+- 假设填写 Topic Name：`source`
+- Partition：1
 
 #### 创建 Namespace
 
@@ -567,11 +675,14 @@ maintenance = {
 #### 创建 Instance
 
 - 假设填写实例名：`sink_mysql`
+- URL：`linux04:3306`
 
 #### 创建 Database
 
 - 假设填写 Database Name：`sink`
 - config 参数：`useUnicode=true&characterEncoding=UTF-8&useSSL=false&rewriteBatchedStatements=true`
+
+
 
 #### 创建 Namespace
 
@@ -597,8 +708,9 @@ maintenance = {
     - Stream type 类型选择：`Flink`
     - 假设填写 Name：`wormhole_stream_test`
 
-## Flink Flow（流式作业）
+## Flink Flow
 
+- 假设 Flow name 为：`wormhole_flow_test`
 - Flow 是在 Project 内容页下才能创建
 - 并且是 Project 下面的用户才能创建，admin 用户没有权限
 - Flow 会关联 source 和 sink
@@ -622,11 +734,27 @@ maintenance = {
 
 ## Kafka 发送测试数据
 
-- `cd /usr/local/kafka/bin`
-- `./kafka-console-producer.sh --broker-list linux01:9092 --topic source --property "parse.key=true" --property "key.separator=@@@"`
+- 在 linux04 机子上
+- `cd /usr/local/kafka/bin && ./kafka-console-producer.sh --broker-list linux04:9092 --topic source --property "parse.key=true" --property "key.separator=@@@"`
 - 发送 UMS 流消息协议规范格式：
 
 ```
-data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 1, "name": "test", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:00:00"}
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 1, "name": "test1", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:01:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 2, "name": "test2", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:02:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 3, "name": "test3", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:03:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 4, "name": "test4", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:04:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 5, "name": "test5", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:05:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 6, "name": "test6", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:06:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 7, "name": "test7", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:07:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 8, "name": "test8", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:08:00"}
+
+data_increment_data.kafka.source_kafka.source.ums_extension.*.*.*@@@{"id": 9, "name": "test9", "phone":"18074546423", "city": "Beijing", "time": "2017-12-22 10:09:00"}
 ```
 

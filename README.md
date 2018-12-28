@@ -101,6 +101,7 @@
 - [Portainer 安装和配置](markdown-file/Portainer-Install-And-Settings.md)
 - [Grafana 安装和配置](markdown-file/Grafana-Install-And-Settings.md)
 - [Ansible 安装和配置](markdown-file/Ansible-Install-And-Settings.md)
+- [Wormhole + Flink 最佳实践](markdown-file/Wormhole-Install-And-Settings.md)
 
 ## 联系(Contact)
 
