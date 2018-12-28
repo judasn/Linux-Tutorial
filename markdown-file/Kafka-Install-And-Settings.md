@@ -427,7 +427,7 @@ num.partitions=1
 # 允许删除topic
 delete.topic.enable=false
 # 允许自动创建topic（默认是 true）
-auto.create.topics.enable=false
+auto.create.topics.enable=true
 # 磁盘IO不足的时候，可以适当调大该值 ( 当内存足够时 )
 #log.flush.interval.messages=10000
 #log.flush.interval.ms=1000

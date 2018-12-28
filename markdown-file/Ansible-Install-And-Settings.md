@@ -190,7 +190,61 @@ PLAY RECAP *********************************************************************
 ```
 
 
-- 执行命令：`ansible-playbook /opt/disable-firewalld-playbook.yml`
+
+#### 基础环境（CentOS 7.x）
+
+
+- 创建脚本文件：`vim /opt/install-basic-playbook.yml`
+
+```
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: Disable SELinux at next reboot
+      selinux:
+        state: disabled
+        
+    - name: disable firewalld
+      command: "{{ item }}"
+      with_items:
+         - systemctl stop firewalld
+         - systemctl disable firewalld
+         - setenforce 0
+         
+    - name: install-basic
+      command: "{{ item }}"
+      with_items:
+         - yum install -y zip unzip lrzsz git epel-release wget htop deltarpm
+         
+    - name: install-vim
+      shell: "{{ item }}"
+      with_items:
+         - yum install -y vim
+         - curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
+         
+    - name: install-docker
+      shell: "{{ item }}"
+      with_items:
+         - yum install -y yum-utils device-mapper-persistent-data lvm2
+         - yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+         - yum makecache fast
+         - yum install -y docker-ce
+         - systemctl start docker.service
+         - docker run hello-world
+         
+    - name: install-docker-compose
+      shell: "{{ item }}"
+      with_items:
+         - curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+         - chmod +x /usr/local/bin/docker-compose
+         - docker-compose --version
+         - systemctl restart docker.service
+         - systemctl enable docker.service
+         
+```
+
+
+- 执行命令：`ansible-playbook /opt/install-basic-playbook.yml`
 
 #### 修改 hosts
 
@@ -259,6 +313,7 @@ PLAY RECAP *********************************************************************
 #### 部署 Hadoop 集群 
 
 - 创建脚本文件：`vim /opt/hadoop-playbook.yml`
+- 刚学 Ansible，不好动配置文件，所以就只保留环境部分的设置，其他部分自行手工~
 
 ```
 - hosts: hadoop-host
@@ -277,20 +332,6 @@ PLAY RECAP *********************************************************************
         path: /data/hadoop/hdfs/tmp
         state: directory
 
-    - name: copy gz file
-      copy: src=/opt/hadoop-2.6.5.tar.gz dest=/usr/local
-      
-    - name: tar gz file
-      command: cd /usr/local && tar zxf hadoop-2.6.5.tar.gz
-      
-    - name: check folder existed
-      stat: path=/usr/local/hadoop-2.6.5
-      register: folder_existed
-    
-    - name: rename folder
-      command: mv /usr/local/hadoop-2.6.5 /usr/local/hadoop
-      when: folder_existed.stat.exists == true
-      
     - name: set HADOOP_HOME
       blockinfile: 
         path: /etc/profile
@@ -306,7 +347,7 @@ PLAY RECAP *********************************************************************
 ```
 
 
-- 执行命令：`ansible-playbook /opt/jdk8-playbook.yml`
+- 执行命令：`ansible-playbook /opt/hadoop-playbook.yml`
 
 
 
@@ -317,7 +358,7 @@ PLAY RECAP *********************************************************************
 
 ## 资料
 
-
+- [ANSIBLE模块 - shell和command区别](https://www.jianshu.com/p/081139f73613)
 - <https://www.the5fire.com/ansible-guide-cn.html>
 - <https://www.jianshu.com/p/62388a4fcbc6>
 - <http://showme.codes/2017-06-12/ansible-introduce/>
