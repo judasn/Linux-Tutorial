@@ -494,6 +494,7 @@ tcp6       0      0 :::37481                :::*                    LISTEN      
 
 ## 资料
 
+- [如何正确的为 MapReduce 配置内存分配](http://loupipalien.com/2018/03/how-to-properly-configure-the-memory-allocations-for-mapreduce/)
 - <https://www.linode.com/docs/databases/hadoop/how-to-install-and-set-up-hadoop-cluster/>
 - <http://www.cnblogs.com/Leo_wl/p/7426496.html>
 - <https://blog.csdn.net/bingduanlbd/article/details/51892750>
