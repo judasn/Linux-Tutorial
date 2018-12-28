@@ -37,7 +37,7 @@
 
 #### 特别说明
 
-- **5 台 8C32G 服务器 CentOS 7.5，内存推荐 16G 或以上。**
+- **4 台 8C32G 服务器 CentOS 7.5，内存推荐 16G 或以上。**
     - **为了方便，所有服务器都已经关闭防火墙，并且在云服务上设置安全组对外开通所有端口**
     - **全程 root 用户**
 - 整体部署结构图：
@@ -55,7 +55,6 @@ hostnamectl --static set-hostname linux01
 hostnamectl --static set-hostname linux02
 hostnamectl --static set-hostname linux03
 hostnamectl --static set-hostname linux04
-hostnamectl --static set-hostname linux05
 ```
 
 - 给所有服务器设置 hosts：`vim /etc/hosts`
@@ -65,7 +64,6 @@ hostnamectl --static set-hostname linux05
 172.16.0.92       linux02
 172.16.0.133      linux03
 172.16.0.159      linux04
-172.16.0.184      linux05
 ```
 
 - 在 linux01 生成密钥对，设置 SSH 免密登录
@@ -88,7 +86,6 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux03（根据提示输入 linux03
 
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux04（根据提示输入 linux04 密码）
 
-ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@linux05（根据提示输入 linux05 密码）
 
 在 linux01 上测试
 ssh linux01
@@ -98,8 +95,6 @@ ssh linux02
 ssh linux03
 
 ssh linux04
-
-ssh linux05
 ``` 
 
 - 安装基础软件：`yum install -y zip unzip lrzsz git epel-release wget htop deltarpm`
@@ -116,8 +111,6 @@ linux03
 [kafka-host]
 linux04
 
-[wh-host]
-linux05
 ```
 
 - 测试 Ansible：`ansible all -a 'ps'`，必须保证能得到如下结果：
@@ -134,12 +127,6 @@ linux02 | CHANGED | rc=0 >>
 10590 pts/1    00:00:00 sh
 10603 pts/1    00:00:00 python
 10604 pts/1    00:00:00 ps
-
-linux05 | CHANGED | rc=0 >>
-  PID TTY          TIME CMD
-10573 pts/0    00:00:00 sh
-10586 pts/0    00:00:00 python
-10587 pts/0    00:00:00 ps
 
 linux03 | CHANGED | rc=0 >>
   PID TTY          TIME CMD
@@ -242,8 +229,6 @@ scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux02:/opt
 scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux03:/opt
 
 scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux04:/opt
-
-scp -r /opt/jdk-8u191-linux-x64.tar.gz root@linux05:/opt
 ```
 
 - 在 linux01 创建脚本文件：`vim /opt/jdk8-playbook.yml`
