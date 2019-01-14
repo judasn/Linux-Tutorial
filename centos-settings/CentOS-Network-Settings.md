@@ -44,19 +44,22 @@
   ```
   - 重启网络配置：`service network restart`
 
-## CentOS 7
+## CentOS 7.x
 
 ### 命令行下设置网络
 
 - 查看系统下有哪些网卡：`ls /etc/sysconfig/network-scripts/`，新版本不叫 eth0 这类格式了，比如我当前这个叫做：ifcfg-ens33（你的肯定跟我不一样，但是格式类似）
+- 先备份：`cp /etc/sysconfig/network-scripts/ifcfg-ens33 /etc/sysconfig/network-scripts/ifcfg-ens33.bak`
 - 编辑该文件：`vim /etc/sysconfig/network-scripts/ifcfg-ens33`，改为如下信息：（IP 段自己改为自己的网络情况）
 
 ``` ini
 TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
 BOOTPROTO=static
-IPADDR=192.168.1.126
+IPADDR=192.168.0.127
 NETMASK=255.255.255.0
-GATEWAY=192.168.1.1
+GATEWAY=192.168.0.1
 DNS1=8.8.8.8
 DNS1=114.114.114.114
 DEFROUTE=yes
@@ -71,7 +74,7 @@ IPV6_PEERROUTES=yes
 IPV6_FAILURE_FATAL=no
 IPV6_ADDR_GEN_MODE=stable-privacy
 NAME=ens33
-UUID=15a16b51-0369-44d7-87b4-667f715a68df
+UUID=b9f01b7d-4ebf-4d3a-a4ec-ae203425bb11
 DEVICE=ens33
 ONBOOT=yes
 ```
