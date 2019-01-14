@@ -8,8 +8,9 @@
 
 
 
-## 修改方法
+## CentOS 6 修改方法
 
+- 设置 hostname：`hostnamectl --static set-hostname linux02`
 - 命令：`sudo vim /etc/udev/rules.d/70-persistent-net.rules`
     - 该文件中正常此时应该有两行信息
     - 在文件中把 NAME="eth0″ 的这一行注释掉
@@ -24,3 +25,9 @@
     - 编辑：`sudo vim /etc/sysconfig/network-scripts/ifcfg-eth0`
     - 把文件中的 UUID 值 改为上面要求复制的 UUID 值。
     - 保存配置文件，重启系统，正常应该是可以了。
+
+## CentOS 7 修改方法
+
+- 在 VMware 15 Pro 的情况下，直接 copy 进行后，直接修改网卡配置即可
+- 编辑该文件：`vim /etc/sysconfig/network-scripts/ifcfg-ens33`
+    - 把 ip 地址修改即可
