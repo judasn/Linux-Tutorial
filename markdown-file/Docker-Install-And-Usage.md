@@ -934,6 +934,7 @@ kubectl version
 vim /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward=1
 
 sysctl --system
 
@@ -955,6 +956,7 @@ kubeadm init \
 
 10.244.0.0/16是 flannel 插件固定使用的ip段，它的值取决于你准备安装哪个网络插件
 
+这个过程会下载一些 docker 镜像，时间可能会比较久，看你网络情况。
 终端会输出核心内容：
 Your Kubernetes master has initialized successfully!
 
@@ -971,7 +973,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token 84kj2n.1kdj36xcsvyzx29i --discovery-token-ca-cert-hash sha256:bcd2edf9878e82db6f73f1253e8d6b6e7b91160db706f7ee59b9a9e32c6099e3
+  kubeadm join 192.168.0.127:6443 --token r7qkjb.2g1zikg6yvrmwlp6 --discovery-token-ca-cert-hash sha256:14601b9269829cd86756ad30aaeb3199158cbc2c150ef8b9dc2ce00f1fa5c2d0
 
 
 
@@ -979,11 +981,6 @@ as root:
 也可以使用另外一个流行网络插件 calico：
 kubeadm init --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr=192.168.0.0/16 --kubernetes-version v1.13.2
 
-
-
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.zshrc
@@ -1002,7 +999,7 @@ kubectl cluster-info
 ```
 echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token 84kj2n.1kdj36xcsvyzx29i --discovery-token-ca-cert-hash sha256:bcd2edf9878e82db6f73f1253e8d6b6e7b91160db706f7ee59b9a9e32c6099e3
+kubeadm join 192.168.0.127:6443 --token r7qkjb.2g1zikg6yvrmwlp6 --discovery-token-ca-cert-hash sha256:14601b9269829cd86756ad30aaeb3199158cbc2c150ef8b9dc2ce00f1fa5c2d0
 
 
 在 master 节点上：kubectl get cs
