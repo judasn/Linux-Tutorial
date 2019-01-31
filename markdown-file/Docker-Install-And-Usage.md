@@ -839,23 +839,209 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 #### 开始安装 - Kubernetes 1.13.2 版本
 
+- 三台机子：
+    - master-1：`192.168.0.127`
+    - node-1：`192.168.0.128`
+    - node-2：`192.168.0.129`
 - 官网最新版本：<https://github.com/kubernetes/kubernetes/releases>
 - 官网 1.13 版本的 changelog：<https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md>
 - 所有节点安装 Docker 18.06，并设置阿里云源 
+    - 可以参考：[点击我o(∩_∩)o ](https://github.com/judasn/Linux-Tutorial/blob/master/favorite-file/shell/install_docker_k8s_disable_firewalld_centos7-aliyun.sh)
+    - 核心，查看可以安装的 Docker 列表：`yum list docker-ce --showduplicates`
 - 所有节点设置 kubernetes repo 源，并安装 Kubeadm、Kubelet、Kubectl 都设置阿里云的源
 - Kubeadm 初始化集群过程当中，它会下载很多的镜像，默认也是去 Google 家里下载。但是 1.13 新增了一个配置：`--image-repository` 算是救了命。
+- 具体流程：
+
+```
+主机时间同步
+systemctl start chronyd.service
+systemctl enable chronyd.service
+
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+systemctl disable iptables.service
+
+
+setenforce 0
+
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+swapoff -a && sysctl -w vm.swappiness=0
+
+
+hostnamectl --static set-hostname  k8s-master-1
+hostnamectl --static set-hostname  k8s-node-1
+hostnamectl --static set-hostname  k8s-node-2
+
+
+vim /etc/hosts
+192.168.0.127 k8s-master-1
+192.168.0.128 k8s-node-1
+192.168.0.129 k8s-node-2
+
+master 免密
+生产密钥对
+ssh-keygen -t rsa
+
+
+公钥内容写入 authorized_keys
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+
+测试：
+ssh localhost
+
+将公钥复制到其他机子
+ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@k8s-node-1（根据提示输入 k8s-node-1 密码）
+ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@k8s-node-2（根据提示输入 k8s-node-2 密码）
+
+
+在 linux01 上测试
+ssh k8s-master-1
+ssh k8s-node-1
+ssh k8s-node-2
+
+
+
+vim /etc/yum.repos.d/kubernetes.repo
+
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+
+
+scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-1:/etc/yum.repos.d/
+scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-2:/etc/yum.repos.d/
+
+
+所有机子
+yum install -y kubelet-1.13.2 kubeadm-1.13.2 kubectl-1.13.2 --disableexcludes=kubernetes
+
+
+vim  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+最后一行添加：Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+
+
+systemctl enable kubelet && systemctl start kubelet
+
+kubeadm version
+kubectl version
+
+
+vim /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+
+sysctl --system
+
+```
+
+- 初始化 master 节点：
+
+```
+
+推荐：
+kubeadm init \
+--image-repository registry.aliyuncs.com/google_containers \
+--pod-network-cidr 10.244.0.0/16 \
+--kubernetes-version 1.13.2 \
+--service-cidr 10.96.0.0/12 \
+--apiserver-advertise-address=0.0.0.0 \
+--ignore-preflight-errors=Swap
+
+10.244.0.0/16是 flannel 插件固定使用的ip段，它的值取决于你准备安装哪个网络插件
+
+终端会输出核心内容：
+Your Kubernetes master has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+  kubeadm join 192.168.0.127:6443 --token 53mly1.yf9llsghle20p2uq --discovery-token-ca-cert-hash sha256:a9f26eef42c30d9f4b20c52058a2eaa696edc3f63ba20be477fe1494ec0146f7
+
+
+
+
+也可以使用另外一个流行网络插件 calico：
+kubeadm init --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr=192.168.0.0/16 --kubernetes-version v1.13.2
+
+
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+export KUBECONFIG=/etc/kubernetes/admin.conf
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.zshrc
+source ~/.zshrc
+
+
+查询我们的 token
+kubeadm token list
+
+
+kubectl cluster-info
+```
+
+- 到 node 节点进行加入：
+
+```
+
+kubeadm join 192.168.0.127:6443 --token 53mly1.yf9llsghle20p2uq --discovery-token-ca-cert-hash sha256:a9f26eef42c30d9f4b20c52058a2eaa696edc3f63ba20be477fe1494ec0146f7
+
+
+在 master 节点上：kubectl get cs
+NAME                 STATUS    MESSAGE              ERROR
+controller-manager   Healthy   ok
+scheduler            Healthy   ok
+etcd-0               Healthy   {"health": "true"} 
+结果都是 Healthy 则表示可以了，不然就得检查。必要时可以用：`kubeadm reset` 重置，重新进行集群初始化
+
+
+
+master 安装 Flannel
+cd /opt && wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+kubectl apply -f /opt/kube-flannel.yml
+
+
+验证：
+kubectl get pods --all-namespaces
+kubectl get nodes
+如果还是 NotReady，则查看错误信息：
+kubectl describe pod kube-scheduler-master.hanli.com -n kube-system
+kubectl logs kube-scheduler-master.hanli.com -n kube-system
+tail -f /var/log/messages
+
+```
+
+
+
 
 #### 主要概念
 
 - Master 节点，负责集群的调度、集群的管理
-    - 常见组件：
+    - 常见组件：<https://kubernetes.io/docs/concepts/overview/components/>
     - kube-apiserver：API服务
     - kube-scheduler：调度
     - Kube-Controller-Manager：容器编排
     - Etcd：保存了整个集群的状态
     - Kube-proxy：负责为 Service 提供 cluster 内部的服务发现和负载均衡
     - Kube-DNS：负责为整个集群提供 DNS 服务
-- Workers 节点，负责容器相关的处理
+- node 节点，负责容器相关的处理
 
 - `Pods`
 
