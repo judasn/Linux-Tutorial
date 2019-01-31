@@ -854,19 +854,19 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ```
 主机时间同步
-systemctl start chronyd.service
-systemctl enable chronyd.service
+systemctl start chronyd.service && systemctl enable chronyd.service
 
 systemctl stop firewalld.service
 systemctl disable firewalld.service
 systemctl disable iptables.service
 
 
-setenforce 0
-
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 swapoff -a && sysctl -w vm.swappiness=0
+
+
+
 
 
 hostnamectl --static set-hostname  k8s-master-1
@@ -942,6 +942,7 @@ sysctl --system
 - 初始化 master 节点：
 
 ```
+echo 1 > /proc/sys/net/ipv4/ip_forward
 
 推荐：
 kubeadm init \
@@ -970,7 +971,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token 53mly1.yf9llsghle20p2uq --discovery-token-ca-cert-hash sha256:a9f26eef42c30d9f4b20c52058a2eaa696edc3f63ba20be477fe1494ec0146f7
+  kubeadm join 192.168.0.127:6443 --token 84kj2n.1kdj36xcsvyzx29i --discovery-token-ca-cert-hash sha256:bcd2edf9878e82db6f73f1253e8d6b6e7b91160db706f7ee59b9a9e32c6099e3
 
 
 
@@ -999,8 +1000,9 @@ kubectl cluster-info
 - 到 node 节点进行加入：
 
 ```
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token 53mly1.yf9llsghle20p2uq --discovery-token-ca-cert-hash sha256:a9f26eef42c30d9f4b20c52058a2eaa696edc3f63ba20be477fe1494ec0146f7
+kubeadm join 192.168.0.127:6443 --token 84kj2n.1kdj36xcsvyzx29i --discovery-token-ca-cert-hash sha256:bcd2edf9878e82db6f73f1253e8d6b6e7b91160db706f7ee59b9a9e32c6099e3
 
 
 在 master 节点上：kubectl get cs
