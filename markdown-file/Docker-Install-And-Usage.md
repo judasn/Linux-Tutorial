@@ -810,7 +810,52 @@ sudo chmod +x /usr/local/bin/docker-compose
 	- `容器聚合`
 - 主要角色：Master、Node
 
+
+#### 安装准备 - Kubernetes 1.13 版本
+
+- 推荐最低 2C2G，优先：2C4G 或以上 
+- 特别说明：1.13 之前的版本，由于网络问题，需要各种设置，这里就不再多说了。1.13 之后相对就简单了点。
+- 优先官网软件包：kubeadm
+- 官网资料：
+    - issues 入口：<https://github.com/kubernetes/kubeadm>
+    - 源码入口：<https://github.com/kubernetes/kubernetes/tree/master/cmd/kubeadm>
+    - 安装指导：<https://kubernetes.io/docs/setup/independent/install-kubeadm/>
+    - 按官网要求做下检查：<https://kubernetes.io/docs/setup/independent/install-kubeadm/#before-you-begin>
+    - 网络环境：<https://kubernetes.io/docs/setup/independent/install-kubeadm/#verify-the-mac-address-and-product-uuid-are-unique-for-every-node>
+    - 端口检查：<https://kubernetes.io/docs/setup/independent/install-kubeadm/#check-required-ports>
+    - 对 Docker 版本的支持，这里官网推荐的是 18.06：<https://kubernetes.io/docs/setup/release/notes/#sig-cluster-lifecycle>
+- 三大核心工具包，都需要各自安装，并且注意版本关系：
+    - `kubeadm`: the command to bootstrap the cluster.
+        - 集群部署、管理工具
+    - `kubelet`: the component that runs on all of the machines in your cluster and does things like starting pods and containers.
+        - 具体执行层面的管理 Pod 和 Docker 工具
+    - `kubectl`: the command line util to talk to your cluster.
+        - 操作 k8s 的命令行入口工具
+- 官网插件安装过程的故障排查：<https://kubernetes.io/docs/setup/independent/troubleshooting-kubeadm/>
+- 其他部署方案：
+    - <https://github.com/coreos/tectonic-installer>
+    - <https://github.com/kubernetes-incubator/kubespray>
+    - <https://github.com/apprenda/kismatic>
+
+#### 开始安装 - Kubernetes 1.13.2 版本
+
+- 官网最新版本：<https://github.com/kubernetes/kubernetes/releases>
+- 官网 1.13 版本的 changelog：<https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG-1.13.md>
+- 所有节点安装 Docker 18.06，并设置阿里云源 
+- 所有节点设置 kubernetes repo 源，并安装 Kubeadm、Kubelet、Kubectl 都设置阿里云的源
+- Kubeadm 初始化集群过程当中，它会下载很多的镜像，默认也是去 Google 家里下载。但是 1.13 新增了一个配置：`--image-repository` 算是救了命。
+
 #### 主要概念
+
+- Master 节点，负责集群的调度、集群的管理
+    - 常见组件：
+    - kube-apiserver：API服务
+    - kube-scheduler：调度
+    - Kube-Controller-Manager：容器编排
+    - Etcd：保存了整个集群的状态
+    - Kube-proxy：负责为 Service 提供 cluster 内部的服务发现和负载均衡
+    - Kube-DNS：负责为整个集群提供 DNS 服务
+- Workers 节点，负责容器相关的处理
 
 - `Pods`
 
@@ -946,7 +991,13 @@ Master选举确保kube-scheduler和kube-controller-manager高可用
 ## 资料
 
 - 书籍：《第一本 Docker 书》
-
+- [如何更“优雅”地部署Kubernetes集群](https://juejin.im/entry/5a03f98d6fb9a04524054516)
+- []()
+- []()
+- []()
+- []()
+- []()
+- []()
 
 
 
