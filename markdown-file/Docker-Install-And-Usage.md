@@ -920,23 +920,25 @@ scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-2:/etc/yum.repos.d/
 所有机子
 yum install -y kubelet-1.13.2 kubeadm-1.13.2 kubectl-1.13.2 --disableexcludes=kubernetes
 
-
+所有机子
 vim  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 最后一行添加：Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
 
-
+所有机子
 systemctl enable kubelet && systemctl start kubelet
 
 kubeadm version
 kubectl version
 
-
+必须配置：
 vim /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 net.ipv4.ip_forward=1
+vm.swappiness=0
 
-sysctl --system
+modprobe br_netfilter
+sysctl -p /etc/sysctl.d/k8s.conf
 
 ```
 
@@ -973,7 +975,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token r7qkjb.2g1zikg6yvrmwlp6 --discovery-token-ca-cert-hash sha256:14601b9269829cd86756ad30aaeb3199158cbc2c150ef8b9dc2ce00f1fa5c2d0
+  kubeadm join 192.168.0.127:6443 --token 6y18dy.oy5bt6d5y4nvop28 --discovery-token-ca-cert-hash sha256:a4e8aed696bc0481bb3f6e0af4256d41a1779141241e2684fdc6aa8bcca4d58b
 
 
 
