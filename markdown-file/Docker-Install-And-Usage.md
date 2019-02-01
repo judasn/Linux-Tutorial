@@ -917,8 +917,36 @@ scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-1:/etc/yum.repos.d/
 scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-2:/etc/yum.repos.d/
 
 
+
+所有机子
+iptables -P FORWARD ACCEPT
+
 所有机子
 yum install -y kubelet-1.13.2 kubeadm-1.13.2 kubectl-1.13.2 --disableexcludes=kubernetes
+
+
+所有机子
+vim /etc/cni/net.d/10-flannel.conflist，内容
+{
+    "name": "cbr0",
+    "plugins": [
+        {
+            "type": "flannel",
+            "delegate": {
+                "hairpinMode": true,
+                "isDefaultGateway": true
+            }
+        },
+        {
+            "type": "portmap",
+            "capabilities": {
+                "portMappings": true
+            }
+        }
+    ]
+}
+
+
 
 所有机子
 vim  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
@@ -987,8 +1015,14 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 查询我们的 token
 kubeadm token list
 
-
 kubectl cluster-info
+
+
+master 安装 Flannel
+cd /opt && wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+kubectl apply -f /opt/kube-flannel.yml
+
 ```
 
 - 到 node 节点进行加入：
@@ -1006,12 +1040,6 @@ scheduler            Healthy   ok
 etcd-0               Healthy   {"health": "true"} 
 结果都是 Healthy 则表示可以了，不然就得检查。必要时可以用：`kubeadm reset` 重置，重新进行集群初始化
 
-
-
-master 安装 Flannel
-cd /opt && wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-
-kubectl apply -f /opt/kube-flannel.yml
 
 
 验证：
