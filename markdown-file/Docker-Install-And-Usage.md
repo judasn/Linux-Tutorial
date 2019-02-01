@@ -1047,11 +1047,11 @@ etcd-0               Healthy   {"health": "true"}
 
 
 验证：
-kubectl get pods --all-namespaces
 kubectl get nodes
 如果还是 NotReady，则查看错误信息：
-kubectl describe pod kube-scheduler-master.hanli.com -n kube-system
-kubectl logs kube-scheduler-master.hanli.com -n kube-system
+kubectl get pods --all-namespaces，其中：Pending/ContainerCreating/ImagePullBackOff 都是 Pod 没有就绪，我们可以这样查看对应 Pod 遇到了什么问题
+kubectl describe pod <Pod Name> --namespace=kube-system
+或者：kubectl logs <Pod Name> -n kube-system
 tail -f /var/log/messages
 
 ```
