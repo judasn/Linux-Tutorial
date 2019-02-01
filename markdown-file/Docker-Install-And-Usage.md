@@ -965,8 +965,11 @@ net.bridge.bridge-nf-call-iptables = 1
 net.ipv4.ip_forward=1
 vm.swappiness=0
 
-modprobe br_netfilter
-sysctl -p /etc/sysctl.d/k8s.conf
+
+scp -r /etc/sysctl.d/k8s.conf root@k8s-node-1:/etc/sysctl.d/
+scp -r /etc/sysctl.d/k8s.conf root@k8s-node-2:/etc/sysctl.d/
+
+modprobe br_netfilter && sysctl -p /etc/sysctl.d/k8s.conf
 
 ```
 
@@ -1003,10 +1006,11 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token 6y18dy.oy5bt6d5y4nvop28 --discovery-token-ca-cert-hash sha256:a4e8aed696bc0481bb3f6e0af4256d41a1779141241e2684fdc6aa8bcca4d58b
+  kubeadm join 192.168.0.127:6443 --token 6m0emc.x9uim283uzevn3pm --discovery-token-ca-cert-hash sha256:c8b1b72de1eabc71df5490afa7cd8dd1c1952234e65b30262ed5084c9d1f10c2
 
 
 
+master 机子：
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -1030,7 +1034,7 @@ kubectl apply -f /opt/kube-flannel.yml
 ```
 echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token r7qkjb.2g1zikg6yvrmwlp6 --discovery-token-ca-cert-hash sha256:14601b9269829cd86756ad30aaeb3199158cbc2c150ef8b9dc2ce00f1fa5c2d0
+kubeadm join 192.168.0.127:6443 --token 6m0emc.x9uim283uzevn3pm --discovery-token-ca-cert-hash sha256:c8b1b72de1eabc71df5490afa7cd8dd1c1952234e65b30262ed5084c9d1f10c2
 
 
 在 master 节点上：kubectl get cs
