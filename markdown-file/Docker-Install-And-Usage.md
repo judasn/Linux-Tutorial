@@ -947,7 +947,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
 推荐：
 kubeadm init \
---image-repository registry.aliyuncs.com/google_containers \
+--image-repository registry.cn-hangzhou.aliyuncs.com/google_containers \
 --pod-network-cidr 10.244.0.0/16 \
 --kubernetes-version 1.13.2 \
 --service-cidr 10.96.0.0/12 \
@@ -977,14 +977,9 @@ as root:
 
 
 
-
-也可以使用另外一个流行网络插件 calico：
-kubeadm init --image-repository registry.aliyuncs.com/google_containers --pod-network-cidr=192.168.0.0/16 --kubernetes-version v1.13.2
-
-
-export KUBECONFIG=/etc/kubernetes/admin.conf
-echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.zshrc
-source ~/.zshrc
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 
 查询我们的 token
