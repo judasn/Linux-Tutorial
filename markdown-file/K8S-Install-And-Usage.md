@@ -48,7 +48,7 @@
     - <https://github.com/kubernetes-incubator/kubespray>
     - <https://github.com/apprenda/kismatic>
 
-#### 开始安装 - Kubernetes 1.13.3 版本
+#### 开始安装 - Kubernetes 1.13.2 版本
 
 - 三台机子：
     - master-1：`192.168.0.127`
@@ -74,8 +74,8 @@ systemctl disable iptables.service
 
 setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
-swapoff -a && sysctl -w vm.swappiness=0
 echo "vm.swappiness = 0" >> /etc/sysctl.conf
+swapoff -a && sysctl -w vm.swappiness=0
 
 
 
@@ -133,7 +133,7 @@ scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-2:/etc/yum.repos.d/
 iptables -P FORWARD ACCEPT
 
 所有机子
-yum install -y kubelet-1.13.3 kubeadm-1.13.3 kubectl-1.13.3 --disableexcludes=kubernetes
+yum install -y kubelet-1.13.2 kubeadm-1.13.2 kubectl-1.13.2 --disableexcludes=kubernetes
 
 
 所有机子
@@ -198,7 +198,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 kubeadm init \
 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers \
 --pod-network-cidr 10.244.0.0/16 \
---kubernetes-version 1.13.3 \
+--kubernetes-version 1.13.2 \
 --service-cidr 10.96.0.0/12 \
 --apiserver-advertise-address=0.0.0.0 \
 --ignore-preflight-errors=Swap
@@ -207,7 +207,7 @@ kubeadm init \
 
 这个过程会下载一些 docker 镜像，时间可能会比较久，看你网络情况。
 终端会输出核心内容：
-[init] Using Kubernetes version: v1.13.3
+[init] Using Kubernetes version: v1.13.2
 [preflight] Running pre-flight checks
 [preflight] Pulling images required for setting up a Kubernetes cluster
 [preflight] This might take a minute or two, depending on the speed of your internet connection
@@ -223,12 +223,12 @@ kubeadm init \
 [certs] Generating "front-proxy-ca" certificate and key
 [certs] Generating "front-proxy-client" certificate and key
 [certs] Generating "etcd/ca" certificate and key
-[certs] Generating "etcd/healthcheck-client" certificate and key
-[certs] Generating "apiserver-etcd-client" certificate and key
 [certs] Generating "etcd/server" certificate and key
 [certs] etcd/server serving cert is signed for DNS names [k8s-master-1 localhost] and IPs [192.168.0.127 127.0.0.1 ::1]
+[certs] Generating "apiserver-etcd-client" certificate and key
 [certs] Generating "etcd/peer" certificate and key
 [certs] etcd/peer serving cert is signed for DNS names [k8s-master-1 localhost] and IPs [192.168.0.127 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
 [certs] Generating "sa" key and public key
 [kubeconfig] Using kubeconfig folder "/etc/kubernetes"
 [kubeconfig] Writing "admin.conf" kubeconfig file
@@ -241,14 +241,13 @@ kubeadm init \
 [control-plane] Creating static Pod manifest for "kube-scheduler"
 [etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
 [wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
-[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
-[apiclient] All control plane components are healthy after 32.002189 seconds
+[apiclient] All control plane components are healthy after 18.002437 seconds
 [uploadconfig] storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
 [kubelet] Creating a ConfigMap "kubelet-config-1.13" in namespace kube-system with the configuration for the kubelets in the cluster
 [patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "k8s-master-1" as an annotation
 [mark-control-plane] Marking the node k8s-master-1 as control-plane by adding the label "node-role.kubernetes.io/master=''"
 [mark-control-plane] Marking the node k8s-master-1 as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
-[bootstrap-token] Using token: 3ag6sz.y8rmcz5xec50xkz1
+[bootstrap-token] Using token: yes6xf.5huewerdtfxafde5
 [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
 [bootstraptoken] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
 [bootstraptoken] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
@@ -272,8 +271,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-kubeadm join 192.168.0.127:6443 --token cdo0z3.msyp89yp8zk6lhmf --discovery-token-ca-cert-hash sha256:c0d8942e801962232f0e02b757d13ed0034fa07ab3953764e6a6c67b6688963c
-
+  kubeadm join 192.168.0.127:6443 --token yes6xf.5huewerdtfxafde5 --discovery-token-ca-cert-hash sha256:98dd48ac4298e23f9c275309bfd8b69c5b3166752ccf7a36c2affcb7c1988781
 
 
 
@@ -284,7 +282,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 export KUBECONFIG=$HOME/.kube/config
 
 查询我们的 token
-kubectl cluster-info
+kubeadm token list
 
 kubectl cluster-info
 
@@ -301,7 +299,7 @@ kubectl apply -f /opt/kube-flannel.yml
 ```
 echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token cdo0z3.msyp89yp8zk6lhmf --discovery-token-ca-cert-hash sha256:c0d8942e801962232f0e02b757d13ed0034fa07ab3953764e6a6c67b6688963c
+kubeadm join 192.168.0.127:6443 --token yes6xf.5huewerdtfxafde5 --discovery-token-ca-cert-hash sha256:98dd48ac4298e23f9c275309bfd8b69c5b3166752ccf7a36c2affcb7c1988781
 
 这时候终端会输出：
 
