@@ -75,7 +75,7 @@ systemctl disable iptables.service
 setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 swapoff -a && sysctl -w vm.swappiness=0
-
+echo "vm.swappiness = 0" >> /etc/sysctl.conf
 
 
 
@@ -277,10 +277,10 @@ master 机子：
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
+export KUBECONFIG=$HOME/.kube/config
 
 查询我们的 token
-kubeadm token list
+kubectl cluster-info
 
 kubectl cluster-info
 
@@ -320,6 +320,9 @@ This node has joined the cluster:
 * The Kubelet was informed of the new secure connection details.
 
 Run 'kubectl get nodes' on the master to see this node join the cluster.
+
+
+如果 node 节点加入失败，可以：kubeadm reset，再来重新 join
 
 
 
