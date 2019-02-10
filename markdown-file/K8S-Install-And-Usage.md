@@ -163,13 +163,9 @@ mkdir -p /etc/cni/net.d && vim /etc/cni/net.d/10-flannel.conflist，内容
 vim  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 最后一行添加：Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
 
-所有机子
-systemctl enable kubelet && systemctl start kubelet
 
-kubeadm version
-kubectl version
 
-必须配置：
+所有机子必须配置：
 vim /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -181,6 +177,15 @@ scp -r /etc/sysctl.d/k8s.conf root@k8s-node-1:/etc/sysctl.d/
 scp -r /etc/sysctl.d/k8s.conf root@k8s-node-2:/etc/sysctl.d/
 
 modprobe br_netfilter && sysctl -p /etc/sysctl.d/k8s.conf
+
+
+
+所有机子
+systemctl enable kubelet && systemctl start kubelet
+
+kubeadm version
+kubectl version
+
 
 ```
 
@@ -267,8 +272,7 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token 3ag6sz.y8rmcz5xec50xkz1 --discovery-token-ca-cert-hash sha256:912c325aee8dc7c583c36a1c15d7ef1d7a1abeea5dc8a19e96d24536c13373e6
-
+kubeadm join 192.168.0.127:6443 --token cdo0z3.msyp89yp8zk6lhmf --discovery-token-ca-cert-hash sha256:c0d8942e801962232f0e02b757d13ed0034fa07ab3953764e6a6c67b6688963c
 
 
 
@@ -297,7 +301,8 @@ kubectl apply -f /opt/kube-flannel.yml
 ```
 echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token 3ag6sz.y8rmcz5xec50xkz1 --discovery-token-ca-cert-hash sha256:912c325aee8dc7c583c36a1c15d7ef1d7a1abeea5dc8a19e96d24536c13373e6
+kubeadm join 192.168.0.127:6443 --token cdo0z3.msyp89yp8zk6lhmf --discovery-token-ca-cert-hash sha256:c0d8942e801962232f0e02b757d13ed0034fa07ab3953764e6a6c67b6688963c
+
 这时候终端会输出：
 
 [preflight] Running pre-flight checks
