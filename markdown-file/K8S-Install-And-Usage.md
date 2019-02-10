@@ -48,7 +48,7 @@
     - <https://github.com/kubernetes-incubator/kubespray>
     - <https://github.com/apprenda/kismatic>
 
-#### 开始安装 - Kubernetes 1.13.2 版本
+#### 开始安装 - Kubernetes 1.13.3 版本
 
 - 三台机子：
     - master-1：`192.168.0.127`
@@ -133,11 +133,11 @@ scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-2:/etc/yum.repos.d/
 iptables -P FORWARD ACCEPT
 
 所有机子
-yum install -y kubelet-1.13.2 kubeadm-1.13.2 kubectl-1.13.2 --disableexcludes=kubernetes
+yum install -y kubelet-1.13.3 kubeadm-1.13.3 kubectl-1.13.3 --disableexcludes=kubernetes
 
 
 所有机子
-vim /etc/cni/net.d/10-flannel.conflist，内容
+mkdir -p /etc/cni/net.d && vim /etc/cni/net.d/10-flannel.conflist，内容
 {
     "name": "cbr0",
     "plugins": [
@@ -193,7 +193,7 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 kubeadm init \
 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers \
 --pod-network-cidr 10.244.0.0/16 \
---kubernetes-version 1.13.2 \
+--kubernetes-version 1.13.3 \
 --service-cidr 10.96.0.0/12 \
 --apiserver-advertise-address=0.0.0.0 \
 --ignore-preflight-errors=Swap
@@ -202,6 +202,56 @@ kubeadm init \
 
 这个过程会下载一些 docker 镜像，时间可能会比较久，看你网络情况。
 终端会输出核心内容：
+[init] Using Kubernetes version: v1.13.3
+[preflight] Running pre-flight checks
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Activating the kubelet service
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [k8s-master-1 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.0.127]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [k8s-master-1 localhost] and IPs [192.168.0.127 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [k8s-master-1 localhost] and IPs [192.168.0.127 127.0.0.1 ::1]
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 32.002189 seconds
+[uploadconfig] storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.13" in namespace kube-system with the configuration for the kubelets in the cluster
+[patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "k8s-master-1" as an annotation
+[mark-control-plane] Marking the node k8s-master-1 as control-plane by adding the label "node-role.kubernetes.io/master=''"
+[mark-control-plane] Marking the node k8s-master-1 as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: 3ag6sz.y8rmcz5xec50xkz1
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstraptoken] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstraptoken] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstraptoken] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstraptoken] creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
 Your Kubernetes master has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
@@ -217,7 +267,9 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token 6m0emc.x9uim283uzevn3pm --discovery-token-ca-cert-hash sha256:c8b1b72de1eabc71df5490afa7cd8dd1c1952234e65b30262ed5084c9d1f10c2
+  kubeadm join 192.168.0.127:6443 --token 3ag6sz.y8rmcz5xec50xkz1 --discovery-token-ca-cert-hash sha256:912c325aee8dc7c583c36a1c15d7ef1d7a1abeea5dc8a19e96d24536c13373e6
+
+
 
 
 
@@ -245,7 +297,31 @@ kubectl apply -f /opt/kube-flannel.yml
 ```
 echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token 6m0emc.x9uim283uzevn3pm --discovery-token-ca-cert-hash sha256:c8b1b72de1eabc71df5490afa7cd8dd1c1952234e65b30262ed5084c9d1f10c2
+kubeadm join 192.168.0.127:6443 --token 3ag6sz.y8rmcz5xec50xkz1 --discovery-token-ca-cert-hash sha256:912c325aee8dc7c583c36a1c15d7ef1d7a1abeea5dc8a19e96d24536c13373e6
+这时候终端会输出：
+
+[preflight] Running pre-flight checks
+[discovery] Trying to connect to API Server "192.168.0.127:6443"
+[discovery] Created cluster-info discovery client, requesting info from "https://192.168.0.127:6443"
+[discovery] Requesting info from "https://192.168.0.127:6443" again to validate TLS against the pinned public key
+[discovery] Cluster info signature and contents are valid and TLS certificate validates against pinned roots, will use API Server "192.168.0.127:6443"
+[discovery] Successfully established connection with API Server "192.168.0.127:6443"
+[join] Reading configuration from the cluster...
+[join] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+[kubelet] Downloading configuration for the kubelet from the "kubelet-config-1.13" ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Activating the kubelet service
+[tlsbootstrap] Waiting for the kubelet to perform the TLS Bootstrap...
+[patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "k8s-node-1" as an annotation
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the master to see this node join the cluster.
+
+
 
 
 在 master 节点上：kubectl get cs
