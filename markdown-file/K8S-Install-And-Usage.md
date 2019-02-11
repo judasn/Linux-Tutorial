@@ -48,7 +48,7 @@
     - <https://github.com/kubernetes-incubator/kubespray>
     - <https://github.com/apprenda/kismatic>
 
-#### 开始安装 - Kubernetes 1.13.2 版本
+#### 开始安装 - Kubernetes 1.13.3 版本
 
 - 三台机子：
     - master-1：`192.168.0.127`
@@ -61,25 +61,29 @@
     - 核心，查看可以安装的 Docker 列表：`yum list docker-ce --showduplicates`
 - 所有节点设置 kubernetes repo 源，并安装 Kubeadm、Kubelet、Kubectl 都设置阿里云的源
 - Kubeadm 初始化集群过程当中，它会下载很多的镜像，默认也是去 Google 家里下载。但是 1.13 新增了一个配置：`--image-repository` 算是救了命。
-- 具体流程：
+
+#### 安装具体流程
+
+- 同步所有机子时间：`systemctl start chronyd.service && systemctl enable chronyd.service`
+- 所有机子禁用防火墙、selinux、swap
 
 ```
-主机时间同步
-systemctl start chronyd.service && systemctl enable chronyd.service
-
 systemctl stop firewalld.service
 systemctl disable firewalld.service
 systemctl disable iptables.service
 
+iptables -P FORWARD ACCEPT
 
 setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 echo "vm.swappiness = 0" >> /etc/sysctl.conf
 swapoff -a && sysctl -w vm.swappiness=0
+```
 
 
+- 给各自机子设置 hostname 和 hosts
 
-
+```
 hostnamectl --static set-hostname  k8s-master-1
 hostnamectl --static set-hostname  k8s-node-1
 hostnamectl --static set-hostname  k8s-node-2
@@ -89,30 +93,30 @@ vim /etc/hosts
 192.168.0.127 k8s-master-1
 192.168.0.128 k8s-node-1
 192.168.0.129 k8s-node-2
+```
 
-master 免密
-生产密钥对
+- 给 master 设置免密
+
+```
 ssh-keygen -t rsa
 
-
-公钥内容写入 authorized_keys
 cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 
-测试：
+
 ssh localhost
 
-将公钥复制到其他机子
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@k8s-node-1（根据提示输入 k8s-node-1 密码）
 ssh-copy-id -i ~/.ssh/id_rsa.pub -p 22 root@k8s-node-2（根据提示输入 k8s-node-2 密码）
 
-
-在 linux01 上测试
 ssh k8s-master-1
 ssh k8s-node-1
 ssh k8s-node-2
+```
 
 
+- 给所有机子设置 yum 源
 
+```
 vim /etc/yum.repos.d/kubernetes.repo
 
 [kubernetes]
@@ -126,18 +130,13 @@ gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors
 
 scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-1:/etc/yum.repos.d/
 scp -r /etc/yum.repos.d/kubernetes.repo root@k8s-node-2:/etc/yum.repos.d/
+```
 
+- 给 master 机子创建 flannel 配置文件
 
+```
+mkdir -p /etc/cni/net.d && vim /etc/cni/net.d/10-flannel.conflist
 
-所有机子
-iptables -P FORWARD ACCEPT
-
-所有机子
-yum install -y kubelet-1.13.2 kubeadm-1.13.2 kubectl-1.13.2 --disableexcludes=kubernetes
-
-
-所有机子
-mkdir -p /etc/cni/net.d && vim /etc/cni/net.d/10-flannel.conflist，内容
 {
     "name": "cbr0",
     "plugins": [
@@ -156,17 +155,15 @@ mkdir -p /etc/cni/net.d && vim /etc/cni/net.d/10-flannel.conflist，内容
         }
     ]
 }
+```
 
 
 
-所有机子
-vim  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-最后一行添加：Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+- 给所有机子创建配置
 
-
-
-所有机子必须配置：
+```
 vim /etc/sysctl.d/k8s.conf
+
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 net.ipv4.ip_forward=1
@@ -177,15 +174,30 @@ scp -r /etc/sysctl.d/k8s.conf root@k8s-node-1:/etc/sysctl.d/
 scp -r /etc/sysctl.d/k8s.conf root@k8s-node-2:/etc/sysctl.d/
 
 modprobe br_netfilter && sysctl -p /etc/sysctl.d/k8s.conf
+```
+
+- 给所有机子安装组件
+
+```
+yum install -y kubelet-1.13.3 kubeadm-1.13.3 kubectl-1.13.3 --disableexcludes=kubernetes
+```
+
+- 给所有机子添加一个变量
+
+```
+vim  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+最后一行添加：Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+```
 
 
+- 启动所有机子
 
-所有机子
+```
 systemctl enable kubelet && systemctl start kubelet
 
 kubeadm version
 kubectl version
-
 
 ```
 
@@ -194,20 +206,18 @@ kubectl version
 ```
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
-推荐：
+
 kubeadm init \
 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers \
 --pod-network-cidr 10.244.0.0/16 \
---kubernetes-version 1.13.2 \
---service-cidr 10.96.0.0/12 \
---apiserver-advertise-address=0.0.0.0 \
+--kubernetes-version 1.13.3 \
 --ignore-preflight-errors=Swap
 
-10.244.0.0/16是 flannel 插件固定使用的ip段，它的值取决于你准备安装哪个网络插件
+其中 10.244.0.0/16 是 flannel 插件固定使用的ip段，它的值取决于你准备安装哪个网络插件
 
 这个过程会下载一些 docker 镜像，时间可能会比较久，看你网络情况。
 终端会输出核心内容：
-[init] Using Kubernetes version: v1.13.2
+[init] Using Kubernetes version: v1.13.3
 [preflight] Running pre-flight checks
 [preflight] Pulling images required for setting up a Kubernetes cluster
 [preflight] This might take a minute or two, depending on the speed of your internet connection
@@ -216,19 +226,19 @@ kubeadm init \
 [kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
 [kubelet-start] Activating the kubelet service
 [certs] Using certificateDir folder "/etc/kubernetes/pki"
-[certs] Generating "ca" certificate and key
-[certs] Generating "apiserver" certificate and key
-[certs] apiserver serving cert is signed for DNS names [k8s-master-1 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.0.127]
-[certs] Generating "apiserver-kubelet-client" certificate and key
 [certs] Generating "front-proxy-ca" certificate and key
 [certs] Generating "front-proxy-client" certificate and key
 [certs] Generating "etcd/ca" certificate and key
 [certs] Generating "etcd/server" certificate and key
 [certs] etcd/server serving cert is signed for DNS names [k8s-master-1 localhost] and IPs [192.168.0.127 127.0.0.1 ::1]
-[certs] Generating "apiserver-etcd-client" certificate and key
 [certs] Generating "etcd/peer" certificate and key
 [certs] etcd/peer serving cert is signed for DNS names [k8s-master-1 localhost] and IPs [192.168.0.127 127.0.0.1 ::1]
 [certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [k8s-master-1 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.0.127]
 [certs] Generating "sa" key and public key
 [kubeconfig] Using kubeconfig folder "/etc/kubernetes"
 [kubeconfig] Writing "admin.conf" kubeconfig file
@@ -241,13 +251,13 @@ kubeadm init \
 [control-plane] Creating static Pod manifest for "kube-scheduler"
 [etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
 [wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
-[apiclient] All control plane components are healthy after 18.002437 seconds
+[apiclient] All control plane components are healthy after 19.001686 seconds
 [uploadconfig] storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
 [kubelet] Creating a ConfigMap "kubelet-config-1.13" in namespace kube-system with the configuration for the kubelets in the cluster
 [patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "k8s-master-1" as an annotation
 [mark-control-plane] Marking the node k8s-master-1 as control-plane by adding the label "node-role.kubernetes.io/master=''"
 [mark-control-plane] Marking the node k8s-master-1 as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
-[bootstrap-token] Using token: yes6xf.5huewerdtfxafde5
+[bootstrap-token] Using token: 8tpo9l.jlw135r8559kaad4
 [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
 [bootstraptoken] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
 [bootstraptoken] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
@@ -271,35 +281,40 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.0.127:6443 --token yes6xf.5huewerdtfxafde5 --discovery-token-ca-cert-hash sha256:98dd48ac4298e23f9c275309bfd8b69c5b3166752ccf7a36c2affcb7c1988781
+  kubeadm join 192.168.0.127:6443 --token 8tpo9l.jlw135r8559kaad4 --discovery-token-ca-cert-hash sha256:d6594ccc1310a45cbebc45f1c93f5ac113873786365ed63efcf667c952d7d197
+```
 
+- 给 master 机子设置配置
 
-
-master 机子：
+```
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 export KUBECONFIG=$HOME/.kube/config
+```
 
-查询我们的 token
+- 在 master 上查看一些环境
+
+```
 kubeadm token list
 
 kubectl cluster-info
+```
 
+- 给 master 安装 Flannel
 
-master 安装 Flannel
+```
 cd /opt && wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 kubectl apply -f /opt/kube-flannel.yml
-
 ```
 
-- 到 node 节点进行加入：
+- 到 node 节点加入集群：
 
 ```
 echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
 
-kubeadm join 192.168.0.127:6443 --token yes6xf.5huewerdtfxafde5 --discovery-token-ca-cert-hash sha256:98dd48ac4298e23f9c275309bfd8b69c5b3166752ccf7a36c2affcb7c1988781
+kubeadm join 192.168.0.127:6443 --token 8tpo9l.jlw135r8559kaad4 --discovery-token-ca-cert-hash sha256:d6594ccc1310a45cbebc45f1c93f5ac113873786365ed63efcf667c952d7d197
 
 这时候终端会输出：
 
@@ -323,32 +338,29 @@ This node has joined the cluster:
 * The Kubelet was informed of the new secure connection details.
 
 Run 'kubectl get nodes' on the master to see this node join the cluster.
+```
 
+- 如果 node 节点加入失败，可以：`kubeadm reset`，再来重新 join
+- 在 master 节点上：`kubectl get cs`
 
-如果 node 节点加入失败，可以：kubeadm reset，再来重新 join
-
-
-
-
-在 master 节点上：kubectl get cs
+```
 NAME                 STATUS    MESSAGE              ERROR
 controller-manager   Healthy   ok
 scheduler            Healthy   ok
 etcd-0               Healthy   {"health": "true"} 
 结果都是 Healthy 则表示可以了，不然就得检查。必要时可以用：`kubeadm reset` 重置，重新进行集群初始化
+```
 
 
+- 在 master 节点上：`kubectl get nodes`
 
-验证：
-kubectl get nodes
-如果还是 NotReady，则查看错误信息：
-kubectl get pods --all-namespaces，其中：Pending/ContainerCreating/ImagePullBackOff 都是 Pod 没有就绪，我们可以这样查看对应 Pod 遇到了什么问题
+```
+如果还是 NotReady，则查看错误信息：kubectl get pods --all-namespaces
+其中：Pending/ContainerCreating/ImagePullBackOff 都是 Pod 没有就绪，我们可以这样查看对应 Pod 遇到了什么问题
 kubectl describe pod <Pod Name> --namespace=kube-system
 或者：kubectl logs <Pod Name> -n kube-system
 tail -f /var/log/messages
-
 ```
-
 
 
 
