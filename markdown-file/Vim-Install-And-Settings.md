@@ -117,6 +117,10 @@
 	- 进入 vim 后，按 `F5`，然后 `shift + insert` 进行粘贴。这种事就不会错乱了。
 	- 原因是：`vim ~/.vimrc` 中有一行这样的设置：`set pastetoggle=<F5>`
 
+## 其他常用命令
+
+- 对两个文件进行对比：`vimdiff /opt/1.txt /opt/2.txt`
+
 ## 资料
 
 - [vim几个小技巧（批量替换，列编辑）](http://blogread.cn/it/article/1010?f=sa)
