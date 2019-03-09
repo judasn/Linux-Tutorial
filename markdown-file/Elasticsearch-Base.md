@@ -25,7 +25,7 @@ services:
 -------------------------------------------------------------------
 
 
-## Elasticsearch 6.5.x 安装（适配与 5.5.x）
+## Elasticsearch 6.5.x 安装（适配与 5.5.x，6.6.x）
 
 #### 环境
 
@@ -113,6 +113,12 @@ type=rpm-md
 #### 安装 X-Pack（6.5.x 默认带了 x-pack）
 
 - `cd /usr/share/elasticsearch && bin/elasticsearch-plugin install x-pack`
+
+#### GUI 客户端工具
+
+- 优先推荐：<https://www.elastic-kaizen.com/download.html>
+- <https://github.com/ElasticHQ/elasticsearch-HQ>
+
 
 #### 安装 Chrome 扩展的 Head
 
