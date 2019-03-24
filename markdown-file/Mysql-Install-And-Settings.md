@@ -148,6 +148,27 @@ rpm -Uvh https://mirror.webtatic.com/yum/el6/latest.rpm
             - `ln -s /usr/local/mysql/bin/mysqldump /usr/bin`
             - `ln -s /usr/local/mysql/bin/mysqlslap /usr/bin`
 
+## MySQL 5.7 YUM 安装
+
+- 官网：<https://dev.mysql.com/doc/refman/5.7/en/linux-installation-yum-repo.html>
+
+```
+
+禁用 selinux：setenforce 0
+
+wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
+yum localinstall mysql57-community-release-el7-11.noarch.rpm
+yum install mysql-community-server
+一共 194M
+
+配置文件：/etc/my.cnf
+systemctl start mysqld
+systemctl status mysqld
+
+查看初次使用的临时密码：grep 'temporary password' /var/log/mysqld.log
+
+```
+
 -------------------------------------------------------------------
 
 

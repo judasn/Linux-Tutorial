@@ -47,6 +47,8 @@
 - `--debug-info` 代表要额外输出 CPU 以及内存的相关信息。
 - `--only-print` 打印压力测试的时候 mysqlslap 到底做了什么事，通过 sql 语句方式告诉我们。
 
+-------------------------------------------------------------------
+
 
 ## sysbench 工具
 
@@ -148,6 +150,8 @@ Threads fairness:
     events (avg/stddev):           2748.6000/132.71 --总处理事件数/标准偏差
     execution time (avg/stddev):   119.9907/0.00 --总执行时间/标准偏差
 
+-------------------------------------------------------------------
+
 ## QPS 和 TPS 和说明
 
 ### 基本概念
@@ -171,6 +175,157 @@ Threads fairness:
 - 每天300wPV的在单台机器上，这台机器需要多少QPS？对于这样的问题，假设每天80%的访问集中在20%的时间里，这20%时间叫做峰值时间。( 3000000 * 0.8 ) / (3600 * 24 * 0.2 ) = 139 (QPS).
 - 如果一台机器的QPS是58，需要几台机器来支持？答：139 / 58 = 3
 
+-------------------------------------------------------------------
+
+## Percona TPCC-MySQL 测试工具（优先推荐）
+
+- 可以较好地模拟真实测试结果数据
+- 官网主页：<https://github.com/Percona-Lab/tpcc-mysql>
+
+```
+TPC-C 是专门针对联机交易处理系统（OLTP系统）的规范，一般情况下我们也把这类系统称为业务处理系统。
+TPC-C是TPC(Transaction Processing Performance Council)组织发布的一个测试规范，用于模拟测试复杂的在线事务处理系统。其测试结果包括每分钟事务数(tpmC)，以及每事务的成本(Price/tpmC)。
+在进行大压力下MySQL的一些行为时经常使用。
+```
+
+### 安装
+
+- 先确定本机安装过 MySQL
+- 并且安装过：`yum install mysql-devel`
+
+```
+git clone https://github.com/Percona-Lab/tpcc-mysql
+cd tpcc-mysql/src
+make
+
+如果make没报错，就会在tpcc-mysql 根目录文件夹下生成tpcc二进制命令行工具tpcc_load、tpcc_start
+```
+
+### 测试的几个表介绍
+
+```
+tpcc-mysql的业务逻辑及其相关的几个表作用如下：
+New-Order：新订单，主要对应 new_orders 表
+Payment：支付，主要对应 orders、history 表
+Order-Status：订单状态，主要对应 orders、order_line 表
+Delivery：发货，主要对应 order_line 表
+Stock-Level：库存，主要对应 stock 表
+
+其他相关表：
+客户：主要对应customer表
+地区：主要对应district表
+商品：主要对应item表
+仓库：主要对应warehouse表
+```
+
+### 准备
+
+- 测试阿里云 ECS 与 RDS 是否相通：
+- 记得在 RDS 添加账号和给账号配置权限，包括：配置权限、数据权限（默认添加账号后都是没有开启的，还要自己手动开启）
+- 还要添加内网 ECS 到 RDS 的白名单 IP 里面
+- 或者在 RDS 上开启外网访问设置，但是也设置 IP 白名单（访问 ip.cn 查看自己的外网 IP 地址，比如：120.85.112.97）
+
+```
+ping rm-wz9066qo44wn500t55o.mysql.rds.aliyuncs.com
+
+mysql -h rm-wz9066qo44wn500t55o.mysql.rds.aliyuncs.com -P 3306 -u myaccount -p
+
+输入密码：Aa123456
+```
+
+
+
+```
+创库，名字为：TPCC：
+CREATE DATABASE TPCC DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+
+导入项目中的出初始化数据脚本：
+创建表：create_table.sql
+创建索引和外键：add_fkey_idx.sql
+```
+
+
+### 测试
+
+- 数据库：阿里云 RDS-MySQL-5.7-2C4G
+- 测试机：阿里云 ECS-4C8G-CentOS7.6
+
+- 需要注意的是 tpcc 默认会读取 /var/lib/mysql/mysql.sock 这个 socket 文件。因此，如果你的socket文件不在相应路径的话，可以做个软连接，或者通过TCP/IP的方式连接测试服务器
+- 准备数据：
+
+```
+cd /opt/tpcc-mysql
+./tpcc_load -h rm-wz9066qo44wn500t55o.mysql.rds.aliyuncs.com -P 3306 -d TPCC -u myaccount -p Aa123456 -w 100
+-w 100 表示创建 100 个仓库数据
+这个过程花费时间还是挺长的，我这台 ECS 结果是这样：
+差不多 9s == 5000 个数据。
+也就是：
+10W 个数据需要 == 20 X 9s == 180s == 3min
+1000W == 5h
+一共差不多花了 10h 左右。
+
+插入过程 RDS-2C4G 的监控情况：
+CPU利用率 4%
+内存 18% ~ 40% （随着数据增加而增大）
+连接数：1%
+IOPS：4%
+已使用存储空间：5.5G ~ 10G
+
+要模拟出够真实的数据，仓库不要太少，一般要大于 100，
+当然你也可以 select count(*) from 上面的各个表，看下 100 个库生成的数据，是不是跟你预期数据差不多，是的话就够了。
+
+select count(*) from customer;
+10s X 10 X 100 = 10000s
+
+select count(*) from district;
+select count(*) from history;
+select count(*) from item;
+    100 个仓库 == 1000 X 100 == 100000 == 10W
+select count(*) from new_orders;
+select count(*) from order_line;
+select count(*) from orders;
+select count(*) from stock;
+    100 个仓库 == 100000 X 100 == 10000000 = 1000W
+select count(*) from warehouse;
+```
+
+- 开始测试：
+
+```
+
+tpcc_start -h rm-wz9066qo44wn500t55o.mysql.rds.aliyuncs.com -P 3306 -d TPCC -u myaccount -p Aa123456 -w 100 -c 200 -r 300 -l 2400 -f /opt/mysql_tpcc_100_20190324
+
+-w 100 表示 100 个仓库数据
+-c 200 表示并发 200 个线程
+-r 300 表示预热 300 秒
+-l 2400 表示持续压测 2400 秒
+
+```
+
+
+### 报表
+
+
+```
+行数据表示：10, 1187(0):1.682|2.175, 1187(0):0.336|0.473, 118(0):0.172|0.226, 118(0):1.864|2.122, 119(0):6.953|8.107
+
+10：时间戳,每十秒产生一条数据。
+1187(0):1.682|2.175：表示10秒内完成1187笔新订单业务。
+1187(0):0.336|0.473: 支付业务，
+118(0):1.864|2.122:查询业务，
+118(0):0.172|0.226: 发货业务，
+119(0):6.953|8.107: 库存查询业务
+
+
+
+<TpmC>
+188.000 TpmC
+TpmC结果值(每分钟事务数，该值是第一次统计结果中的新订单事务数除以总耗时分钟数，例如本例中是：372/2=186)
+tpmC值在国内外被广泛用于衡量计算机系统的事务处理能力
+```
+
+
 
 
 ## 资料
@@ -181,3 +336,4 @@ Threads fairness:
 - <http://blog.chinaunix.net/uid-25723371-id-3498970.html>
 - <http://nsimple.top/archives/mysql-sysbench-tool.html>
 - <https://dearhwj.gitbooks.io/itbook/content/test/performance_test_qps_tps.html>
+- <https://www.hi-linux.com/posts/38534.html>
