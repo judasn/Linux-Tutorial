@@ -60,10 +60,11 @@ db.createUser(
 - 赋权：`chmod 777 -R /data/docker/mongo/db`
 - 运行镜像：`docker run --name cloud-mongo2 -p 37017:27017 -v /data/docker/mongo/db:/data/db -d mongo:3.4 --auth`
 - 进入容器中 mongo shell 交互界面：`docker exec -it cloud-mongo2 mongo`
-    - 进入 admin：`use admin`
 - 创建一个超级用户：
 
 ```
+use admin
+
 db.createUser(
     {
         user: "mongo-admin",
@@ -73,10 +74,11 @@ db.createUser(
         ]
     }
 )
+
+db.auth("mongo-admin","123456")
 ```
 
-- 验证账号：`db.auth("mongo-admin","123456")`
-    - 使用 db.auth() 可以对数据库中的用户进行验证，如果验证成功则返回 1，否则返回 0
+- 使用 db.auth() 可以对数据库中的用户进行验证，如果验证成功则返回 1，否则返回 0
 - 接着创建一个普通数据库和用户：
 
 ```
