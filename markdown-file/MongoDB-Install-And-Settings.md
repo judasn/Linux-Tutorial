@@ -362,6 +362,15 @@ $ne ->not equal 不等于
 
 - Robomongo：<https://robomongo.org/>
 
+## 基准测试
+
+- <https://github.com/brianfrankcooper/YCSB/tree/master/mongodb#4-run-ycsb>
+
+## 随机生成测试数据
+
+- <https://github.com/feliixx/mgodatagen>
+
+
 ## 资料
 
 - <http://www.cnblogs.com/zhoujinyi/p/4610050.html>
