@@ -22,8 +22,9 @@
 - 请查看介绍中支持哪个版本：<https://robomongo.org/download>
 - 目前 201712 支持 MongoDB 3.4
 
+-------------------------------------------------------------------
 
-## Docker 下安装 MongoDB
+## Docker 下安装 MongoDB（方式一）
 
 - 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/docker/mongo/db`
 - 赋权：`chmod 777 -R /data/docker/mongo/db`
@@ -51,16 +52,61 @@ db.createUser(
 - 导出：`docker exec -it cloud-mongo mongoexport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 -o /data/db/mongodb.json --type json`
 - 导入：`docker exec -it cloud-mongo mongoimport -h 127.0.0.1 -u 用户名 -p 密码 -d 库名 -c 集合名 --file /data/db/mongodb.json --type json`
 
-## 安装环境
 
-- CentOS 6
 
-## MongoDB 安装
+## Docker 下安装 MongoDB（方式二）
+
+- 先创建一个宿主机以后用来存放数据的目录：`mkdir -p /data/docker/mongo/db`
+- 赋权：`chmod 777 -R /data/docker/mongo/db`
+- 运行镜像：`docker run --name cloud-mongo2 -p 37017:27017 -v /data/docker/mongo/db:/data/db -d mongo:3.4 --auth`
+- 进入容器中 mongo shell 交互界面：`docker exec -it cloud-mongo2 mongo`
+    - 进入 admin：`use admin`
+- 创建一个超级用户：
+
+```
+db.createUser(
+    {
+        user: "mongo-admin",
+        pwd: "123456",
+        roles: [ 
+            { role: "root", db: "admin" }
+        ]
+    }
+)
+```
+
+- 验证账号：`db.auth("mongo-admin","123456")`
+    - 使用 db.auth() 可以对数据库中的用户进行验证，如果验证成功则返回 1，否则返回 0
+- 接着创建一个普通数据库和用户：
+
+```
+
+use my_test_db
+
+
+db.createUser(
+    {
+        user: "mytestuser",
+        pwd: "123456",
+        roles: [ 
+            { role: "dbAdmin", db: "my_test_db" },
+            { role: "readWrite", db: "my_test_db" }
+        ]
+    }
+)
+
+
+db.auth("mytestuser","123456")
+```
+
+-------------------------------------------------------------------
+
+## MongoDB 传统方式安装
 
 - 关闭 SELinux
 	- 编辑配置文件：`vim /etc/selinux/config`
 	- 把 `SELINUX=enforcing` 改为 `SELINUX=disabled`
-- MongoDB 安装
+- MongoDB 资料
 	- 官网：<https://www.mongodb.com>
 	- 官网文档：<https://docs.mongodb.com/manual/reference/method/>
 	- 此时（20170228） 最新稳定版本为：**3.4.2**
