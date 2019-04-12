@@ -1,0 +1,25 @@
+# http://editorconfig.org
+# 官网首页有介绍：IntelliJ IDEA，VS Code 默认就支持，无需额外安装插件
+root = true
+
+# 空格替代Tab缩进在各种编辑工具下效果一致
+[*]
+indent_style = space
+indent_size = 4
+charset = utf-8
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+max_line_length = 200
+
+
+
+[*.java]
+indent_style = tab
+
+[*.{json,yml}]
+indent_size = 2
+
+[*.md]
+insert_final_newline = false
+trim_trailing_whitespace = false

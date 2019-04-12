@@ -3,6 +3,15 @@
 
 - 下面说的优化基于 MySQL 5.6，理论上 5.5 之后的都算适用，具体还是要看官网
 
+## 优秀材料
+
+- <https://notes.diguage.com/mysql/>
+- <>
+- <>
+- <>
+- <>
+
+
 ## 服务状态查询
 
 - 查看当前数据库的状态，常用的有：
@@ -10,14 +19,23 @@
 	- 查看刚刚执行 SQL 是否有警告信息：`SHOW WARNINGS;`
 	- 查看刚刚执行 SQL 是否有错误信息：`SHOW ERRORS;`
 	- 查看已经连接的所有线程状况：`SHOW FULL PROCESSLIST;`
+	    - 输出参数说明：<http://www.ibloger.net/article/2519.html>
+	    - 可以结束某些连接：`kill id值`
 	- 查看当前连接数量：`SHOW STATUS LIKE 'max_used_connections';`
 	- 查看变量，在 my.cnf 中配置的变量会在这里显示：`SHOW VARIABLES;`
+	- 查询慢 SQL 配置：`show variables like 'slow%';`
+	    - 开启慢 SQL：`set global slow_query_log='ON'`
+    - 查询慢 SQL 秒数值：` show variables like 'long%';`
+        - 调整秒速值：`set long_query_time=1;`
 	- 查看当前MySQL 中已经记录了多少条慢查询，前提是配置文件中开启慢查询记录了.
 		- `SHOW STATUS LIKE '%slow_queries%';`
 	- 查询当前MySQL中查询、更新、删除执行多少条了，可以通过这个来判断系统是侧重于读还是侧重于写，如果是写要考虑使用读写分离。
 		- `SHOW STATUS LIKE '%Com_select%';`
+		- `SHOW STATUS LIKE '%Com_insert%';`
 		- `SHOW STATUS LIKE '%Com_update%';`
 		- `SHOW STATUS LIKE '%Com_delete%';`
+	- 如果 rollback 过多，说明程序肯定哪里存在问题
+		- `SHOW STATUS LIKE '%Com_rollback%';`
 	- 显示MySQL服务启动运行了多少时间，如果MySQL服务重启，该时间重新计算，单位秒
 		- `SHOW STATUS LIKE 'uptime';`
 	- 显示查询缓存的状态情况
@@ -35,23 +53,22 @@
 		- 6. Qcache_not_cached # 没有进行缓存的查询的数量，通常是这些查询未被缓存或其类型不允许被缓存
 		- 7. Qcache_queries_in_cache # 在当前缓存的查询（和响应）的数量。 
 		- 8. Qcache_total_blocks #缓存中块的数量。
+- 查询哪些表在被使用，是否有锁表：`SHOW OPEN TABLES WHERE In_use > 0;`
+- 查询 innodb 状态（输出内容很多）：`SHOW ENGINE INNODB STATUS;`
+- 锁性能状态：`SHOW STATUS LIKE  'innodb_row_lock_%';`
+    - Innodb_row_lock_current_waits：当前等待锁的数量
+    - Innodb_row_lock_time：系统启动到现在、锁定的总时间长度
+    - Innodb_row_lock_time_avg：每次平均锁定的时间
+    - Innodb_row_lock_time_max：最长一次锁定时间
+    - Innodb_row_lock_waits：系统启动到现在、总共锁定次数
+- 帮我们分析表，并提出建议：`select * from my_table procedure analyse();`
 
 
+## 系统表
 
-
-## my.cnf 常配置项
-
-- `key_buffer_size`，索引缓冲区大小。
-- `query_cache_size`，查询缓存。
-- `max_connections = 1000`，MySQL 的最大并发连接数
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
+- 当前运行的所有事务：`select * from information_schema.INNODB_TRX;`
+- 当前事务出现的锁：`select * from information_schema.INNODB_LOCKS;`
+- 锁等待的对应关系：`select * from information_schema.INNODB_LOCK_WAITS;`
 
 
 ## 查询优化
@@ -109,6 +126,46 @@
 	- 优化：
 		- 可以使用连接查询（JOIN）代替子查询，连接查询时不需要建立临时表，其速度比子查询快。
 
+## 查询不走索引优化
+
+- WHERE字句的查询条件里有不等于号（WHERE column!=…），MYSQL将无法使用索引
+- 类似地，如果WHERE字句的查询条件里使用了函数（如：WHERE DAY(column)=…），MYSQL将无法使用索引
+- 在JOIN操作中（需要从多个数据表提取数据时），MYSQL只有在主键和外键的数据类型相同时才能使用索引，否则即使建立了索引也不会使用
+- 如果WHERE子句的查询条件里使用了比较操作符LIKE和REGEXP，MYSQL只有在搜索模板的第一个字符不是通配符的情况下才能使用索引。比如说，如果查询条件是LIKE 'abc%',MYSQL将使用索引；如果条件是LIKE '%abc'，MYSQL将不使用索引。
+- 在ORDER BY操作中，MYSQL只有在排序条件不是一个查询条件表达式的情况下才使用索引。尽管如此，在涉及多个数据表的查询里，即使有索引可用，那些索引在加快ORDER BY操作方面也没什么作用。
+- 如果某个数据列里包含着许多重复的值，就算为它建立了索引也不会有很好的效果。比如说，如果某个数据列里包含了净是些诸如“0/1”或“Y/N”等值，就没有必要为它创建一个索引。
+- 索引有用的情况下就太多了。基本只要建立了索引，除了上面提到的索引不会使用的情况下之外，其他情况只要是使用在WHERE条件里，ORDER BY 字段，联表字段，一般都是有效的。 建立索引要的就是有效果。 不然还用它干吗？ 如果不能确定在某个字段上建立的索引是否有效果，只要实际进行测试下比较下执行时间就知道。
+- 如果条件中有or(并且其中有or的条件是不带索引的)，即使其中有条件带索引也不会使用(这也是为什么尽量少用or的原因)。注意：要想使用or，又想让索引生效，只能将or条件中的每个列都加上索引
+- 如果列类型是字符串，那一定要在条件中将数据使用引号引用起来,否则不使用索引
+- 如果mysql估计使用全表扫描要比使用索引快,则不使用索引
+
+
+## 其他查询优化
+
+- 关联查询过程
+    - 确保 ON 或者 using子句中的列上有索引
+    - 确保任何的 groupby 和 orderby 中的表达式只涉及到一个表中的列。
+- count()函数优化
+    - count()函数有一点需要特别注意：它是不统计值为NULL的字段的！所以：不能指定查询结果的某一列，来统计结果行数。即 count(xx column) 不太好。
+    - 如果想要统计结果集，就使用 count(*)，性能也会很好。
+- 分页查询（数据偏移量大的场景）
+    - 不允许跳页，只能上一页或者下一页
+    - 使用 where 加上上一页 ID 作为条件(具体要看 explain 分析效果)：`select xxx,xxx from test_table where id < '上页id分界值' order by id desc limit 20;`
+
+## 创表原则
+
+- 所有字段均定义为 NOT NULL ，除非你真的想存 Null。因为表内默认值 Null 过多会影响优化器选择执行计划
+
+
+## 建立索引原则
+
+- 使用区分度高的列作为索引，字段不重复的比例，区分度越高，索引树的分叉也就越多，一次性找到的概率也就越高。
+- 尽量使用字段长度小的列作为索引
+- 使用数据类型简单的列（int 型，固定长度）
+- 选用 NOT NULL 的列。在MySQL中，含有空值的列很难进行查询优化，因为它们使得索引、索引的统计信息以及比较运算更加复杂。你应该用0、一个特殊的值或者一个空串代替空值。
+- 尽量的扩展索引，不要新建索引。比如表中已经有a的索引，现在要加(a,b)的索引，那么只需要修改原来的索引即可。这样也可避免索引重复。
+
+
 
 ## 数据库结构优化
 
@@ -152,7 +209,36 @@
 	- 可以看我整理的这篇文章：<https://github.com/judasn/Linux-Tutorial/blob/master/MySQL-Settings/MySQL-5.6/1G-Memory-Machine/my-for-comprehensive.cnf>
 - 由于 binlog 日志的读写频繁，可以考虑在 my.cnf 中配置，指定这个 binlog 日志到一个 SSD 硬盘上。
 
+
+## 锁相关
+
+InnoDB支持事务；InnoDB 采用了行级锁。也就是你需要修改哪行，就可以只锁定哪行。
+在 Mysql 中，行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql 语句操作了主键索引，Mysql 就会锁定这条主键索引；如果一条语句操作了非主键索引，MySQL会先锁定该非主键索引，再锁定相关的主键索引。
+InnoDB 行锁是通过给索引项加锁实现的，如果没有索引，InnoDB 会通过隐藏的聚簇索引来对记录加锁。也就是说：如果不通过索引条件检索数据，那么InnoDB将对表中所有数据加锁，实际效果跟表锁一样。因为没有了索引，找到某一条记录就得扫描全表，要扫描全表，就得锁定表。
+
+
+数据库的增删改操作默认都会加排他锁，而查询不会加任何锁。
+
+排他锁：对某一资源加排他锁，自身可以进行增删改查，其他人无法进行任何操作。语法为：
+select * from table for update;
+
+共享锁：对某一资源加共享锁，自身可以读该资源，其他人也可以读该资源（也可以再继续加共享锁，即 共享锁可多个共存），但无法修改。
+要想修改就必须等所有共享锁都释放完之后。语法为：
+select * from table lock in share mode;
+
+
+
 ## 资料
 
 - <https://my.oschina.net/jsan/blog/653697>
 - <https://blog.imdst.com/mysql-5-6-pei-zhi-you-hua/>
+- <https://mp.weixin.qq.com/s/qCRfxIr1RoHd9i8-Hk8iuQ>
+- <https://yancg.cn/detail?id=3>
+- <https://www.jianshu.com/p/1ab3cd5551b9>
+- <http://blog.brucefeng.info/post/mysql-index-query?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io>
+- <>
+- <>
+- <>
+- <>
+- <>
+- <>
