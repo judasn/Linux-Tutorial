@@ -71,60 +71,106 @@
 - 锁等待的对应关系：`select * from information_schema.INNODB_LOCK_WAITS;`
 
 
-## 查询优化
+## otpimizer trace
 
-- 使用 EXPLAIN 进行 SQL 语句分析：`EXPLAIN SELECT * FROM sys_user;`
-- 得到的结果有下面几列：
-	- **id**，该列表示当前结果序号，无特殊意义，不重要
+- 作用：输入我们想要查看优化过程的查询语句，当该查询语句执行完成后，就可以到 information_schema 数据库下的OPTIMIZER_TRACE表中查看 mysql 自己帮我们的完整优化过程
+- 是否打开（默认都是关闭）：`SHOW VARIABLES LIKE 'optimizer_trace';`
+    - one_line的值是控制输出格式的，如果为on那么所有输出都将在一行中展示，不适合人阅读，所以我们就保持其默认值为off吧。
+- 打开配置：`SET optimizer_trace="enabled=on";`
+- 关闭配置：`SET optimizer_trace="enabled=off";`
+- 查询优化结果：`SELECT * FROM information_schema.OPTIMIZER_TRACE;`
+
+```
+我们所说的基于成本的优化主要集中在optimize阶段，对于单表查询来说，我们主要关注optimize阶段的"rows_estimation"这个过程，这个过程深入分析了对单表查询的各种执行方案的成本；
+对于多表连接查询来说，我们更多需要关注"considered_execution_plans"这个过程，这个过程里会写明各种不同的连接方式所对应的成本。
+反正优化器最终会选择成本最低的那种方案来作为最终的执行计划，也就是我们使用EXPLAIN语句所展现出的那种方案。
+如果有小伙伴对使用EXPLAIN语句展示出的对某个查询的执行计划很不理解，大家可以尝试使用optimizer trace功能来详细了解每一种执行方案对应的成本，相信这个功能能让大家更深入的了解MySQL查询优化器。
+```
+
+
+
+## 查询优化(EXPLAIN 查看执行计划)
+
+- 使用 EXPLAIN 进行 SQL 语句分析：`EXPLAIN SELECT * FROM sys_user;`，效果如下：
+
+```
+id|select_type|table   |partitions|type|possible_keys|key|key_len|ref|rows|filtered|Extra|
+--|-----------|--------|----------|----|-------------|---|-------|---|----|--------|-----|
+ 1|SIMPLE     |sys_user|          |ALL |             |   |       |   |   2|     100|     |
+```
+
+- 简单描述
+    - `id`：在一个大的查询语句中每个 SELECT 关键字都对应一个唯一的id
+    - `select_type`：SELECT 关键字对应的那个查询的类型
+    - `table`：表名
+    - `partitions`：匹配的分区信息
+    - `type`：针对单表的访问方法
+    - `possible_keys`：可能用到的索引
+    - `key`：实际上使用的索引
+    - `key_len`：实际使用到的索引长度
+    - `ref`：当使用索引列等值查询时，与索引列进行等值匹配的对象信息
+    - `rows`：预估的需要读取的记录条数
+    - `filtered`：某个表经过搜索条件过滤后剩余记录条数的百分比
+    - `Extra`：一些额外的信息
+- 有多个结果的场景分析
+    - 有子查询的一般都会有多个结果，id 是递增值。但是，有些场景查询优化器可能对子查询进行重写，转换为连接查询。所以有时候 id 就不是自增值。
+    - 对于连接查询一般也会有多个接口，id 可能是相同值，相同值情况下，排在前面的记录表示驱动表，后面的表示被驱动表
+    - UNION 场景会有 id 为 NULL 的情况，这是一个去重后临时表，合并多个结果集的临时表。但是，UNION ALL 不会有这种情况，因为这个不需要去重。
+- 根据具体的描述：
+	- **id**，该列表示当前结果序号
 	- **select_type**，表示 SELECT 语句的类型，有下面几种
-		- SIMPLE，表示简单查询，其中不包括连接查询和子查询
-		- PRIMARY，表示主查询，或者是最外面的查询语句。比如你使用一个子查询语句，比如这条 SQL：`EXPLAIN SELECT * FROM (SELECT sys_user_id FROM sys_user WHERE sys_user_id = 1) AS temp_table;`
-			- 这条 SQL 有两个结果，其中有一个结果的类型就是 PRIMARY
-		- UNION，使用 UNION 的 SQL 是这个类型
-		- DERIVED，在 SQL 中 From 后面子查询
-		- SUBQUERY，子查询
+		- `SIMPLE`：表示简单查询，其中不包括 UNION 查询和子查询
+		- `PRIMARY`：对于包含UNION、UNION ALL或者子查询的大查询来说，它是由几个小查询组成的，其中最左边的那个查询的select_type值就是PRIMARY
+		- `UNION`：对于包含UNION或者UNION ALL的大查询来说，它是由几个小查询组成的，其中除了最左边的那个小查询以外，其余的小查询的select_type值就是UNION
+		- `UNION RESULT`：MySQL选择使用临时表来完成UNION查询的去重工作，针对该临时表的查询的select_type就是UNION RESULT
+		- `SUBQUERY`：如果包含子查询的查询语句不能够转为对应的semi-join的形式，并且该子查询是不相关子查询，并且查询优化器决定采用将该子查询物化的方案来执行该子查询时，该子查询的第一个SELECT关键字代表的那个查询的select_type就是SUBQUERY
+		- `DEPENDENT SUBQUERY`：如果包含子查询的查询语句不能够转为对应的semi-join的形式，并且该子查询是相关子查询，则该子查询的第一个SELECT关键字代表的那个查询的select_type就是DEPENDENT SUBQUERY
+		- `DEPENDENT UNION`：在包含UNION或者UNION ALL的大查询中，如果各个小查询都依赖于外层查询的话，那除了最左边的那个小查询之外，其余的小查询的select_type的值就是DEPENDENT UNION
+		- `DERIVED`：对于采用物化的方式执行的包含派生表的查询，该派生表对应的子查询的select_type就是DERIVED
+		- `MATERIALIZED`：当查询优化器在执行包含子查询的语句时，选择将子查询物化之后与外层查询进行连接查询时，该子查询对应的select_type属性就是MATERIALIZED
 		- 还有其他一些
 	- **table**，表名或者是子查询的一个结果集
 	- **type**，表示表的链接类型，分别有（以下的连接类型的顺序是从最佳类型到最差类型）**（这个属性重要）**：
 		- 性能好：
-			- system，表仅有一行，这是 const 类型的特列，平时不会出现，这个也可以忽略不计。
-			- const，数据表最多只有一个匹配行，因为只匹配一行数据，所以很快，常用于 PRIMARY KEY 或者 UNIQUE 索引的查询，可理解为 const 是最优化的。
-			- eq_ref，mysql 手册是这样说的:"对于每个来自于前面的表的行组合，从该表中读取一行。这可能是最好的联接类型，除了 const 类型。它用在一个索引的所有部分被联接使用并且索引是 UNIQUE(唯一键) 也不是 PRIMARY KEY(主键)"。eq_ref 可以用于使用 = 比较带索引的列。
-			- ref，查询条件索引既不是 UNIQUE(唯一键) 也不是 PRIMARY KEY(主键) 的情况。ref 可用于 = 或 < 或 > 操作符的带索引的列。
-			- ref_or_null，该联接类型如同 ref，但是添加了 MySQL 可以专门搜索包含 NULL 值的行。在解决子查询中经常使用该联接类型的优化。
+			- `system`：当表中只有一条记录并且该表使用的存储引擎的统计数据是精确的，比如MyISAM、Memory，那么对该表的访问方法就是system，平时不会出现，这个也可以忽略不计。
+			- `const`：当我们根据主键或者唯一二级索引列与常数进行等值匹配时，对单表的访问方法就是const，常用于 PRIMARY KEY 或者 UNIQUE 索引的查询，可理解为 const 是最优化的。
+			- `eq_ref`：在连接查询时，如果被驱动表是通过主键或者唯一二级索引列等值匹配的方式进行访问的（如果该主键或者唯一二级索引是联合索引的话，所有的索引列都必须进行等值比较），则对该被驱动表的访问方法就是eq_ref
+			- `ref`：当通过普通的二级索引列与常量进行等值匹配时来查询某个表，那么对该表的访问方法就可能是ref。ref 可用于 = 或 < 或 > 操作符的带索引的列。
+			- `ref_or_null`：当对普通二级索引进行等值匹配查询，该索引列的值也可以是NULL值时，那么对该表的访问方法就可能是ref_or_null
 		- 性能较差：
-			- index_merge，该联接类型表示使用了索引合并优化方法。在这种情况下，key 列包含了使用的索引的清单，key_len 包含了使用的索引的最长的关键元素。
-			- unique_subquery，该类型替换了下面形式的IN子查询的ref: `value IN (SELECT primary_key FROM single_table WHERE some_expr)`。unique_subquery 是一个索引查找函数,可以完全替换子查询,效率更高。
-			- index_subquery，该联接类型类似于 unique_subquery。可以替换 IN 子查询, 但只适合下列形式的子查询中的非唯一索引: `value IN (SELECT key_column FROM single_table WHERE some_expr)`
-			- range，只检索给定范围的行, 使用一个索引来选择行。
-			- index，该联接类型与 ALL 相同, 除了只有索引树被扫描。这通常比 ALL 快, 因为索引文件通常比数据文件小。
+			- `index_merge`：该联接类型表示使用了索引合并优化方法。在这种情况下，key 列包含了使用的索引的清单，key_len 包含了使用的索引的最长的关键元素。
+			- `unique_subquery`：类似于两表连接中被驱动表的eq_ref访问方法，unique_subquery是针对在一些包含IN子查询的查询语句中，如果查询优化器决定将IN子查询转换为EXISTS子查询，而且子查询可以使用到主键进行等值匹配的话，那么该子查询执行计划的type列的值就是unique_subquery
+			- `index_subquery`：index_subquery与unique_subquery类似，只不过访问子查询中的表时使用的是普通的索引
+			- `range`：只检索给定范围的行, 使用一个索引来选择行。
+			- `index`：该联接类型与 ALL 相同, 除了只有索引树被扫描。这通常比 ALL 快, 因为索引文件通常比数据文件小。
+			    - 再一次强调，对于使用InnoDB存储引擎的表来说，二级索引的记录只包含索引列和主键列的值，而聚簇索引中包含用户定义的全部列以及一些隐藏列，所以扫描二级索引的代价比直接全表扫描，也就是扫描聚簇索引的代价更低一些
 		- 性能最差：
-			- ALL，对于每个来自于先前的表的行组合, 进行完整的表扫描。（性能最差）
-	- **possible_keys**，指出 MySQL 能使用哪个索引在该表中找到行。如果该列为 NULL，说明没有使用索引，可以对该列创建索引来提供性能。**（这个属性重要）**
-	- **key**，显示 MySQL 实际决定使用的键 (索引)。如果没有选择索引, 键是 NULL。**（这个属性重要）**
-	- **key**_len，显示 MySQL 决定使用的键长度。如果键是 NULL, 则长度为 NULL。注意：key_len 是确定了 MySQL 将实际使用的索引长度。
-	- **ref**，显示使用哪个列或常数与 key 一起从表中选择行。
-	- **rows**，显示 MySQL 认为它执行查询时必须检查的行数。**（这个属性重要）**
-	- **Extra**，该列包含 MySQL 解决查询的详细信息：
-		- Distinct:MySQL 发现第 1 个匹配行后, 停止为当前的行组合搜索更多的行。
-		- Not exists:MySQL 能够对查询进行 LEFT JOIN 优化, 发现 1 个匹配 LEFT JOIN 标准的行后, 不再为前面的的行组合在该表内检查更多的行。
-		- range checked for each record (index map: #):MySQL 没有发现好的可以使用的索引, 但发现如果来自前面的表的列值已知, 可能部分索引可以使用。
-		- Using filesort:MySQL 需要额外的一次传递, 以找出如何按排序顺序检索行。
-		- Using index: 从只使用索引树中的信息而不需要进一步搜索读取实际的行来检索表中的列信息。
-		- Using temporary: 为了解决查询,MySQL 需要创建一个临时表来容纳结果。
-		- Using where:WHERE 子句用于限制哪一个行匹配下一个表或发送到客户。
-		- Using sort_union(...), Using union(...), Using intersect(...): 这些函数说明如何为 index_merge 联接类型合并索引扫描。
-		- Using index for group-by: 类似于访问表的 Using index 方式,Using index for group-by 表示 MySQL 发现了一个索引, 可以用来查 询 GROUP BY 或 DISTINCT 查询的所有列, 而不要额外搜索硬盘访问实际的表。
-- **了解对索引不生效的查询情况 （这个属性重要）**
-	- 使用 LIKE 关键字的查询，在使用 LIKE 关键字进行查询的查询语句中，如果匹配字符串的第一个字符为“%”，索引不起作用。只有“%”不在第一个位置，索引才会生效。
-	- 使用联合索引的查询，MySQL 可以为多个字段创建索引，一个索引可以包括 16 个字段。对于联合索引，只有查询条件中使用了这些字段中第一个字段时，索引才会生效。
-	- 使用 OR 关键字的查询，查询语句的查询条件中只有 OR 关键字，且 OR 前后的两个条件中的列都是索引列时，索引才会生效，否则，索引不生效。
-- 子查询优化
-	- MySQL 从 4.1 版本开始支持子查询，使用子查询进行 SELECT 语句嵌套查询，可以一次完成很多逻辑上需要多个步骤才能完成的 SQL 操作。
-	- 子查询虽然很灵活，但是执行效率并不高。
-	- 执行子查询时，MYSQL 需要创建临时表，查询完毕后再删除这些临时表，所以，子查询的速度会受到一定的影响。
-	- 优化：
-		- 可以使用连接查询（JOIN）代替子查询，连接查询时不需要建立临时表，其速度比子查询快。
+			- `ALL`：对于每个来自于先前的表的行组合, 进行完整的表扫描。（性能最差）
+	- `possible_keys`，指出 MySQL 能使用哪个索引在该表中找到行。如果该列为 NULL，说明没有使用索引，可以对该列创建索引来提供性能。**（这个属性重要）**
+	    - possible_keys列中的值并不是越多越好，可能使用的索引越多，查询优化器计算查询成本时就得花费更长时间，所以如果可以的话，尽量删除那些用不到的索引。
+	- `key`，显示 MySQL 实际决定使用的键 (索引)。如果没有选择索引, 键是 NULL。**（这个属性重要）**
+	    - 不过有一点比较特别，就是在使用index访问方法来查询某个表时，possible_keys列是空的，而key列展示的是实际使用到的索引
+	- `key_len`，表示当优化器决定使用某个索引执行查询时，该索引记录的最大长度。如果键是可以为 NULL, 则长度多 1。
+	- `ref`，显示使用哪个列或常数与 key 一起从表中选择行。
+	- `rows`，显示 MySQL 认为它执行查询时必须检查的行数。**（这个属性重要）**
+	- `Extra`，该列包含 MySQL 解决查询的详细信息：
+		- `Distinct` MySQL 发现第 1 个匹配行后, 停止为当前的行组合搜索更多的行。
+		- `Not exists` 当我们使用左（外）连接时，如果WHERE子句中包含要求被驱动表的某个列等于NULL值的搜索条件，而且那个列又是不允许存储NULL值的，那么在该表的执行计划的Extra列就会提示Not exists额外信息
+		- `range checked for each record (index map: #)` MySQL 没有发现好的可以使用的索引, 但发现如果来自前面的表的列值已知, 可能部分索引可以使用。
+		- `Using filesort` 有一些情况下对结果集中的记录进行排序是可以使用到索引的
+		    - 需要注意的是，如果查询中需要使用filesort的方式进行排序的记录非常多，那么这个过程是很耗费性能的，我们最好想办法将使用文件排序的执行方式改为使用索引进行排序。
+		- `Using temporary` 在许多查询的执行过程中，MySQL可能会借助临时表来完成一些功能，比如去重、排序之类的，比如我们在执行许多包含DISTINCT、GROUP BY、UNION等子句的查询过程中，如果不能有效利用索引来完成查询，MySQL很有可能寻求通过建立内部的临时表来执行查询。如果查询中使用到了内部的临时表，在执行计划的Extra列将会显示Using temporary提示
+		    - 如果我们并不想为包含GROUP BY子句的查询进行排序，需要我们显式的写上：ORDER BY NULL
+		    - 执行计划中出现Using temporary并不是一个好的征兆，因为建立与维护临时表要付出很大成本的，所以我们最好能使用索引来替代掉使用临时表
+		- `Using join buffer (Block Nested Loop)` 在连接查询执行过程过，当被驱动表不能有效的利用索引加快访问速度，MySQL一般会为其分配一块名叫join buffer的内存块来加快查询速度，也就是我们所讲的基于块的嵌套循环算法
+		- `Using where`
+		    - 当我们使用全表扫描来执行对某个表的查询，并且该语句的WHERE子句中有针对该表的搜索条件时，在Extra列中会提示上述额外信息
+		    - 当使用索引访问来执行对某个表的查询，并且该语句的WHERE子句中有除了该索引包含的列之外的其他搜索条件时，在Extra列中也会提示上述额外信息
+		- `Using sort_union(...), Using union(...), Using intersect(...)` 如果执行计划的Extra列出现了Using intersect(...)提示，说明准备使用Intersect索引合并的方式执行查询，括号中的...表示需要进行索引合并的索引名称；如果出现了Using union(...)提示，说明准备使用Union索引合并的方式执行查询；出现了Using sort_union(...)提示，说明准备使用Sort-Union索引合并的方式执行查询。
+		- `Using index condition` 有些搜索条件中虽然出现了索引列，但却不能使用到索引
+		- `Using index` 当我们的查询列表以及搜索条件中只包含属于某个索引的列，也就是在可以使用索引覆盖的情况下，在Extra列将会提示该额外信息
+		- `Using index for group-by` 类似于访问表的 Using index 方式,Using index for group-by 表示 MySQL 发现了一个索引, 可以用来查 询 GROUP BY 或 DISTINCT 查询的所有列, 而不要额外搜索硬盘访问实际的表。
+
 
 ## 查询不走索引优化
 
@@ -139,6 +185,14 @@
 - 如果列类型是字符串，那一定要在条件中将数据使用引号引用起来,否则不使用索引
 - 如果mysql估计使用全表扫描要比使用索引快,则不使用索引
 
+
+## 子查询优化
+
+- MySQL 从 4.1 版本开始支持子查询，使用子查询进行 SELECT 语句嵌套查询，可以一次完成很多逻辑上需要多个步骤才能完成的 SQL 操作。
+- 子查询虽然很灵活，但是执行效率并不高。
+- 执行子查询时，MYSQL 需要创建临时表，查询完毕后再删除这些临时表，所以，子查询的速度会受到一定的影响。
+- 优化：
+    - 可以使用连接查询（JOIN）代替子查询，连接查询时不需要建立临时表，其速度比子查询快。
 
 ## 其他查询优化
 
@@ -199,7 +253,9 @@
 		- 插入数据之前执行禁止事务的自动提交，数据插入完成后再恢复，可以提供插入速度。
 		- 禁用：`SET autocommit = 0;`
 		- 开启：`SET autocommit = 1;`
-
+		- 插入数据之前执行禁止对外键的检查，数据插入完成后再恢复
+        - 禁用：`SET foreign_key_checks = 0;`
+        - 开启：`SET foreign_key_checks = 1;`
 
 
 ## 服务器优化
@@ -236,7 +292,7 @@ select * from table lock in share mode;
 - <https://yancg.cn/detail?id=3>
 - <https://www.jianshu.com/p/1ab3cd5551b9>
 - <http://blog.brucefeng.info/post/mysql-index-query?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io>
-- <>
+- <https://juejin.im/book/5bffcbc9f265da614b11b731>
 - <>
 - <>
 - <>
