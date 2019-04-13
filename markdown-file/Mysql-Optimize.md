@@ -6,7 +6,7 @@
 ## 优秀材料
 
 - <https://notes.diguage.com/mysql/>
-- <>
+- <https://mp.weixin.qq.com/s/Wc6Gw6S5xMy2DhTCrogxVQ>
 - <>
 - <>
 - <>
