@@ -1,7 +1,34 @@
 # MySQL 安装和配置
 
 
-## Docker 安装 MySQL
+## Docker 安装 MySQL（不带挂载）
+
+```
+docker run \
+	--name mysql-jira \
+	--restart always \
+	-p 3306:3306 \
+	-e MYSQL_ROOT_PASSWORD=adg_123456 \
+	-e MYSQL_DATABASE=jira_db \
+	-e MYSQL_USER=jira_user \
+	-e MYSQL_PASSWORD=jira_123456 \
+	-d \
+	mysql:5.7
+```
+
+
+- 连上容器：`docker exec -it mysql-jira /bin/bash`
+	- 连上 MySQL：`mysql -u root -p`
+- 设置编码：
+
+```
+SET NAMES 'utf8mb4';
+alter database jira_db character set utf8mb4;
+```
+
+
+
+## Docker 安装 MySQL（带挂载）
 
 - 关掉：SELinux
 - 创建本地数据存储 + 配置文件目录：`mkdir -p /data/docker/mysql/datadir /data/docker/mysql/conf /data/docker/mysql/log`
