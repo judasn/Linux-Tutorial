@@ -576,7 +576,7 @@ TOTAL:（总的流量）       12.9GB          229Mb              190Mb   193Mb 
 #### lsof
 
 - 安装 lsof：`yum install -y lsof`
-- 查看 3316 端口是否有被使用：`lsof -i:3316`，**有被使用会输出类似如下信息，如果没被使用会没有任何信息返回**
+- 查看 3316 端口是否有被使用（macOS 也适用）：`lsof -i:3316`，**有被使用会输出类似如下信息，如果没被使用会没有任何信息返回**
 
 ```
 COMMAND     PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
@@ -596,7 +596,7 @@ docker-pr 13551 root    4u  IPv6 2116824      0t0  TCP *:aicc-cmi (LISTEN)
 #### netstat
 
 - 更多用法可以看：[netstat 的10个基本用法](https://linux.cn/article-2434-1.html)
-- 查看所有在用的端口：`netstat -ntlp`
+- 查看所有在用的端口（macOS 也适用）：`netstat -ntlp`
 
 ```
 Active Internet connections (only servers)
