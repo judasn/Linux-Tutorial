@@ -774,7 +774,8 @@ logger.warn("-------------maxMemory=" + ((double) maxMemory / (1024 * 1024)));
 - Docker Compose 主要用于定义和运行多个 Docker 容器的工具，这样可以快速运行一套分布式系统
 	- 容器之间是有依赖关系，比如我一个 Java web 系统依赖 DB 容器、Redis 容器，必须这些依赖容器先运行起来。
 - 一个文件：docker-compose.yml
-- 一个命令：docker-compose up
+- 一个命令：`docker-compose up`
+    - 指定文件：`docker-compose -f zookeeper.yml -p zk_test up -d`
 - 官网安装说明：<https://docs.docker.com/compose/install/#install-compose>
 - 安装方法：
 

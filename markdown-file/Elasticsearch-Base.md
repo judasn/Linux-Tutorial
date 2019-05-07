@@ -2,6 +2,9 @@
 
 ## Docker 部署
 
+- `vim ~/elasticsearch-5.6.8-docker.yml`
+- 启动：`docker-compose -f ~/elasticsearch-5.6.8-docker.yml -p elasticsearch_5.6.8 up -d`
+
 ```
 version: "3"
 
