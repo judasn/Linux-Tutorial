@@ -124,6 +124,9 @@ type=rpm-md
 - 默认只能 localhost 访问，修改成支持外网访问
 
 ```
+打开这个注释：#cluster.name: my-application
+集群名称最好是自己给定，不然有些 client 端会连不上，或者要求填写
+
 打开这个注释：#network.host: 192.168.0.1
 改为：network.host: 0.0.0.0
 ```
