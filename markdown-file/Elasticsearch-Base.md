@@ -1,29 +1,38 @@
 # Elasticsearch 知识
 
-## Docker 部署
+## Docker 单节点部署
 
+- 注意：docker 版本下 client.transport.sniff = true 是无效的。
 - `vim ~/elasticsearch-5.6.8-docker.yml`
 - 启动：`docker-compose -f ~/elasticsearch-5.6.8-docker.yml -p elasticsearch_5.6.8 up -d`
 
 ```
-version: "3"
-
+version: '3'
 services:
-  elasticsearch:
-    image: elasticsearch:5.6.8
-    restart: always
-    container_name: elasticsearch
-    hostname: elasticsearch
+  elasticsearch1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.8
+    container_name: elasticsearch1
     environment:
-      - 'http.host=0.0.0.0'
-      - 'transport.host=127.0.0.1'
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "cluster.name=elasticsearch"
+      - "network.host=0.0.0.0"
+      - "http.host=0.0.0.0"
+      - "xpack.security.enabled=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - 9200:9200
+      - 9300:9300
     volumes:
       - /data/docker/elasticsearch/data:/usr/share/elasticsearch/data
+
 ```
+
 
 -------------------------------------------------------------------
 
