@@ -83,6 +83,22 @@
  - `sudo yum install -y htop`（htop 官方源是没有的，所以如果能下载下来就表示已经使用了第三方源）
 
 
+### 禁用源
+
+- 编辑：`vim /etc/yum.repos.d/elasticsearch.repo`
+- 把 enabled=1 改为 enabled=0
+
+```
+[elasticsearch-6.x]
+name=Elasticsearch repository for 6.x packages
+baseurl=https://artifacts.elastic.co/packages/6.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+
 > 资料：
 
 - <https://wiki.centos.org/zh/PackageManagement/Yum/Priorities>

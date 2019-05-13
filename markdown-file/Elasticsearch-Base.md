@@ -61,15 +61,30 @@ elasticsearch hard memlock unlimited
 
 #### 开始安装
 
+- 检查：`rpm -qa | grep elastic`
+- 卸载：`rpm -e --nodeps elasticsearch`
 - 官网 RPM 安装流程（重要，以下资料都是对官网的总结）：<https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html>
 - 导入 KEY：`rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch`
 - 新建文件：`vim /etc/yum.repos.d/elasticsearch.repo`
-- 内容如下：
+- 内容如下（6.x）：
 
 ```
 [elasticsearch-6.x]
 name=Elasticsearch repository for 6.x packages
 baseurl=https://artifacts.elastic.co/packages/6.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+
+- 内容如下（5.x）：
+
+```
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
 gpgcheck=1
 gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
 enabled=1
