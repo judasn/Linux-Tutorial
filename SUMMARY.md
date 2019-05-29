@@ -51,6 +51,7 @@
 * [MongoDB 安装和配置](markdown-file/MongoDB-Install-And-Settings.md)
 * [Solr 安装和配置](markdown-file/Solr-Install-And-Settings.md)
 * [Jira 安装和配置](markdown-file/Jira-Install-And-Settings.md)
+* [Confluence 安装和配置](markdown-file/Confluence-Install-And-Settings.md)
 * [Jenkins 安装和配置](markdown-file/Jenkins-Install-And-Settings.md)
 * [TeamCity 安装和配置](markdown-file/TeamCity-Install-And-Settings.md)
 * [Nginx 安装和配置](markdown-file/Nginx-Install-And-Settings.md)
