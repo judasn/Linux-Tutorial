@@ -25,6 +25,13 @@
     - Elasticsearch 和 SkyWalking 的所在服务器的时间必须一致
     - 看了下源码依赖的 Elasticsearch 依赖包，目前支持 5.x 和 6.x
 
+
+## 支持收集的组件列表
+
+- 国内常用的组件目前看来都支持了
+- <https://github.com/apache/skywalking/blob/master/docs/en/setup/service-agent/java-agent/Supported-list.md>
+
+
 ## 基于 IntelliJ IDEA 直接运行、Debug
 
 - 这里选择 IntelliJ IDEA 运行服务，方便我们 debug 了解 SkyWalking：<https://github.com/apache/skywalking/blob/master/docs/en/guides/How-to-build.md#setup-your-intellij-idea>
@@ -173,13 +180,17 @@ git submodule update
 mvn clean package -DskipTests
 ```
 
+## 告警配置
+
+- <https://skywalking.apache.org/zh/blog/2019-01-03-monitor-microservice.html>
+
 
 ## 资料
 
 - <https://skywalking.apache.org/zh/blog/2018-12-21-SkyWalking-source-code-read.html>
 - <https://github.com/JaredTan95/skywalking-tutorials>
 - <https://www.bilibili.com/video/av40796154?from=search&seid=8779011383117018227>
-- <>
+- <https://skywalking.apache.org/zh/blog/2019-01-03-monitor-microservice.html>
 - <>
 - <>
 - <>
