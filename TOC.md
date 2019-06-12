@@ -40,6 +40,7 @@
 - [Jenkins 安装和配置](markdown-file/Jenkins-Install-And-Settings.md)
 - [Maven 安装和配置](markdown-file/Maven-Install-And-Settings.md)
 - [Nexus 安装和配置](markdown-file/Nexus-Install-And-Settings.md)
+- [PostgreSQL 安装和配置](markdown-file/PostgreSQL-Install-And-Settings.md)
 - [MySQL 安装和配置](markdown-file/Mysql-Install-And-Settings.md)
 - [MySQL 优化](markdown-file/Mysql-Optimize.md)
 - [MySQL 测试](markdown-file/Mysql-Test.md)
