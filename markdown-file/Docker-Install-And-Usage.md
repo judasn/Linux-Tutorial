@@ -309,6 +309,11 @@ CONTAINER ID        NAME                      CPU %               MEM USAGE / LI
 	- `docker run -it 镜像ID --link redis-name:myredis /bin/bash`
 		- `redis-name` 是容器名称
 		- `myredis` 是容器别名，其他容器连接它可以用这个别名来写入到自己的配置文件中
+- 容器与宿主机之间文件的拷贝
+    - `docker cp /www/runoob 96f7f14e99ab:/www/` 将主机 /www/runoob 目录拷贝到容器 96f7f14e99ab 的 /www 目录下
+    - `docker cp /www/runoob 96f7f14e99ab:/www` 将主机 /www/runoob 目录拷贝到容器 96f7f14e99ab 中，目录重命名为 www。
+    - `docker cp  96f7f14e99ab:/www /tmp/` 将容器96f7f14e99ab的/www目录拷贝到主机的/tmp目录中。
+
 
 #### docker 网络模式
 
