@@ -51,40 +51,27 @@ gitlab-postgresql:
 - 本质就是把文件、缓存、数据库抽离出来，然后部署多个 Gitlab 用 nginx 前面做负载。
 
 
-## 原始安装方式
+## 原始安装方式（推荐）
 
-- 环境：
-	- CPU：1 core
-	- 内存：2G
-- 我习惯使用 root 用户
+- 推荐至少内存 4G，它有大量组件
 - 有开源版本和收费版本，各版本比较：<https://about.gitlab.com/products/>
 - 官网：<https://about.gitlab.com/>
 - 中文网：<https://www.gitlab.com.cn/>
 - 官网下载：<https://about.gitlab.com/downloads/>
-- 安装的系统环境要求：<https://docs.gitlab.com/ce/install/requirements.html>
-	- 从文章看目前要求 ruby 2.3，用 yum 版本过低，那就源码安装 ruby 吧，官网当前最新是：2.4.1（大小：14M）
 - 官网安装说明：<https://about.gitlab.com/installation/#centos-7>
-- 安装 ruby
-	- 下载：<https://www.ruby-lang.org/en/downloads/>
-	- 解压：`tar zxvf ruby-2.4.1.tar.gz`
-	- 编译安装：
-		- `cd ruby-2.4.1`
-		- `./configure`
-		- `make`，过程有点慢
-		- `make install`
-	- 默认安装到这个目录：`/usr/local`
-	- 查看当前版本号：`ruby -v`
-- CentOS 6 安装流程：<https://about.gitlab.com/downloads/#centos6>
-	- 当前（201703）的版本是：`GitLab Community Edition 9.0.0`
-	- `sudo yum install -y curl openssh-server openssh-clients postfix cronie`
-	- `sudo service postfix start`
-	- `sudo chkconfig postfix on`
-	- `sudo lokkit -s http -s ssh`
-	- `curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash`
-	- `sudo yum install gitlab-ce`，软件大小：272M，下载速度不稳定
-	- `sudo gitlab-ctl reconfigure`，这个过程比较慢
 - 如果上面的下载比较慢，也有国内的镜像：
 	- 清华：<https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ce/>
+- 参考：<https://ken.io/note/centos7-gitlab-install-tutorial>
+
+```
+sudo yum install -y curl policycoreutils-python openssh-server
+
+sudo systemctl enable sshd
+sudo systemctl start sshd
+
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+sudo EXTERNAL_URL="http://192.168.1.123:8181" yum install -y gitlab-ce
+```
 
 
 ## 配置
@@ -92,7 +79,10 @@ gitlab-postgresql:
 - 配置域名 / IP
 	- 编辑配置文件：`sudo vim /etc/gitlab/gitlab.rb`
 	- 找到 13 行左右：`external_url 'http://gitlab.example.com'`，改为你的域名 / IP
-	- 重启服务：`sudo gitlab-ctl reconfigure`
+	- 刷新配置：`sudo gitlab-ctl reconfigure`，第一次这个时间会比较久，我花了好几分钟
+	- 启动服务：`sudo gitlab-ctl start`
+	- 停止服务：`sudo gitlab-ctl stop`
+	- 重启服务：`sudo gitlab-ctl restart`
 - 前面的初始化配置完成之后，访问当前机子 IP：`http://192.168.1.111:80`
 - 默认用户是 `root`，并且没有密码，所以第一次访问是让你设置你的 root 密码，我设置为：gitlab123456（至少 8 位数）
 - 设置会初始化密码之后，你就需要登录了。输入设置的密码。
@@ -233,6 +223,69 @@ gitlab-postgresql:
 	- <http://blog.jobbole.com/76867/>
 	- <http://www.cnblogs.com/cnblogsfans/p/5075073.html>
 
+
+## 接入第三方登录
+
+- 官网文档：
+    - <https://docs.gitlab.com/ce/integration/omniauth.html>
+    - <https://docs.gitlab.com/ce/integration/oauth2_generic.html>
+    - <https://gitlab.com/satorix/omniauth-oauth2-generic#gitlab-config-example>
+
+- gitlab 自己本身维护一套用户系统，第三方认证服务一套用户系统，gitlab 可以将两者关联起来，然后用户可以选择其中一种方式进行登录而已。
+- 所以，gitlab 第三方认证只能用于网页登录，clone 时仍然使用用户在 gitlab 的账户密码，推荐使用 ssh-key 来操作仓库，不再使用账户密码。
+- 重要参数：block_auto_created_users=true 的时候则自动注册的账户是被锁定的，需要管理员账户手动的为这些账户解锁，可以改为 false
+- 编辑配置文件引入第三方：`sudo vim /etc/gitlab/gitlab.rb`，在 309 行有默认的一些注释配置
+    - 其中 oauth2_generic 模块默认是没有，需要自己 gem，其他主流的那些都自带，配置即可使用。
+
+```
+gitlab_rails['omniauth_enabled'] = true
+gitlab_rails['omniauth_allow_single_sign_on'] = ['google_oauth2', 'facebook', 'twitter', 'oauth2_generic']
+gitlab_rails['omniauth_block_auto_created_users'] = false
+gitlab_rails['omniauth_sync_profile_attributes'] = ['email','username']
+gitlab_rails['omniauth_external_providers'] = ['google_oauth2', 'facebook', 'twitter', 'oauth2_generic']
+gitlab_rails['omniauth_providers'] = [
+    {
+        "name"=> "google_oauth2",
+        "label"=> "Google",
+        "app_id"=> "123456",
+        "app_secret"=> "123456",
+        "args"=> {
+            "access_type"=> 'offline',
+            "approval_prompt"=> '123456'
+        }
+    },
+    {
+        "name"=> "facebook",
+        "label"=> "facebook",
+        "app_id"=> "123456",
+        "app_secret"=> "123456"
+    },
+    {
+        "name"=> "twitter",
+        "label"=> "twitter",
+        "app_id"=> "123456",
+        "app_secret"=> "123456"
+    },
+    {
+        "name" => "oauth2_generic",
+        "app_id" => "123456",
+        "app_secret" => "123456",
+        "args" => {
+          client_options: {
+            "site" => "http://sso.cdk8s.com:9090/sso",
+            "user_info_url" => "/oauth/userinfo"
+          },
+          user_response_structure: {
+            root_path: ["user_attribute"],
+            attributes: { 
+              "nickname": "username" 
+            }
+          }
+        }
+    }
+]
+
+```
 
 
 ## 资料
