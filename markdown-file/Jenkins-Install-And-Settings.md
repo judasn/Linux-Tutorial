@@ -158,6 +158,37 @@ This may also be found at: /root/.jenkins/secrets/initialAdminPassword
 	- 如果配置插件过程遇到这个错误：`No valid crumb was included in the request`，则多重试几次。
 	- 登录后把：<http://192.168.0.105:18080/configureSecurity/> 下面的 `防止跨站点请求伪造` 勾选去掉。遇到问题多试几次。
 
+
+## 忘记 admin 密码进行重置
+
+- 备份配置文件：`cp /root/.jenkins/config.xml /root/.jenkins/config.xml.back`
+- 编辑：`vim /root/.jenkins/config.xml`，删除 config.xml 文件中的这部分内容，在 10 行左右位置
+
+```
+<useSecurity>true</useSecurity>
+<authorizationStrategy class="hudson.security.FullControlOnceLoggedInAuthorizationStrategy">
+  <denyAnonymousReadAccess>true</denyAnonymousReadAccess>
+</authorizationStrategy>
+<securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
+  <disableSignup>true</disableSignup>
+  <enableCaptcha>false</enableCaptcha>
+</securityRealm>
+```
+
+- 重启服务，进入首页此时系统是免密状态
+- 选择左侧的 `系统管理`，系统会提示你需要配置安全设置：`全局安全配置`
+    - 勾选 `启用安全`
+    - 安全域 > 勾选 `Jenkins专有用户数据库`
+    - 点击保存
+- 重新点击首页：`系统管理`
+    - 点击 `管理用户`
+    - 在用户列表中点击 admin 右侧齿轮
+    - 修改密码，修改后即可重新登录。
+- 选择左侧的 `系统管理`，系统会提示你需要配置安全设置：`全局安全配置`
+    - 勾选 `启用安全`
+    - 授权策略 > 勾选 `登录用户可以做任何事` 或 `安全矩阵`
+    - 点击保存
+
 -------------------------------------------------------------------
 
 ## pipeline 语法
@@ -927,3 +958,4 @@ pipeline {
 - <http://stackoverflow.com/questions/4969156/java-net-unknownhostexception>
 - <https://www.jianshu.com/p/b50e679e2409>
 - <http://xkcoding.com/2018/01/04/devops-jenkins.html>
+- <https://blog.csdn.net/jlminghui/article/details/54952148>
