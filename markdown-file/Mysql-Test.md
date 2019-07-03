@@ -199,6 +199,8 @@ cd tpcc-mysql/src
 make
 
 如果make没报错，就会在tpcc-mysql 根目录文件夹下生成tpcc二进制命令行工具tpcc_load、tpcc_start
+
+如果要同时支持 PgSQL 可以考虑：https://github.com/Percona-Lab/sysbench-tpcc
 ```
 
 ### 测试的几个表介绍
