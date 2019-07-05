@@ -88,7 +88,8 @@ sudo systemctl status grafana-server
 
 - dashboar仓库地址：<https://grafana.com/dashboards>
 - 本地可以通过输入 dashboard id 导入别人模板
-
+- 打开：<http://192.168.0.105:3000/dashboard/import>
+    - 输入对应的 id，点击 Load 即可
 
 ----------------------------------------------------------------------------------------------
 
