@@ -84,6 +84,11 @@ sudo systemctl status grafana-server
 - 个性化设置：<http://192.168.0.105:3000/org>
 - 软件变量：<http://192.168.0.105:3000/admin/settings>
 
+## 官网 dashboard
+
+- dashboar仓库地址：<https://grafana.com/dashboards>
+- 本地可以通过输入 dashboard id 导入别人模板
+
 
 ----------------------------------------------------------------------------------------------
 
