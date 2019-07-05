@@ -27,6 +27,14 @@ docker exec -it influxdb /bin/bash
 auth admin 123456
 show databases;
 
+use springboot
+show measurements
+
+show series from "jvm_buffer_total_capacity"
+
+select * from "jvm_buffer_total_capacity"
+
+
 如果你要再额外创建数据库：
 create database demo
 
