@@ -11,12 +11,14 @@
 - 官网：<https://hub.docker.com/r/grafana/grafana/>
 
 ```
-docker run -d --name grafana -p 3000:3000 -v /Users/gitnavi/docker_data/grafana/data grafana/grafana
+mkdir -p /data/docker/grafana/data
+chmod 777 -R /data/docker/grafana/data
+
+docker run -d --name grafana -p 3000:3000 -v /data/docker/grafana/data:/var/lib/grafana grafana/grafana
 
 docker exec -it grafana /bin/bash
 
 容器中默认的配置文件位置：/etc/grafana/grafana.ini
-
 复制出配置文件到宿主机：docker cp grafana:/etc/grafana/grafana.ini /Users/gitnavi/
 ```
 

@@ -26,19 +26,19 @@ sudo cp wrk /usr/local/bin
 
 ## 使用
 
-- 启用 10 个线程，每个线程发起 100 个连接，持续 15 秒：`wrk -t10 -c100 -d15s http://www.baidu.com`
+- 启用 10 个线程，每个线程发起 100 个连接，持续 15 秒：`wrk -t5 -c5 -d30s http://www.baidu.com`
 - 最终报告：
 
 ```
-Running 15s test @ http://www.baidu.com
-  10 threads and 100 connections
+Running 30s test @ http://www.baidu.com
+  5 threads and 5 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency   208.39ms  324.00ms   1.91s    87.70%
-    Req/Sec    82.68     64.81   414.00     70.60%
-  11345 requests in 15.02s, 166.51MB read
-  Socket errors: connect 0, read 20, write 0, timeout 59
-Requests/sec:    755.26
-Transfer/sec:     11.08MB
+    Latency    44.59ms   17.41ms 331.91ms   95.66%
+    Req/Sec    23.11      5.77    30.00     57.04%
+  3439 requests in 30.03s, 50.47MB read
+  Socket errors: connect 0, read 10, write 0, timeout 0
+Requests/sec:    114.52
+Transfer/sec:      1.68MB
 ```
 
 #### 使用 lua 脚本（发送一个 post 请求）
