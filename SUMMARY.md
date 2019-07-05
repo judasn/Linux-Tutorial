@@ -87,6 +87,7 @@
 * [WordPress 安装和配置](markdown-file/WordPress-Install-And-Settings.md)
 * [GoAccess 安装和配置](markdown-file/GoAccess-Install-And-Settings.md)
 * [Portainer 安装和配置](markdown-file/Portainer-Install-And-Settings.md)
+* [Influxdb 安装和配置](markdown-file/Influxdb-Install-And-Settings.md)
 * [Grafana 安装和配置](markdown-file/Grafana-Install-And-Settings.md)
 * [Ansible 安装和配置](markdown-file/Ansible-Install-And-Settings.md)
 * [Wormhole + Flink 安装和配置](markdown-file/Wormhole-Install-And-Settings.md)
