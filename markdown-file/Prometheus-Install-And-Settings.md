@@ -242,6 +242,19 @@ scrape_configs:
       labels:
         instance: nginx1
 
+
+如果nginx 有加 basic auth，则需要这样：
+scrape_configs:
+  - job_name: "nginx"
+    metrics_path: /status/format/prometheus
+    basic_auth:
+      username: youmeek
+      password: '123456'
+    static_configs:
+    - targets: ['192.168.1.3:9913']
+      labels:
+        instance: 'nginx1'
+
 ```
 
 - 重启 prometheus：`docker restart prometheus`
