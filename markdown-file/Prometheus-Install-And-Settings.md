@@ -1,6 +1,9 @@
 # Prometheus 安装和配置
 
+- 不错的发展史说明：<https://caicloud.io/blog/5a5db4203255f5063f2bd462>
 - 特别说明：一般这类环境要尽可能保证所有服务器时间一致
+- Prometheus 本地存储不适合存长久数据，一般存储一个月就够了。要永久存储需要用到远端存储，远端存储可以用 OpenTSDB
+- Prometheus 也不适合做日志存储，日志存储还是推荐 ELK 方案
 
 ## Prometheus Docker 安装
 
@@ -286,6 +289,10 @@ scrape_configs:
 - [Grafana+Prometheus系统监控之钉钉报警功能](https://blog.52itstyle.vip/archives/2029/)
 - [Grafana+Prometheus系统监控之webhook](https://blog.52itstyle.vip/archives/2068/)
 
+
+## 远端存储方案
+
+- <https://segmentfault.com/a/1190000015576540>
 
 
 ----------------------------------------------------------------------------------------------
