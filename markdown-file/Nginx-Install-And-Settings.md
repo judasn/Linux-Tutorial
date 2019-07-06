@@ -102,6 +102,26 @@ http {
 
 -------------------------------------------------------------------
 
+## Nginx 源码编译安装（带 Prometheus 模块）
+
+```
+./configure \
+--prefix=/usr/local/nginx \
+--pid-path=/var/local/nginx/nginx.pid \
+--lock-path=/var/lock/nginx/nginx.lock \
+--error-log-path=/var/log/nginx/error.log \
+--http-log-path=/var/log/nginx/access.log \
+--with-http_gzip_static_module \
+--http-client-body-temp-path=/var/temp/nginx/client \
+--http-proxy-temp-path=/var/temp/nginx/proxy \
+--http-fastcgi-temp-path=/var/temp/nginx/fastcgi \
+--http-uwsgi-temp-path=/var/temp/nginx/uwsgi \
+--with-http_ssl_module \
+--with-http_stub_status_module \
+--http-scgi-temp-path=/var/temp/nginx/scgi \
+--add-module=/usr/local/nginx-module-vts
+```
+
 
 ## Nginx 源码编译安装（带监控模块）
 

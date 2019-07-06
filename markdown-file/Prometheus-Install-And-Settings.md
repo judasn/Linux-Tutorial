@@ -110,12 +110,12 @@ systemctl status node_exporter
 ```
 修改prometheus.yml，加入下面的监控目标：
 
-vim  /usr/local/prometheus/prometheus.yml
+vim  /data/docker/prometheus/config/prometheus.yml
 
 scrape_configs:
   - job_name: 'centos7'
     static_configs:
-    - targets: ['127.0.0.1:9100']
+    - targets: ['192.168.1.3:9100']
       labels:
         instance: centos7_node1
 
@@ -143,8 +143,16 @@ git clone --depth=1 https://github.com/vozlt/nginx-module-vts.git
 ./configure --prefix=/usr/local/nginx --with-http_ssl_module --add-module=/opt/nginx-module-vts
 
 make（已经安装过了，就不要再 make install）
+```
+
 
 ```
+也有人做好了 docker 镜像：
+https://hub.docker.com/r/xcgd/nginx-vts
+
+docker run --name nginx-vts -p 80:80 -v /data/docker/nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro -d xcgd/nginx-vts
+```
+
 
 ```
 修改Nginx配置
@@ -168,7 +176,8 @@ http {
 }
 
 
-验证nginx-module-vts模块：http://IP/status
+验证nginx-module-vts模块：http://192.168.1.3/status，会展示：
+Nginx Vhost Traffic Status 统计表
 
 ```
 
@@ -185,11 +194,13 @@ server {
 - 安装 nginx-vts-exporter
 
 ```
-wget -O nginx-vts-exporter-0.5.zip https://github.com/hnlq715/nginx-vts-exporter/archive/v0.5.zip
-unzip nginx-vts-exporter-0.5.zip
-mv nginx-vts-exporter-0.5  /usr/local/prometheus/nginx-vts-exporter
-chmod +x /usr/local/prometheus/nginx-vts-exporter/bin/nginx-vts-exporter
+官网版本：https://github.com/hnlq715/nginx-vts-exporter/releases
 
+wget https://github.com/hnlq715/nginx-vts-exporter/releases/download/v0.10.3/nginx-vts-exporter-0.10.3.linux-amd64.tar.gz
+
+tar zxvf nginx-vts-exporter-0.10.3.linux-amd64.tar.gz
+
+chmod +x /usr/local/nginx-vts-exporter-0.10.3.linux-amd64/nginx-vts-exporter
 ```
 
 ```
@@ -204,7 +215,7 @@ After=network.target
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/local/prometheus/nginx-vts-exporter/bin/nginx-vts-exporter -nginx.scrape_uri=http://localhost/status/format/json
+ExecStart=/usr/local/nginx-vts-exporter-0.10.3.linux-amd64/nginx-vts-exporter -nginx.scrape_uri=http://192.168.1.3/status/format/json
 Restart=on-failure
 
 [Install]
@@ -215,18 +226,21 @@ WantedBy=multi-user.target
 ```
 启动nginx-vts-exporter
 systemctl start nginx_vts_exporter.service
+systemctl daemon-reload
 systemctl status nginx_vts_exporter.service
 ```
 
 
 ```
-修改prometheus.yml，加入下面的监控目标：
+修改 prometheus.yml，加入下面的监控目标：
+vim  /data/docker/prometheus/config/prometheus.yml
 
-- job_name: nginx
+scrape_configs:
+  - job_name: 'nginx'
     static_configs:
-      - targets: ['127.0.0.1:9913']
-        labels:
-          instance: web1
+    - targets: ['192.168.1.3:9913']
+      labels:
+        instance: nginx1
 
 ```
 
