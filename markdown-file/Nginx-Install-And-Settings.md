@@ -310,6 +310,27 @@ upgrade:
 - 更新 `make upgrade`
 
 
+## 为 Nginx 添加 basic_auth
+
+```
+yum install httpd-tools  
+
+htpasswd -c /opt/nginx-auth/passwd.db myusername，回车之后输入两次密码
+
+
+server {
+    ...
+
+    location / {
+        auth_basic   "please input you user name and password";
+        auth_basic_user_file    /opt/nginx-auth/passwd.db;
+        ....
+    }
+}
+
+```
+
+
 ## Nginx 全局变量
 
 - $arg_PARAMETER #这个变量包含GET请求中，如果有变量PARAMETER时的值。
