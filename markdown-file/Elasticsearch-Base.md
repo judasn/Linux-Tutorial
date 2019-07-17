@@ -3,10 +3,15 @@
 ## Docker 单节点部署
 
 - 官网：<https://hub.docker.com/_/elasticsearch>
+- 官网列表：<https://www.docker.elastic.co/>
+- 阿里云支持版本：<https://data.aliyun.com/product/elasticsearch>
     - 7.x：7.1.0
     - 6.x：6.8.0
     - 5.x：5.6.8
 - 注意：docker 版本下 client.transport.sniff = true 是无效的。
+
+#### 5.6.x
+
 - `vim ~/elasticsearch-5.6.8-docker.yml`
 - 启动：`docker-compose -f ~/elasticsearch-5.6.8-docker.yml -p elasticsearch_5.6.8 up -d`
 
@@ -34,6 +39,40 @@ services:
       - 9300:9300
     volumes:
       - /data/docker/elasticsearch/data:/usr/share/elasticsearch/data
+
+```
+
+
+#### 6.7.x
+
+- `vim ~/elasticsearch-6.7.2-docker.yml`
+- 启动：`docker-compose -f ~/elasticsearch-6.7.2-docker.yml -p elasticsearch_6.7.2 up -d`
+- `mkdir -p /data/docker/elasticsearch-6.7.2/data`
+
+```
+version: '3'
+services:
+  elasticsearch1:
+    image: docker pull docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+    container_name: elasticsearch1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "cluster.name=elasticsearch"
+      - "network.host=0.0.0.0"
+      - "http.host=0.0.0.0"
+      - "xpack.security.enabled=false"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - /data/docker/elasticsearch-6.7.2/data:/usr/share/elasticsearch/data
 
 ```
 
