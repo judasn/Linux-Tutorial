@@ -5,9 +5,7 @@
 - 官网：<https://hub.docker.com/_/elasticsearch>
 - 官网列表：<https://www.docker.elastic.co/>
 - 阿里云支持版本：<https://data.aliyun.com/product/elasticsearch>
-    - 7.x：7.1.0
-    - 6.x：6.8.0
-    - 5.x：5.6.8
+    - 阿里云有一个 `插件配置` 功能，常用的 Elasticsearch 插件都带了，勾选下即可安装。也支持上传安装。
 - 注意：docker 版本下 client.transport.sniff = true 是无效的。
 
 #### 5.6.x
