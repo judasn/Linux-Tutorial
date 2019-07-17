@@ -48,6 +48,7 @@ services:
 - `vim ~/elasticsearch-6.7.2-docker.yml`
 - 启动：`docker-compose -f ~/elasticsearch-6.7.2-docker.yml -p elasticsearch_6.7.2 up -d`
 - `mkdir -p /data/docker/elasticsearch-6.7.2/data`
+- 如果官网镜像比较慢可以换成阿里云：`registry.cn-hangzhou.aliyuncs.com/elasticsearch/elasticsearch:6.7.2`
 
 ```
 version: '3'
