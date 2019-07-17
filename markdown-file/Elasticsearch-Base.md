@@ -53,7 +53,7 @@ services:
 version: '3'
 services:
   elasticsearch1:
-    image: docker pull docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.2
     container_name: elasticsearch-6.7.2
     environment:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
