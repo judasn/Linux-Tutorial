@@ -146,22 +146,21 @@ FROM openjdk:8-jre-alpine
 
 LABEL maintainer="tanjian20150101@gmail.com"
 
-ENV SW_APPLICATION_CODE=java-agent-demo \
-	SW_COLLECTOR_SERVERS=localhost:11800
+ENV SW_AGENT_NAMESPACE=java-agent-demo \
+	SW_AGENT_COLLECTOR_BACKEND_SERVICES=localhost:11800
 
-COPY skywalking-agent /apache-skywalking-apm-incubating/agent
+COPY skywalking-agent /apache-skywalking-apm-bin/agent
 
 COPY target/sky-demo-1.0-SNAPSHOT.jar /demo.jar
 
-ENTRYPOINT java -javaagent:/apache-skywalking-apm-incubating/agent/skywalking-agent.jar -Dskywalking.collector.backend_service=${SW_COLLECTOR_SERVERS} \
--Dskywalking.agent.application_code=${SW_APPLICATION_CODE} -jar /demo.jar
+ENTRYPOINT java -javaagent:/apache-skywalking-apm-bin/agent/skywalking-agent.jar -jar /demo.jar
 ```
 
 - 构建镜像：
 
 ```
 docker build -t hello-demo .
-docker run -p 10101:10101 -e SW_APPLICATION_CODE=hello-world-demo-005 -e SW_COLLECTOR_SERVERS=127.10.0.2:11800 hello-demo
+docker run -p 10101:10101 -e SW_AGENT_NAMESPACE=hello-world-demo-005 -e SW_AGENT_COLLECTOR_BACKEND_SERVICES=127.10.0.2:11800 hello-demo
 ```
 
 
