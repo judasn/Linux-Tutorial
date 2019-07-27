@@ -8,6 +8,7 @@
 ## Prometheus Docker 安装
 
 - 官网：<https://prometheus.io/>
+- Docker 官方镜像：<https://hub.docker.com/r/prom/prometheus/>
 - 这里以 Spring Boot Metrics 为收集信息
 - 创建配置文件：`vim /data/docker/prometheus/config/prometheus.yml`
 - 在 scrape_configs 位置下增加我们自己应用的路径信息
