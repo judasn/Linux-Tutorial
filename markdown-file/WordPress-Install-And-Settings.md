@@ -194,6 +194,19 @@ systemctl enable httpd.service
 
 - 我是托管到 DNSPOD，重新指向到新 IP 地址即可
 
+## 常用插件
+
+- JP Markdown
+- WP Code Highlight.js
+- FooBox Image Lightbox
+- WP Super Cache
+
+## 常见问题
+
+- 安装插件出现：`WordPress需要访问您网页服务器的权限。 请输入您的FTP登录凭据以继续`
+- 解决办法：`chown -R apache:apache /var/www/html`
+
+
 ## 资料
 
 - <https://blog.csdn.net/qq_35723367/article/details/79544001>
