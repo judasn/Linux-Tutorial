@@ -1,0 +1,135 @@
+version: '3'
+
+networks:
+  default:
+
+services:
+  nginx:
+    image: nginx:1.15-alpine
+    container_name: gio_platform_nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl/gio-selfsigned.crt:/etc/ssl/certs/gio-selfsigned.crt
+      - ./nginx/ssl/gio-selfsigned.key:/etc/ssl/private/gio-selfsigned.key
+      - ./nginx/ssl/gio.pem:/etc/ssl/certs/gio.pem
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - apim_gateway
+      - apim_portal
+      - apim_management
+      - am_gateway
+      - am_management
+      - am_webui
+
+  mongodb:
+    image: mongo:3.4
+    container_name: gio_platform_mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=gravitee
+    volumes:
+      - ./mongo/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./data/mongo:/data/db
+      - ./logs/mongodb:/var/log/mongodb
+
+  elasticsearch:
+    image: elasticsearch:6.4.0
+    container_name: gio_platform_elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - xpack.security.enabled=false
+      - xpack.monitoring.enabled=false
+      - cluster.name=elasticsearch
+    ulimits:
+      nofile: 65536
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+      - ./logs/elasticsearch:/var/log/elasticsearch
+
+  apim_gateway:
+    image: graviteeio/gateway:latest
+    container_name: gio_platform_apim_gateway
+    volumes: 
+      - ./logs/apim-gateway:/opt/graviteeio-gateway/logs
+    environment:
+      - gravitee_management_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_ratelimit_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_reporters_elasticsearch_endpoints_0=http://elasticsearch:9200
+      - gravitee_services_metrics_enabled=true
+      - gravitee_services_metrics_prometheus.enabled=true
+    depends_on:
+      - mongodb
+      - elasticsearch
+
+  apim_portal:
+    image: graviteeio/management-ui:latest
+    container_name: gio_platform_apim_portal
+    environment:
+      - MGMT_API_URL=https:\/\/localhost\/apim\/management\/
+    depends_on:
+      - apim_management
+
+  apim_management:
+    image: graviteeio/management-api:latest
+    container_name: gio_platform_apim_mgmt_api
+    volumes:
+      - ./logs/apim-management-api:/opt/graviteeio-management-api/logs
+    environment:
+      - gravitee_management_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_ratelimit_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_analytics_elasticsearch_endpoints_0=http://elasticsearch:9200
+      - gravitee_jwt_cookiepath=/apim/management
+      - gravitee_jwt_cookiesecure=true
+    depends_on:
+      - mongodb
+      - elasticsearch
+  
+  am_gateway:
+    image: graviteeio/am-gateway:2
+    container_name: gio_platform_am_gateway
+    volumes:
+      - ./logs/am-gateway:/opt/graviteeio-am-gateway/logs
+    environment:
+      - gravitee_management_mongodb_uri=mongodb://mongodb:27017/gravitee-am?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_oauth2_mongodb_uri=mongodb://mongodb:27017/gravitee-am?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+    depends_on:
+      - mongodb
+
+  am_management:
+    image: graviteeio/am-management-api:2
+    container_name: gio_platform_am_management
+    volumes:
+      - ./logs/am-management-api:/opt/graviteeio-am-management-api/logs
+    environment:
+      - gravitee_management_mongodb_uri=mongodb://mongodb:27017/gravitee-am?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_oauth2_mongodb_uri=mongodb://mongodb:27017/gravitee-am?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_jwt_cookiepath=/am/management
+      - gravitee_jwt_cookiesecure=true
+    depends_on:
+      - mongodb
+  grafana:
+    image: grafana/grafana
+    ports:
+    - "3000:3000"
+  prometheus:
+    image: prom/prometheus
+    volumes:
+    - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+    ports:
+    - "9090:9090"
+  am_webui:
+    image: graviteeio/am-management-ui:2
+    container_name: gio_platform_am_webui
+    environment:
+      - MGMT_API_URL=https:\/\/localhost\/am\/
+      - MGMT_UI_URL=https:\/\/localhost\/am\/ui\/
+    volumes:
+      - ./logs/am-webui:/var/log/nginx
+    depends_on:
+      - am_management

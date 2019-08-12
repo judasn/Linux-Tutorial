@@ -1,0 +1,8 @@
+scrape_configs:
+  - job_name: 'gio-gw'
+    basic_auth:
+      username: admin
+      password: adminadmin
+    metrics_path: /_node/metrics/prometheus
+    static_configs:
+      - targets: ['apim_gateway:18082']

@@ -1,0 +1,76 @@
+#-------------------------------------------------------------------------------
+# Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#            http://www.apache.org/licenses/LICENSE-2.0
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#-------------------------------------------------------------------------------
+version: '2'
+
+volumes:
+  latest_datamongo: {}
+  latest_dataelasticsearch: {}
+
+services:
+  latest_elasticsearch:
+    network_mode: "bridge"
+    extends:
+      file: common.yml
+      service: elasticsearch
+    volumes:
+      - latest_dataelasticsearch:/usr/share/elasticsearch/data
+
+  latest_mongodb:
+    network_mode: "bridge"
+    extends:
+      file: common.yml
+      service: mongodb
+    volumes:
+      - latest_datamongo:/data/db
+
+  latest_gateway:
+    network_mode: "bridge"
+    extends:
+      file: common.yml
+      service: gateway
+    links:
+      - latest_mongodb
+      - latest_elasticsearch
+    labels:
+    - "traefik.backend=graviteeio-gateway"
+    - "traefik.frontend.rule=Host:demo.gravitee.io;PathPrefixStrip:/gateway"
+    environment:
+      - gravitee_management_mongodb_uri=mongodb://demo-mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_ratelimit_mongodb_uri=mongodb://demo-mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_reporters_elasticsearch_endpoints_0=http://demo-elasticsearch:9200
+
+  latest_managementui:
+    network_mode: "bridge"
+    extends:
+      file: common.yml
+      service: managementui
+    labels:
+    - "traefik.backend=graviteeio-managementui"
+    - "traefik.frontend.rule=Host:demo.gravitee.io"
+    environment:
+      - MGMT_API_URL=https:\/\/demo.gravitee.io\/management\/
+
+  latest_managementapi:
+    network_mode: "bridge"
+    extends:
+      file: common.yml
+      service: managementapi
+    labels:
+    - "traefik.backend=graviteeio-managementapi"
+    - "traefik.frontend.rule=Host:demo.gravitee.io;PathPrefix:/management"
+    links:
+      - latest_mongodb
+      - latest_elasticsearch
+    environment:
+      - gravitee_management_mongodb_uri=mongodb://demo-mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
+      - gravitee_analytics_elasticsearch_endpoints_0=http://demo-elasticsearch:9200
