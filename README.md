@@ -6,10 +6,10 @@
 </a>
 
 
-## 声明
+## 新的起点
 
-- 后续我将在新的地方，以新的方式重新开始，感谢一直以来的信任 !
 - CDK8S：<https://mp.weixin.qq.com/s/fITEVy3IEhI4HOyTXRp9ig>
+- TKey：<https://www.oschina.net/p/tkey>
 
 ## 初衷(Original Intention)
 
