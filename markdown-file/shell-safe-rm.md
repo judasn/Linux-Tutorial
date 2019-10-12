@@ -49,8 +49,8 @@ mv: invalid option -- 'r'
 Try 'mv --help' for more information.
 ```
 
-- 现在我们删除一个测试文件：`rm a.txt`，会事显示：`Hi, Trashing a.txt to /root/.trash`
-- 因为我们上面的 shell 每次触发 rm 明白的时候都会去删除一个月前的目录，所以就不需要定时器来删除 .trash 里面的文件了。
+- 现在我们删除一个测试文件：`rm a.txt`，会显示：`Hi, Trashing a.txt to /root/.trash`
+- 因为我们上面的 shell 每次触发 rm 的时候都会去删除一个月前的目录，所以就不需要定时器来删除 .trash 里面的文件了。
 - 如果你要强制删除，清空 .trash 目录，可以使用真正的 rm 命令：`/usr/bin/rm -rf ~/.trash/*`
 
 
