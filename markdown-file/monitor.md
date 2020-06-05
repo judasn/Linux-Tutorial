@@ -858,11 +858,12 @@ access_log  /home/wwwlogs/hicrew.log special_main;
 #### 一次 JVM 引起的 CPU 高排查
 
 - 使用 `ps -ef | grep java`，查看进程 PID
-	- 根据高 CPU 的进程 PID，查看其线程 CPU 使用情况：`top -Hp PID`，找到占用 CPU 资源高的线程 PID
-- 保存堆栈情况：`jstack -l PID >> /opt/jstack-tomcat1-PID-20181017.log`
-- 把占用 CPU 资源高的线程十进制的 PID 转换成 16 进制：`printf "%x\n" PID`，比如：`printf "%x\n" 12401` 得到结果是：`3071`
+	- 根据高 CPU 的进程 PID，查看其线程 CPU 使用情况：`top -Hp PID`，找到占用 CPU 资源高的线程 TID
+	- 也可以用：`ps -mp PID -o THREAD,tid,time`
+- 保存堆栈情况：`jstack -l TID >> /opt/jstack-tomcat1-TID-20181017.log`
+- 把占用 CPU 资源高的线程十进制的 TID 转换成 16 进制：`printf "%x\n" TID`，比如：`printf "%x\n" 12401` 得到结果是：`3071`
 - 在刚刚输出的那个 log 文件中搜索：`3071`，可以找到：`nid=0x3071`
-- 也可以在终端中直接看：`jstack PID |grep 十六进制线程 -A 30`，此时如果发现如下：
+- 也可以在终端中直接看：`jstack TID |grep 十六进制线程 -A 30`，此时如果发现如下：
 
 ```
 "GC task thread#0 (ParallelGC)" os_prio=0 tid=0x00007fd0ac01f000 nid=0x66f runnable 
