@@ -619,6 +619,20 @@ http {
 
 ```
 
+- 最新版本的 Nginx SSL 配置
+
+```
+listen 443 ssl;
+
+ssl_certificate     /opt/jar/ssl/server.crt;
+ssl_certificate_key /opt/jar/ssl/server.key;
+
+ssl_session_timeout 5m;
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+ssl_prefer_server_ciphers on;
+```
+
 ----------------------------------------------------------------------
 
 ## Nginx 压力测试
