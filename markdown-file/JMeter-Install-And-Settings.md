@@ -160,8 +160,8 @@ remote_hosts=192.168.0.1:1099,192.168.0.2:1099
 	- [快速学习Jmeter性能测试工具](http://gitbook.cn/books/58de71a8be13fa66243873ef/index.html)
 	- [jmeter：菜鸟入门到进阶系列](http://www.cnblogs.com/imyalost/p/7062784.html)
 - 国内视频教程：
-	- [JMeter 性能测试入门篇 - 慕课网](https://www.imooc.com/learn/735)
 	- [JMeter 之 HTTP 协议接口性能测试 - 慕课网](https://www.imooc.com/learn/791)
+	- [接口测试基础之入门篇 - 慕课网](https://www.imooc.com/learn/738)
 	- [JMeter 性能测试进阶案例实战 - 慕课网](https://coding.imooc.com/class/142.html)
 	- [性能测试工具—Jmeter- 我要自学网](http://www.51zxw.net/list.aspx?page=2&cid=520)
 	- [jmeter 视频教学课程 - 小强](https://www.youtube.com/watch?v=zIiXpCBaBgQ&list=PL3rfV4zNE8CD-rAwlXlGXilN5QpkqDWox)
