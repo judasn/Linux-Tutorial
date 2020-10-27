@@ -15,7 +15,14 @@
 - 在图形界面中如果你希望临时关闭图形界面可以输入：`init 3`
 
 
-## CentOS 7 设置方法
+## CentOS 7 设置方法 1
+
+- 开机以命令模式启动，执行：
+    - systemctl set-default multi-user.target
+- 开机以图形界面启动，执行：
+    - systemctl set-default graphical.target
+
+## CentOS 7 设置方法 2
 
 - 关闭图形
 	- `mv /etc/systemd/system/default.target /etc/systemd/system/default.target.bak`         (改名备份)
