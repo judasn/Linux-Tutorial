@@ -15,6 +15,7 @@
 
 ## 新的起点
 
+- [本系列的大部分文章都迁移到这里](https://github.com/cdk8s/cdk8s-team-style)
 - [Sculptor Boot：项目思维化的《代码生成器》体系（未来可期，做个朋友吧）](https://github.com/cdk8s/sculptor-boot-generator)
 - CDK8S：<https://mp.weixin.qq.com/s/fITEVy3IEhI4HOyTXRp9ig>
 - TKey：<https://www.oschina.net/p/tkey>
@@ -55,4 +56,3 @@
 - [Linux 下常用压缩文件的解压、压缩](markdown-file/File-Extract-Compress.md)
 - [Yum 下载安装包及对应依赖包](markdown-file/Off-line-Yum-Install.md)
 - [Zsh 入门](markdown-file/Zsh.md)
-- [终端测速](markdown-file/
