@@ -5,7 +5,8 @@
 
 - 本教程中主要演示了 VMware Workstation 下安装 `CentOS 7.3` 的过程。
 - VMware 的使用细节可以看这篇：[CentOS 6 安装](CentOS-Install.md)
-- 如果你是要安装到 PC 机中，你需要准备一个 U 盘，以及下载这个软件：[USBWriter（提取码：5aa2）](https://pan.baidu.com/s/1gg83h9T)
+- 如果你是要安装到 PC 机中，你需要准备一个 U 盘，以及 Windows 下载这个软件：[USBWriter（提取码：5aa2）](https://pan.baidu.com/s/1gg83h9T)
+- 如果你是要安装到 PC 机中，你需要准备一个 U 盘，以及 macOS 下载这个软件：[balenaEtcher（提取码：o9qn）](https://pan.baidu.com/s/1bjddfOcuhS3UUIOrFf5ehg)
 - USBWriter 的使用很简单，如下图即可制作一个 CentOS 系统盘
 
 ![VMware 下安装](../images/CentOS-7-Install-a-0.jpg) 
