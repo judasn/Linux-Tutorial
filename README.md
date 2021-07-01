@@ -1,12 +1,4 @@
 
-## 只有上云才能撑住规模化后的发展
-
-- 初期技术选型上尽可能寻找云支持的
-- 在公司规模小，自建服务基本都做不到 99.999% 高可用
-- 在公司规模发展变迅速时，如果云技术和已有技术契合，迁移成本会低很多很多
-- 目前暂定只选择：[阿里云服务](https://www.aliyun.com/minisite/goods?userCode=v2zozyxz)
-- 这里罗列了阿里云常用的一些：[产品](https://github.com/cdk8s/cdk8s-team-style/blob/master/ops/aliyun.md)
-
 ## 新的起点
 
 - [本系列的大部分文章都迁移到这里](https://github.com/cdk8s/cdk8s-team-style)
