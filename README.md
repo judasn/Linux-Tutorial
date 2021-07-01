@@ -1,10 +1,4 @@
 
-## 团队 DevOps 方案参考
-
-<a target="_blank" href="https://coding.net/?utm_source=judasn">
-<img id="judasn" src="https://upload-images.jianshu.io/upload_images/12159-e3279861ff8655c9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-</a>
-
 ## 只有上云才能撑住规模化后的发展
 
 - 初期技术选型上尽可能寻找云支持的
