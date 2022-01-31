@@ -1,10 +1,8 @@
 
-## 新的起点
 
-- [本系列的大部分文章都迁移到这里](https://github.com/cdk8s/cdk8s-team-style)
-- [Sculptor Boot：项目思维化的《代码生成器》体系（未来可期，做个朋友吧）](https://github.com/cdk8s/sculptor-boot-generator)
-- CDK8S：<https://mp.weixin.qq.com/s/fITEVy3IEhI4HOyTXRp9ig>
-- TKey：<https://www.oschina.net/p/tkey>
+## 作者新方向，感谢支持
+
+- [UPUPMO-扶持个人从开公司到全平台产品上线](https://www.bilibili.com/video/BV1Bb4y1j7dy)
 
 ## 初衷(Original Intention)
 
